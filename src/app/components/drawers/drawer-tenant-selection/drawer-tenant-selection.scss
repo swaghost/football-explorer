@@ -1,0 +1,311 @@
+.tenant-drawer-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.current-tenant-section {
+  padding: 20px;
+  background: #f8f9fa;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .current-org-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .org-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+
+      .org-logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+    }
+
+    .org-info {
+      flex: 1;
+
+      .org-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .user-name {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 2px;
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: #999;
+        font-style: italic;
+      }
+
+      .user-relatives {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
+  margin: 10px 0;
+}
+
+.organization-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .org-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .org-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #2196f3;
+        transform: translateX(4px);
+      }
+
+      &.selected {
+        background: #e3f2fd;
+        border-color: #2196f3;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+
+        .checkbox-container .checkmark {
+          color: #2196f3;
+        }
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        margin-right: 12px;
+        flex-shrink: 0;
+        margin-top: 2px;
+
+        .checkmark {
+          font-size: 20px;
+          font-weight: bold;
+          color: #2196f3;
+        }
+
+        .checkbox {
+          font-size: 20px;
+          color: #ccc;
+        }
+      }
+
+      .org-logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+        flex-shrink: 0;
+
+        .org-list-logo {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: 4px;
+        }
+      }
+
+      .org-details {
+        flex: 1;
+
+        .org-line-1 {
+          font-size: 15px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 4px;
+        }
+
+        .org-line-2 {
+          font-size: 13px;
+          color: #666;
+          margin-bottom: 2px;
+        }
+
+        .org-line-3 {
+          font-size: 12px;
+          color: #999;
+          font-style: italic;
+        }
+      }
+    }
+  }
+}
+
+// Scrollbar styling
+.organization-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.organization-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.organization-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+
+  &:hover {
+    background: #555;
+  }
+}
+
+// Dark mode support
+:host-context(.dark-mode) {
+  .tenant-drawer-content {
+    .current-tenant-section {
+      background: #1a1a1a;
+
+      h4 {
+        color: #999;
+      }
+
+      .current-org-display {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+
+        .org-info {
+          .org-name {
+            color: #e0e0e0;
+          }
+
+          .user-name {
+            color: #b0b0b0;
+          }
+
+          .user-role {
+            color: #888;
+          }
+        }
+      }
+    }
+
+    .divider {
+      background: linear-gradient(to right, transparent, #444, transparent);
+    }
+
+    .organization-list {
+      h4 {
+        color: #999;
+      }
+
+      .org-list {
+        .org-item {
+          background: #2d2d2d;
+          border-color: #444;
+
+          &:hover {
+            background: #3a3a3a;
+            border-color: #2196f3;
+          }
+
+          &.selected {
+            background: #1e3a52;
+            border-color: #2196f3;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+
+            .checkbox-container .checkmark {
+              color: #64b5f6;
+            }
+          }
+
+          .checkbox-container {
+            .checkmark {
+              color: #64b5f6;
+            }
+
+            .checkbox {
+              color: #555;
+            }
+          }
+
+          .org-details {
+            .org-line-1 {
+              color: #e0e0e0;
+            }
+
+            .org-line-2 {
+              color: #b0b0b0;
+            }
+
+            .org-line-3 {
+              color: #888;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Dark mode scrollbar
+  .organization-list::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .organization-list::-webkit-scrollbar-thumb {
+    background: #555;
+
+    &:hover {
+      background: #777;
+    }
+  }
+}

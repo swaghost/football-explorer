@@ -1,0 +1,191 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Context'" [drawerId]="'context-drawer'" [drawerHelp]="drawerHelp"
+    [position]="'right'" (close)="onClose()">
+    <div class="context-drawer-content">
+
+
+        <!-- Logged In User Section -->
+        <div class="user-section" *ngIf="loggedInUser">
+            <h4>Logged In User</h4>
+            <div class="user-card">
+                <div class="user-icon">👤</div>
+                <div class="user-info">
+                    <div class="info-row">
+                        <span class="label">Name:</span>
+                        <span class="value">{{ getUserDisplayName(loggedInUser) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Email:</span>
+                        <span class="value">{{ formatEmail(loggedInUser.EmailAddress) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Phone:</span>
+                        <span class="value">{{ formatPhoneNumber(loggedInUser.PhoneNumber) }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="selectedTenant">
+                        <span class="label">Roles:</span>
+                        <span class="value">{{ getRolesForUser(loggedInUser) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedTenant && loggedInUser"></div>
+
+        <!-- Selected Tenant Section -->
+        <div class="tenant-section" *ngIf="selectedTenant">
+            <h4>Current Organization</h4>
+            <div class="tenant-card">
+                <div class="tenant-icon">
+                    <img *ngIf="selectedTenant.LogoUrl" [src]="selectedTenant.LogoUrl"
+                        [alt]="selectedTenant.TenantName + ' logo'" class="tenant-logo" />
+                    <span *ngIf="!selectedTenant.LogoUrl">🏢</span>
+                </div>
+                <div class="tenant-info">
+                    <div class="tenant-name">{{ selectedTenant.TenantName }}</div>
+                    <div class="tenant-id">Tenant ID: {{ selectedTenant.TenantID }}</div>
+                    <div class="tenant-roles" *ngIf="selectedTenant.Roles && selectedTenant.Roles.length > 0">
+                        My Role(s): {{ getTenantRoles() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Logged In User Message -->
+        <div class="no-user-message" *ngIf="!loggedInUser">
+            <p>No user logged in</p>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="isOperatingAsAnotherUser"></div>
+
+        <!-- Operating As Section -->
+        <div class="user-section" *ngIf="isOperatingAsAnotherUser">
+            <h4>Operating As</h4>
+            <div class="user-card operating-as">
+                <div class="user-icon">👥</div>
+                <div class="user-info">
+                    <div class="info-row">
+                        <span class="label">Name:</span>
+                        <span class="value">{{ getUserDisplayName(contextUser) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Email:</span>
+                        <span class="value">{{ formatEmail(contextUser?.EmailAddress) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Phone:</span>
+                        <span class="value">{{ formatPhoneNumber(contextUser?.PhoneNumber) }}</span>
+                    </div>
+                    <div class="info-row" *ngIf="selectedTenant">
+                        <span class="label">Roles:</span>
+                        <span class="value">{{ getRolesForUser(contextUser) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedTenant && hasTenantRelatives()"></div>
+
+        <!-- Tenant Relatives Section -->
+        <div class="relatives-section" *ngIf="selectedTenant && hasTenantRelatives()">
+            <h4>Tenant Relatives</h4>
+            <div class="relatives-list">
+                <div *ngFor="let relative of getTenantRelatives()" class="relative-item">
+                    <div class="relative-icon">👤</div>
+                    <div class="relative-info">
+                        <div class="relative-name">{{ getUserDisplayName(relative) }}</div>
+                        <div class="relative-roles">{{ getRelativeRoles(relative) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedTeam"></div>
+
+        <!-- Selected Team Section -->
+        <div class="team-section" *ngIf="selectedTeam">
+            <h4>Selected Team</h4>
+            <div class="team-card">
+                <div class="team-icon">🏀</div>
+                <div class="team-info">
+                    <div class="team-name">{{ selectedTeam.TeamName }}</div>
+                    <div class="team-id">Team ID: {{ selectedTeam.TeamID }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedTeamGroup"></div>
+
+        <!-- Selected Team Group Section -->
+        <div class="team-group-section" *ngIf="selectedTeamGroup">
+            <h4>Selected Team Group</h4>
+            <div class="team-group-card">
+                <div class="team-group-icon">👥</div>
+                <div class="team-group-info">
+                    <div class="team-group-name">{{ selectedTeamGroup.TeamGroupName }}</div>
+                    <div class="team-group-id">Team Group ID: {{ selectedTeamGroup.TeamGroupID }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedLesson"></div>
+
+        <!-- Selected Lesson Section -->
+        <div class="lesson-section" *ngIf="selectedLesson">
+            <h4>Selected Lesson</h4>
+            <div class="lesson-card">
+                <div class="lesson-icon">📚</div>
+                <div class="lesson-info">
+                    <div class="lesson-name">{{ selectedLesson.LessonName }}</div>
+                    <div class="lesson-desc" *ngIf="selectedLesson.LessonDesc">{{ selectedLesson.LessonDesc }}</div>
+                    <div class="lesson-meta">
+                        <span class="lesson-nodes">{{ selectedLesson.LessonNodes?.length || 0 }} nodes</span>
+                        <span class="lesson-flow" *ngIf="selectedLesson.FlowName"> • {{ selectedLesson.FlowName
+                            }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedDataset"></div>
+
+        <!-- Selected Dataset Section -->
+        <div class="dataset-section" *ngIf="selectedDataset">
+            <h4>Selected Dataset</h4>
+            <div class="dataset-card">
+                <div class="dataset-icon">📊</div>
+                <div class="dataset-info">
+                    <div class="dataset-name">{{ selectedDataset.FlowName || 'Unnamed Dataset' }}</div>
+                    <div class="dataset-desc" *ngIf="selectedDataset.FlowDesc">{{ selectedDataset.FlowDesc }}</div>
+                    <div class="dataset-meta">
+                        <span class="dataset-id" *ngIf="selectedDataset.FlowID !== undefined">ID: {{
+                            selectedDataset.FlowID }}</span>
+                        <span class="dataset-context" *ngIf="selectedDataset.OwnershipContext"> • {{
+                            selectedDataset.OwnershipContext.Context }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedNode"></div>
+
+        <!-- Selected Node Section -->
+        <div class="node-section" *ngIf="selectedNode">
+            <h4>Selected Node</h4>
+            <div class="node-card">
+                <div class="node-icon">🎯</div>
+                <div class="node-info">
+                    <div class="node-id">{{ selectedNode }}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</app-base-sliding-drawer>

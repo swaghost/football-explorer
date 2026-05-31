@@ -1,0 +1,35 @@
+/**
+ * Font Faces
+ * Loads all custom fonts used throughout the application
+ */
+
+// Eurostile fonts from assets/fonts folder
+@font-face {
+  font-family: "Eurostile";
+  src: url("/assets/fonts/eurostile.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Eurostile";
+  src: url("/assets/fonts/EuroStyle_Normal.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Eurostile Demi";
+  src: url("/assets/fonts/Eurostile-LT-Std-Demi-Oblique_16309.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: oblique;
+}
+
+@font-face {
+  font-family: "Eurostile Oblique";
+  src: url("/assets/fonts/Eurostile-LT-Std-Oblique_16312.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: oblique;
+}

@@ -1,0 +1,159 @@
+<!-- Add Player Popup Modal -->
+<app-base-dialog [visible]="visible" [title]="'Add New Player'" [icon]="'👤'" [maxWidth]="'700px'" (close)="onClose()">
+    <form class="player-form" (ngSubmit)="onSave()" #addPlayerForm="ngForm">
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3>Basic Information</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newFirstName">First Name *</label>
+                    <input type="text" id="newFirstName" name="newFirstName" [(ngModel)]="newPlayer.FirstName" required
+                        placeholder="Enter first name" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="newLastName">Last Name *</label>
+                    <input type="text" id="newLastName" name="newLastName" [(ngModel)]="newPlayer.LastName" required
+                        placeholder="Enter last name" maxlength="50" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Jersey Number -->
+        <div class="form-section">
+            <h3>Jersey Number</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newJerseyNumber">Jersey Number *</label>
+                    <input type="number" id="newJerseyNumber" name="newJerseyNumber"
+                        [(ngModel)]="newPlayer.JerseyNumber" required min="0" max="99"
+                        placeholder="Enter jersey number" />
+                    <small class="form-hint">0 for Goalkeeper, 1-99 for field players</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="form-section">
+            <h3>Gender</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newGenderName">Gender *</label>
+                    <select id="newGenderName" name="newGenderName" [(ngModel)]="newPlayer.GenderName" required
+                        (change)="onGenderChange()">
+                        <option value="">Select Gender</option>
+                        <option *ngFor="let gender of availableGenders" [value]="gender.GenderName">
+                            {{ gender.GenderName }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Age Group -->
+        <div class="form-section">
+            <h3>Age Group</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="newAgeGroupName">Age Group *</label>
+                    <select id="newAgeGroupName" name="newAgeGroupName" [(ngModel)]="newPlayer.AgeGroupName" required
+                        (change)="onAgeGroupChange()">
+                        <option value="">Select Age Group</option>
+                        <option *ngFor="let ageGroup of availableAgeGroups" [value]="ageGroup.AgeGroupName">
+                            {{ ageGroup.AgeGroupName }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Positions (Multiple Selection) -->
+        <div class="form-section">
+            <h3>Positions Player Can Play</h3>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label>Select all positions this player can play:</label>
+                    <div class="checkbox-grid">
+                        <label *ngFor="let position of availablePositions; trackBy: trackByAbbreviation"
+                            class="checkbox-label">
+                            <input type="checkbox" [value]="position.name"
+                                [checked]="newPlayerPositions.includes(position.name)"
+                                (change)="onPositionCheckboxChange(position.name, $event)"
+                                [id]="'position-' + position.abbreviation" />
+                            <span>{{ position.name }} <small>({{ position.abbreviation }})</small></span>
+                        </label>
+                    </div>
+                    <small class="form-hint" *ngIf="newPlayerPositions.length === 0">
+                        Please select at least one position
+                    </small>
+                    <small class="form-hint" *ngIf="newPlayerPositions.length > 0">
+                        {{ newPlayerPositions.length }} position{{
+                        newPlayerPositions.length === 1 ? '' : 's'
+                        }}
+                        selected
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Position (Radio Selection) -->
+        <div class="form-section" *ngIf="newPlayerPositions.length > 0">
+            <h3>Primary Position *</h3>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label>Select the player's primary position:</label>
+                    <div class="radio-grid">
+                        <label *ngFor="let position of newPlayerPositions; trackBy: trackByPositionName"
+                            class="radio-label">
+                            <input type="radio" [value]="position" [(ngModel)]="newPlayerPrimaryPosition"
+                                name="primaryPosition" required [id]="'primary-' + position" />
+                            <span>{{ position }}</span>
+                        </label>
+                    </div>
+                    <small class="form-hint">
+                        This will be the player's main position on the team
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Groups (Multiple Selection) -->
+        <div class="form-section" *ngIf="selectedTeam">
+            <h3>Team Groups</h3>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label>Select team groups to add this player to:</label>
+                    <div class="checkbox-grid" *ngIf="availableTeamGroups.length > 0">
+                        <label *ngFor="let teamGroup of availableTeamGroups; trackBy: trackByTeamGroupId"
+                            class="checkbox-label">
+                            <input type="checkbox" [value]="teamGroup.TeamGroupID"
+                                [checked]="selectedTeamGroupIds.includes(teamGroup.TeamGroupID)"
+                                (change)="onTeamGroupCheckboxChange(teamGroup.TeamGroupID, $event)"
+                                [id]="'group-' + teamGroup.TeamGroupID" />
+                            <span>{{ teamGroup.TeamGroupName }}</span>
+                        </label>
+                    </div>
+                    <p *ngIf="availableTeamGroups.length === 0" class="no-groups-message">
+                        No team groups available. Create a team group first.
+                    </p>
+                    <small class="form-hint" *ngIf="availableTeamGroups.length > 0">
+                        {{ selectedTeamGroupIds.length }} group{{
+                        selectedTeamGroupIds.length === 1 ? '' : 's'
+                        }}
+                        selected
+                        <span *ngIf="selectedTeamGroupIds.length === 0">
+                            (optional)</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div slot="footer" class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="onClose()">
+            Cancel
+        </button>
+        <button type="submit" class="btn btn-save" [disabled]="!isFormValid()" (click)="onSave()">
+            Add Player
+        </button>
+    </div>
+</app-base-dialog>

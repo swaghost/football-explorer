@@ -1,0 +1,35 @@
+<div>
+    <form>
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="radialtree" (click)="change($event)">Radial
+            Tree</label>
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="radialtreetidy"
+                (click)="change($event)">Radial
+            Tree (TIDY)</label>
+
+
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="radialcluster" (click)="change($event)">Radial
+            Cluster</label>
+
+        <!-- <label>
+            <input type="radio" [(ngModel)]="value" name="mode" disabled value="radialtreevertical"
+                (click)="change($event)">Radial Tree
+            Vertical</label> -->
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="treehorizontal" (click)="change($event)">Tree
+            (Horizontal)</label>
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="treevertical" (click)="change($event)">Tree
+            (Vertical)</label>
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="clusterhorizontal"
+                (click)="change($event)">Cluster (Horizontal)</label>
+
+        <label><input type="radio" [(ngModel)]="value" name="mode" value="clustervertical"
+                (click)="change($event)">Cluster (Vertical)</label>
+    </form>
+</div>
+<div>
+    <svg #svg width="1024" height="1024"></svg>
+</div>

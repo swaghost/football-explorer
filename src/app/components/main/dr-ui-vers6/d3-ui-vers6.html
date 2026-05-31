@@ -1,0 +1,868 @@
+<div class="full-window-container" [class.dark-mode]="isDarkMode" [class.bottom-toolbar-visible]="bottomToolbarVisible">
+    <!-- Static Top Toolbar for Toolbar Controls -->
+    <div class="static-toolbar-controls">
+        <!-- Tenant Logo -->
+        <div class="tenant-logo-container">
+            <img *ngIf="selectedTenant?.LogoUrl" [src]="selectedTenant.LogoUrl"
+                [alt]="selectedTenant.TenantName + ' logo'" class="tenant-logo" [title]="selectedTenant.TenantName" />
+            <img *ngIf="!selectedTenant?.LogoUrl" src="assets/images/mock-tenant-logos/TENANT.LOGO.SOCCR-ORG.png"
+                alt="Default logo" class="tenant-logo" title="No organization selected" />
+        </div>
+
+        <!-- Login Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isLoginDrawerOpen" (click)="toggleLoginDrawer()"
+            title="Mock Login">
+            🔑
+        </button>
+
+        <!-- Tenancy (Hamburger Menu) -->
+        <button class="toolbar-toggle-btn hamburger-menu-btn" [class.active]="isTenantDrawerOpen"
+            (click)="toggleTenantDrawer()" title="Tenancy / Organization Selection">
+            <span class="hamburger-icon">☰</span>
+        </button>
+
+        <!-- Player Selection Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isPlayerSelectionDrawerOpen"
+            (click)="togglePlayerSelectionDrawer()" title="Player / Context User Selection">
+            👤
+        </button>
+
+        <!-- Teams Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isTeamsDrawerOpen" (click)="toggleTeamsDrawer()"
+            title="Teams">
+            👨‍👩‍👧‍👦
+        </button>
+
+        <!-- Team Groups Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isTeamGroupsDrawerOpen" (click)="toggleTeamGroupsDrawer()"
+            [disabled]="!selectedTeam" title="Team Groups">
+            👥
+        </button>
+
+        <!-- Datasets Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isDatasetsDrawerOpen" (click)="toggleDatasetsDrawer()"
+            title="Datasets">
+            📊
+        </button>
+
+        <!-- Lesson Builder Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isLessonBuilderDrawerOpen"
+            (click)="toggleLessonBuilderDrawer()" title="Lesson Builder">
+            📚
+        </button>
+
+        <!-- Separator -->
+        <div class="toolbar-controls-separator"></div>
+
+        <!-- Left Side Toolbar Toggle Buttons with Custom Spacing -->
+        <ng-container *ngFor="let toolbarKey of getLeftToolbarKeys(); let i = index">
+            <!-- Spacer after selectionTools -->
+            <!-- <div *ngIf="toolbarKey === 'lessons'" class="toolbar-controls-separator"></div> -->
+
+            <!-- Spacer after skillsRadar -->
+            <div *ngIf="toolbarKey === 'rotationControl'" class="toolbar-controls-separator"></div>
+
+            <!-- Spacer after search (teams toolbar removed) -->
+            <div *ngIf="toolbarKey === 'search'" class="toolbar-controls-separator"></div>
+
+            <!-- Spacer before favorites/bookmarks -->
+            <div *ngIf="toolbarKey === 'favorites'" class="toolbar-controls-separator"></div>
+
+            <button class="toolbar-toggle-btn" [class.active]="getToolbarVisibility(toolbarKey)"
+                (click)="toggleToolbarVisibility(toolbarKey, $event)" [title]="getToolbarDisplayName(toolbarKey)">
+                <span class="toolbar-icon">{{ getToolbarIcon(toolbarKey) }}</span>
+            </button>
+        </ng-container>
+
+        <!-- Spacer to push right toolbar toggles to the far right -->
+        <div class="toolbar-spacer"></div>
+
+        <!-- Right Side Toolbar Toggle Buttons (View, Viewport, Visualization, Tracking) -->
+        <button *ngFor="let toolbarKey of getRightToolbarKeys()" class="toolbar-toggle-btn"
+            [class.active]="getToolbarVisibility(toolbarKey)" (click)="toggleToolbarVisibility(toolbarKey, $event)"
+            [title]="getToolbarDisplayName(toolbarKey)">
+            <span class="toolbar-icon">{{ getToolbarIcon(toolbarKey) }}</span>
+        </button>
+
+        <!-- Separator -->
+        <div class="toolbar-controls-separator"></div>
+
+        <!-- Clear All Actions -->
+        <button class="toolbar-action-btn clear-drawings-btn" [disabled]="isClearDrawingsDisabled"
+            (click)="confirmClearAllDrawings()" title="Clear All Drawings">
+            🗑️ Clear Drawings
+        </button>
+        <button class="toolbar-action-btn clear-selections-btn" [disabled]="isClearSelectionsDisabled"
+            (click)="confirmClearAllSelections()" title="Clear All Selections">
+            ❌ Clear Selections
+        </button>
+
+        <!-- Separator -->
+        <div class="toolbar-controls-separator"></div>
+
+        <!-- Theme Toggle -->
+        <button class="toolbar-toggle-btn theme-toggle" (click)="toggleTheme()"
+            [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+            {{ isDarkMode ? '☀️' : '🌙' }}
+        </button>
+
+        <!-- Separator -->
+        <div class="toolbar-controls-separator"></div>
+
+        <!-- Context Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isContextDrawerOpen" (click)="toggleContextDrawer()"
+            title="Context">
+            �
+        </button>
+
+        <!-- Assigned Lessons Drawer Toggle -->
+        <button class="toolbar-toggle-btn" [class.active]="isAssignedLessonsDrawerOpen"
+            (click)="toggleAssignedLessonsDrawer()" title="Assigned Lessons">
+            📚
+            <span *ngIf="overdueLessonsCount > 0" class="badge badge-danger">{{ overdueLessonsCount }}</span>
+        </button>
+
+        <!-- Subscription Drawer Toggle -->
+        <button class="toolbar-toggle-btn subscription-btn" [class.active]="isSubscriptionDrawerOpen"
+            (click)="toggleSubscriptionDrawer()" title="Subscription">
+            💎
+        </button>
+    </div>
+
+    <!-- Static Bottom Toolbar -->
+    <div class="static-bottom-toolbar" [class.dark-mode]="isDarkMode" *ngIf="bottomToolbarVisible">
+        <!-- Left side - Breadcrumb Navigation -->
+        <div class="bottom-toolbar-left">
+            <!-- Dynamic breadcrumb -->
+            <div class="breadcrumb-container" *ngIf="breadcrumbPath.length > 0">
+                <div class="breadcrumb-content" #breadcrumbContent>
+                    <span *ngFor="let node of breadcrumbPath; let i = index; let last = last" class="breadcrumb-item"
+                        (click)="onBreadcrumbClick(node, $event)" [title]="'Click to navigate to: ' + node.name">
+                        {{ node.name }}
+                        <span *ngIf="!last" class="breadcrumb-separator">›</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center - Empty (operation modes moved to right) -->
+        <div class="bottom-toolbar-center">
+        </div>
+
+        <!-- Right side - Operation Modes and Key State Indicators -->
+        <div class="bottom-toolbar-right">
+            <!-- Show All / Hide All Controls -->
+            <button class="toolbar-toggle-btn" (click)="showAllToolbars()" title="Show All Toolbars">
+                👁️
+            </button>
+            <button class="toolbar-toggle-btn" (click)="hideAllToolbars()" title="Hide All Toolbars">
+                🙈
+            </button>
+
+            <!-- Separator -->
+            <div class="bottom-toolbar-separator"></div>
+
+            <!-- Operation Mode Buttons -->
+            <div class="operation-mode-buttons" *ngIf="operationModeService.isInitialized()">
+                <button *ngFor="let mode of operationModeService.availableModes()" class="operation-mode-btn"
+                    [class.active]="isOperationModeActive(mode.id)" [title]="getOperationModeTooltip(mode.id)"
+                    (click)="onOperationModeClick(mode.id)">
+                    <span class="mode-icon">{{ mode.icon }}</span>
+                    <span class="mode-name">{{ mode.name }}</span>
+                </button>
+            </div>
+
+            <!-- Separator between operation modes and key indicators -->
+            <div class="bottom-toolbar-separator"></div>
+
+            <!-- Key State Indicators -->
+            <div class="key-state-indicators">
+                <button class="key-indicator-btn" [class.active]="keyStates.ctrl" title="Ctrl Key State">
+                    <span class="key-label">Ctrl</span>
+                </button>
+                <button class="key-indicator-btn" [class.active]="keyStates.alt" title="Alt Key State">
+                    <span class="key-label">Alt</span>
+                </button>
+                <button class="key-indicator-btn" [class.active]="keyStates.shift" title="Shift Key State">
+                    <span class="key-label">Shift</span>
+                </button>
+                <!-- Debug Dropdown Button -->
+                <button class="key-indicator-btn"
+                    style="background: red; color: white; margin-left: 10px; font-weight: bold;"
+                    (click)="debugDropdownValues()" title="Debug Dropdown Values">
+                    <span class="key-label">DEBUG</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Container -->
+    <svg #svg class="svg-container" [class.snagit-active]="snagitActive"></svg>
+
+    <!-- Text Input Overlay -->
+    <div class="text-input-overlay" *ngIf="textInputVisible" [style.left.px]="textInputPosition.x"
+        [style.top.px]="textInputPosition.y">
+        <div class="text-input-container" [style.font-size.px]="textFontSize" [style.color]="textColor"
+            [style.font-family]="textFontFamily" [class.bold]="textBold" [class.italic]="textItalic"
+            [class.strikethrough]="textStrikethrough" contenteditable="true" #textInput (blur)="onTextInputBlur()"
+            (keydown.enter)="onTextInputEnter($event)" (keydown.escape)="onTextInputEscape()">
+        </div>
+    </div>
+
+    <!-- Selection Tools Panel (Component) -->
+    <app-toolbar-selection-tools [visible]="toolbarVisibility.selectionTools" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.selectionTools" [locked]="toolbarLocks.selectionTools"
+        [applyConstraints]="applyToolbarConstraints" [drawingMode]="drawingMode" [lassoMode]="lassoMode"
+        [relatedNodeDirection]="relatedNodeDirection" [relatedNodeMode]="relatedNodeMode"
+        (close)="hideToolbar('selectionTools')" (toggleLock)="toggleToolbarLock('selectionTools')"
+        (dragStart)="onToolbarDragStart($event, 'selectionTools')" (setDrawingMode)="setDrawingMode($event)"
+        (setLassoMode)="setLassoMode($event)" (toggleRelatedNodeDirection)="toggleRelatedNodeDirection()"
+        (toggleRelatedNodeMode)="toggleRelatedNodeMode()">
+    </app-toolbar-selection-tools>
+
+    <!-- Annotation Toolbar (Component) -->
+    <app-toolbar-annotation [visible]="toolbarVisibility.annotation" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.annotation" [locked]="toolbarLocks.annotation"
+        [applyConstraints]="applyToolbarConstraints" [drawingMode]="drawingMode" [selectedColor]="selectedColor"
+        [brushSize]="brushSize" [eraserMode]="eraserMode" [eraserSize]="eraserSize"
+        [shapeStrokeWidth]="shapeStrokeWidth" [shapeStrokeColor]="shapeStrokeColor" [shapeFillColor]="shapeFillColor"
+        [shapeFillMode]="shapeFillMode" [rectangleConstrained]="rectangleConstrained"
+        [circleConstrained]="circleConstrained" [arrowSize]="arrowSize" [arrowStrokeColor]="arrowStrokeColor"
+        [arrowFillColor]="arrowFillColor" [textFontSize]="textFontSize" [textColor]="textColor" [textBold]="textBold"
+        [textItalic]="textItalic" [textStrikethrough]="textStrikethrough" [textFontFamily]="textFontFamily"
+        (close)="hideToolbar('annotation')" (toggleLock)="toggleToolbarLock('annotation')"
+        (dragStart)="onToolbarDragStart($event, 'annotation')" (setDrawingMode)="setDrawingMode($event)"
+        (selectColor)="selectColor($event)" (updateBrushSize)="updateBrushSize($event)"
+        (setEraserMode)="setEraserMode($event)" (updateEraserSize)="updateEraserSize($event)"
+        (updateShapeStrokeWidth)="updateShapeStrokeWidthHandler($event)"
+        (updateShapeStrokeColor)="updateShapeStrokeColorHandler($event)"
+        (updateShapeFillColor)="updateShapeFillColorHandler($event)"
+        (updateShapeFillMode)="updateShapeFillModeHandler($event)"
+        (toggleRectangleConstrained)="toggleRectangleConstrainedHandler()"
+        (toggleCircleConstrained)="toggleCircleConstrainedHandler()" (updateArrowSize)="updateArrowSizeHandler($event)"
+        (updateArrowStrokeColor)="updateArrowStrokeColorHandler($event)"
+        (updateArrowFillColor)="updateArrowFillColorHandler($event)"
+        (updateTextFontSize)="updateTextFontSizeHandler($event)" (updateTextColor)="updateTextColorHandler($event)"
+        (toggleTextBold)="toggleTextBoldHandler()" (toggleTextItalic)="toggleTextItalicHandler()"
+        (toggleTextStrikethrough)="toggleTextStrikethroughHandler()"
+        (updateTextFontFamily)="updateTextFontFamilyHandler($event)">
+    </app-toolbar-annotation>
+
+    <!-- Screenshots Toolbar (Component) -->
+    <app-toolbar-screenshots [visible]="toolbarVisibility.screenshots" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.screenshots" [locked]="toolbarLocks.screenshots"
+        [applyConstraints]="applyToolbarConstraints" [screenshotFormat]="screenshotFormat"
+        [screenshotTarget]="screenshotTarget" [snagitMode]="snagitMode" (close)="hideToolbar('screenshots')"
+        (toggleLock)="toggleToolbarLock('screenshots')" (dragStart)="onToolbarDragStart($event, 'screenshots')"
+        (updateScreenshotFormat)="updateScreenshotFormat($event)"
+        (updateScreenshotTarget)="updateScreenshotTarget($event)" (takeScreenshot)="takeScreenshot($event)"
+        (toggleSnagit)="toggleSnagitMode()">
+    </app-toolbar-screenshots>
+
+    <!-- OLD Lesson Builder Panel - REMOVED (replaced by V2) -->
+    <!-- <app-toolbar-lesson-builder [visible]="toolbarVisibility.lessons" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.lessons" [locked]="toolbarLocks.lessons"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="lessonsExpanded" [hasLessons$]="hasLessons$"
+        [currentLessons]="currentLessons" [allLessons]="allLessons" [selectedLesson]="selectedLesson"
+        [autopilotRunning]="autopilotRunning" [currentFlowID]="selectedContextDataset?.FlowID"
+        [currentUserRoleId]="currentUserRoleId" [currentTenantId]="currentSelectedTenantId"
+        [currentTeamId]="currentSelectedTeamId" [currentTeamGroupId]="currentSelectedTeamGroupId"
+        [selectedTenantName]="selectedTenant?.TenantName || null" [selectedTeamName]="selectedTeam?.TeamName || null"
+        [selectedDataset]="selectedContextDataset" (close)="hideToolbar('lessons')"
+        (toggleLock)="toggleToolbarLock('lessons')" (dragStart)="onToolbarDragStart($event, 'lessons')"
+        (toggleExpanded)="toggleLessonsExpanded()" (lessonChange)="onLessonChange($event)"
+        (lessonSelect)="onLessonSelect($event)" (createLesson)="createLesson()" (editLesson)="editLesson()"
+        (deleteLesson)="deleteLesson()" (runLesson)="runLesson()" (autopilot)="autopilot()"
+        (stopAutopilot)="stopAutopilot()" (promoteLesson)="promoteLesson()" (demoteLesson)="demoteLesson()">
+    </app-toolbar-lesson-builder> -->
+
+    <!-- Favorites Panel (Component) -->
+    <app-toolbar-favorites [visible]="toolbarVisibility.favorites" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.favorites" [locked]="toolbarLocks.favorites"
+        [applyConstraints]="applyToolbarConstraints" [selectedNode]="selectedNode" (close)="hideToolbar('favorites')"
+        (toggleLock)="toggleToolbarLock('favorites')" (dragStart)="onToolbarDragStart($event, 'favorites')"
+        (nodeSelected)="onNodeSelected($event)" (panToNode)="navigateToNode($event)">
+    </app-toolbar-favorites>
+
+    <!-- Bookmarks Panel (Component) -->
+    <app-toolbar-bookmarks [visible]="toolbarVisibility.bookmarks" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.bookmarks" [locked]="toolbarLocks.bookmarks"
+        [applyConstraints]="applyToolbarConstraints" (close)="hideToolbar('bookmarks')"
+        (toggleLock)="toggleToolbarLock('bookmarks')" (dragStart)="onToolbarDragStart($event, 'bookmarks')"
+        (nodeSelected)="onNodeSelected($event)" (panToNode)="navigateToNode($event)" [selectedNode]="selectedNode">
+    </app-toolbar-bookmarks>
+
+    <!-- OLD Lesson Runner Panel - REMOVED (replaced by V2) -->
+    <!-- <app-toolbar-lesson-runner [visible]="toolbarVisibility.lessonViewer" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.lessonViewer" [locked]="toolbarLocks.lessonViewer"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="true" [selectedNode]="selectedLessonNode$ | async"
+        [nodeData]="selectedLessonNodeData" [selectedNodes]="selectedNodes" [currentLessons]="currentLessons"
+        [selectedLesson]="selectedLesson" [lessonContentQualitySurveyEnabled]="lessonContentQualitySurveyEnabled"
+        (close)="hideToolbar('lessonViewer')" (toggleLock)="toggleToolbarLock('lessonViewer')"
+        (dragStart)="onToolbarDragStart($event, 'lessonViewer')" (toggleExpanded)="onLessonViewerToggleExpanded()"
+        (nodeSelected)="onLessonViewerNodeSelected($event)" (surveyResponse)="onLessonSurveyResponse($event)">
+    </app-toolbar-lesson-runner> -->
+
+    <!-- Lesson Builder V2 Panel (Component) -->
+    <app-toolbar-lesson-builder-v2 *ngIf="toolbarVisibility.lessonBuilderV2"
+        [visible]="toolbarVisibility.lessonBuilderV2" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.lessonBuilderV2" [locked]="toolbarLocks.lessonBuilderV2"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="true" [selectedNode]="selectedLessonNode$ | async"
+        [nodeData]="selectedLessonNodeData" [selectedNodes]="selectedNodes" [selectedLesson]="selectedLesson"
+        [treeData]="treeData" [hasUnsavedChanges]="hasUnsavedChanges" [canApplyChanges]="canApplyChanges"
+        (close)="hideToolbar('lessonBuilderV2')" (toggleLock)="toggleToolbarLock('lessonBuilderV2')"
+        (dragStart)="onToolbarDragStart($event, 'lessonBuilderV2')" (applySelectionToLesson)="applySelectionToLesson()"
+        (clearNodeSelection)="clearNodeSelection()" (removeNodeFromSelection)="removeNodeFromSelection($event)"
+        (nodeSelect)="onSelectedNodeClick($event)" (reorderNodes)="onReorderSelectedNodes($event)"
+        (nodeSelected)="onLessonViewerNodeSelected($event)" (surveyResponse)="onLessonSurveyResponse($event)"
+        (toggleExpanded)="onLessonBuilderV2ToggleExpanded()">
+    </app-toolbar-lesson-builder-v2>
+
+    <!-- Lesson Runner V2 Panel (Component) -->
+    <app-toolbar-lesson-runner-v2 *ngIf="toolbarVisibility.lessonRunnerV2" [visible]="toolbarVisibility.lessonRunnerV2"
+        [isDarkMode]="isDarkMode" [position]="toolbarPositions.lessonRunnerV2" [locked]="toolbarLocks.lessonRunnerV2"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="true" [nodeData]="selectedLessonRunnerNodeData"
+        [treeData]="treeData" (close)="hideToolbar('lessonRunnerV2')" (toggleLock)="toggleToolbarLock('lessonRunnerV2')"
+        (dragStart)="onToolbarDragStart($event, 'lessonRunnerV2')" (toggleExpanded)="onLessonRunnerV2ToggleExpanded()"
+        (nodeSelected)="onLessonViewerNodeSelected($event)" (surveyResponse)="onLessonSurveyResponse($event)">
+    </app-toolbar-lesson-runner-v2>
+
+    <!-- Technique Explorer Panel (Component) -->
+    <app-toolbar-technique-explorer [visible]="toolbarVisibility.techniqueExplorer" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.techniqueExplorer" [locked]="toolbarLocks.techniqueExplorer"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="true" [selectedNode]="selectedNode"
+        [nodeData]="selectedNodeData" [selectedNodes]="selectedNodes"
+        [exploratoryContentQualitySurveyEnabled]="exploratoryContentQualitySurveyEnabled"
+        [currentDatasetOwnership]="currentDatasetOwnership" (close)="hideToolbar('techniqueExplorer')"
+        (toggleLock)="toggleToolbarLock('techniqueExplorer')"
+        (dragStart)="onToolbarDragStart($event, 'techniqueExplorer')"
+        (toggleExpanded)="onTechniqueExplorerToggleExpanded()" (nodeSelected)="onTechniqueExplorerNodeSelected($event)"
+        (surveyResponse)="onTechniqueExplorerSurveyResponse($event)">
+    </app-toolbar-technique-explorer>
+
+    <!-- Node Painter Panel (Component) -->
+    <app-toolbar-node-painter [visible]="toolbarVisibility.nodePainter" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.nodePainter" [locked]="toolbarLocks.nodePainter"
+        [applyConstraints]="applyToolbarConstraints" [selectedNode]="selectedNode"
+        [selectedNodeHasChildren]="selectedNodeHasChildren" (close)="hideToolbar('nodePainter')"
+        (toggleLock)="toggleToolbarLock('nodePainter')" (dragStart)="onToolbarDragStart($event, 'nodePainter')"
+        (addChild)="onAddChild()" (reparentNode)="onReparentNode()" (insertBetween)="onInsertBetween()"
+        (promoteNode)="onPromoteNode()" (deleteNode)="onDeleteNode()" (editNode)="onEditNode()"
+        (clearChildren)="onClearChildren()" (promoteChildren)="onPromoteChildren()">>
+    </app-toolbar-node-painter>
+
+    <!-- Skills Radar Panel (Component) -->
+    <app-toolbar-skills-radar [visible]="toolbarVisibility.skillsRadar" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.skillsRadar" [locked]="toolbarLocks.skillsRadar"
+        [applyConstraints]="applyToolbarConstraints" [selectedNodes]="selectedNodes" [selectedLesson]="selectedLesson"
+        (close)="hideToolbar('skillsRadar')" (positionChange)="updateToolbarPosition('skillsRadar', $event)"
+        (lockChange)="setToolbarLock('skillsRadar', $event)" (radarValuesChanged)="onRadarValuesChanged($event)">
+    </app-toolbar-skills-radar>
+
+    <!-- Quick-Nav Panel (Component) -->
+    <app-toolbar-quick-nav [visible]="toolbarVisibility.quickNav" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.quickNav" [locked]="toolbarLocks.quickNav"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="quickNavExpanded" [treeData]="treeData"
+        [selectedNode]="selectedNode" [selectedNodes]="selectedNodes" [followSelectedNode]="quickNavFollowEnabled"
+        (close)="hideToolbar('quickNav')" (toggleLock)="toggleToolbarLock('quickNav')"
+        (dragStart)="onToolbarDragStart($event, 'quickNav')" (toggleExpanded)="toggleQuickNavExpanded()"
+        (nodeSelected)="onQuickNavNodeSelected($event)" (nodeToggleSelection)="onQuickNavNodeToggleSelection($event)">
+    </app-toolbar-quick-nav>
+
+    <!-- Search Panel (Component) -->
+    <app-toolbar-search [visible]="toolbarVisibility.search" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.search" [locked]="toolbarLocks.search" [applyConstraints]="applyToolbarConstraints"
+        [expanded]="searchExpanded" [treeData]="treeData" [selectedNode]="selectedNode" (close)="hideToolbar('search')"
+        (toggleLock)="toggleToolbarLock('search')" (dragStart)="onToolbarDragStart($event, 'search')"
+        (toggleExpanded)="toggleSearchExpanded()" (nodeSelected)="onSearchNodeSelected($event)"
+        (nodeToggleSelection)="onSearchNodeToggleSelection($event)">
+    </app-toolbar-search>
+
+    <!-- Import/Export Panel (Component) -->
+    <app-toolbar-import-export [visible]="toolbarVisibility.importExport" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.importExport" [locked]="toolbarLocks.importExport"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="importExportExpanded"
+        (close)="hideToolbar('importExport')" (toggleLock)="toggleToolbarLock('importExport')"
+        (dragStart)="onToolbarDragStart($event, 'importExport')" (toggleExpanded)="toggleImportExportExpanded()">
+    </app-toolbar-import-export>
+
+    <!-- Debug Info (temporarily commented out to fix change detection error)
+    <div class="debug-info"
+        style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px;">
+        <div>Has Lessons: {{ hasLessons$ | async }}</div>
+        <div>Lessons Count: {{ currentLessons?.length }}</div>
+        <div>Selected Lesson: {{ selectedLesson?.LessonName || 'None' }}</div>
+        <div>Selected Lesson Object: {{ selectedLesson | json }}</div>
+        <div>Delete Btn Disabled: {{ !selectedLesson }}</div>
+        <div>Selected Nodes Count: {{ selectedNodes.length }}</div>
+        <div>Lesson Nodes Count: {{ selectedLesson?.LessonNodes?.length || 0 }}</div>
+        <div>Selection Matches: {{ selectionMatchesLesson }}</div>
+    </div>
+    -->
+
+
+
+    <!-- View Controls Panel (Component) -->
+    <app-toolbar-view-effects [visible]="toolbarVisibility.zoomControls" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.zoomControls" [locked]="toolbarLocks.zoomControls"
+        [applyConstraints]="applyToolbarConstraints" [nodeCount]="nodeCount"
+        [snapToolbarsOnResize]="snapToolbarsOnResize" [treeVisible]="treeVisible" [logoFadeVisible]="logoFadeVisible"
+        [blackBackgroundVisible]="blackBackgroundVisible" [autoFadeActive]="autoFadeActive"
+        [autoFadeOutActive]="autoFadeOutActive" [autoFadeDiagramActive]="autoFadeDiagramActive"
+        [autoFadeOptionsActive]="autoFadeOptionsActive" [scrollToNodeEnabled]="scrollToNodeEnabled"
+        [quickNavFollowEnabled]="quickNavFollowEnabled" [nodeListFollowEnabled]="nodeListFollowEnabled"
+        [lessonContentQualitySurveyEnabled]="lessonContentQualitySurveyEnabled"
+        [exploratoryContentQualitySurveyEnabled]="exploratoryContentQualitySurveyEnabled"
+        [explorerAutoShowEnabled]="explorerAutoShowEnabled" (close)="hideToolbar('zoomControls')"
+        (toggleLock)="toggleToolbarLock('zoomControls')" (dragStart)="onToolbarDragStart($event, 'zoomControls')"
+        (updateNodeCount)="updateNodeCount($event)" (toggleSnapToolbarsOnResize)="toggleSnapToolbarsOnResize()"
+        (toggleTreeVisibility)="toggleTreeVisibility()" (toggleLogoFade)="toggleLogoFade()"
+        (toggleBlackBackground)="toggleBlackBackground()" (toggleAutoFade)="toggleAutoFade()"
+        (toggleAutoFadeOut)="toggleAutoFadeOut()" (toggleAutoFadeDiagram)="toggleAutoFadeDiagram()"
+        (toggleAutoFadeOptions)="toggleAutoFadeOptions()" (startCustomAutoFade)="onStartCustomAutoFade($event)"
+        (toggleScrollToNode)="toggleScrollToNode()" (quickNavFollowToggle)="onQuickNavFollowToggle($event)"
+        (nodeListFollowToggle)="onNodeListFollowToggle($event)"
+        (lessonContentQualitySurveyToggle)="onLessonContentQualitySurveyToggle($event)"
+        (exploratoryContentQualitySurveyToggle)="onExploratoryContentQualitySurveyToggle($event)"
+        (explorerAutoShowToggle)="onExplorerAutoShowToggle($event)" (regenerateNodes)="regenerateNodes()">>
+    </app-toolbar-view-effects>
+
+
+
+    <!-- Rotation & Pan Control Panel (Component) -->
+    <app-toolbar-rotation-control [visible]="toolbarVisibility.rotationControl" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.rotationControl" [locked]="toolbarLocks.rotationControl"
+        [applyConstraints]="applyToolbarConstraints" [zoomLevel]="zoomLevel" [panX]="panX" [panY]="panY"
+        [panXMin]="panXMin" [panXMax]="panXMax" [panYMin]="panYMin" [panYMax]="panYMax" [rotationAngle]="rotationAngle"
+        (close)="hideToolbar('rotationControl')" (toggleLock)="toggleToolbarLock('rotationControl')"
+        (dragStart)="onToolbarDragStart($event, 'rotationControl')" (zoomUpdate)="updateZoom($event)"
+        (panUpdate)="updatePan($event.event, $event.axis)" (rotationUpdate)="updateRotation($event)"
+        (resetRotation)="resetRotation()" (resetPan)="resetPan()" (resetZoom)="resetZoom()" (resetAll)="resetAll()">
+    </app-toolbar-rotation-control>
+
+    <!-- Visualization Options Panel (Component) -->
+    <app-toolbar-visualization-options [visible]="toolbarVisibility.visualizationOptions" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.visualizationOptions" [locked]="toolbarLocks.visualizationOptions"
+        [applyConstraints]="applyToolbarConstraints" [selectedVisualization]="selectedVisualization"
+        [selectedFormat]="selectedFormat" [selectedLayoutStyle]="selectedLayoutStyle"
+        [visualizationOptions]="visualizationOptions" [nodeCount]="treeNodes.length" [linkCount]="treeLinks.length"
+        [visualizationRadius]="visualizationRadius" [visualizationWidth]="visualizationWidth"
+        [visualizationHeight]="visualizationHeight" [quickNavFollowEnabled]="quickNavFollowEnabled"
+        [nodeListFollowEnabled]="nodeListFollowEnabled"
+        [lessonContentQualitySurveyEnabled]="lessonContentQualitySurveyEnabled"
+        [exploratoryContentQualitySurveyEnabled]="exploratoryContentQualitySurveyEnabled"
+        [explorerAutoShowEnabled]="explorerAutoShowEnabled" (close)="hideToolbar('visualizationOptions')"
+        (visibilityChange)="onToolbarVisibilityChange('visualizationOptions', $event)"
+        (toggleLock)="toggleToolbarLock('visualizationOptions')"
+        (dragStart)="onToolbarDragStart($event, 'visualizationOptions')"
+        (visualizationChange)="onVisualizationChange($event)" (updateNodeCount)="updateNodeCount($event)"
+        (regenerateNodes)="regenerateNodes()" (radiusChange)="onVisualizationRadiusChange($event)"
+        (widthChange)="onVisualizationWidthChange($event)" (heightChange)="onVisualizationHeightChange($event)"
+        (quickNavFollowToggle)="onQuickNavFollowToggle($event)" (nodeListFollowToggle)="onNodeListFollowToggle($event)"
+        (lessonContentQualitySurveyToggle)="onLessonContentQualitySurveyToggle($event)"
+        (exploratoryContentQualitySurveyToggle)="onExploratoryContentQualitySurveyToggle($event)"
+        (explorerAutoShowToggle)="onExplorerAutoShowToggle($event)">
+    </app-toolbar-visualization-options>
+
+    <!-- Teams Panel (Component) - REMOVED: Replaced by Teams Drawer -->
+    <!--
+    <app-toolbar-teams [visible]="toolbarVisibility.teams" [isDarkMode]="isDarkMode" [position]="toolbarPositions.teams"
+        [locked]="toolbarLocks.teams" [applyConstraints]="applyToolbarConstraints" [expanded]="teamsExpanded"
+        [availableTeams]="getTeamsForSelectedOrganization()" [availableTeamGroups]="getAvailableTeamGroups()"
+        [selectedTeamId]="currentSelectedTeamId" [selectedTeamGroupId]="currentSelectedTeamGroupId"
+        [selectedTeam]="selectedTeam" [selectedTeamGroup]="selectedTeamGroup" [currentUserRoleId]="currentUserRoleId"
+        (close)="hideToolbar('teams')" (toggleLock)="toggleToolbarLock('teams')"
+        (dragStart)="onToolbarDragStart($event, 'teams')" (toggleExpanded)="toggleTeamsExpanded()"
+        (teamChange)="onTeamChange($event)" (teamGroupChange)="onTeamGroupChange($event)" (createTeam)="onCreateTeam()"
+        (editTeam)="onEditTeam()" (deleteTeam)="onDeleteTeam()" (createTeamGroup)="onCreateTeamGroup()"
+        (editTeamGroup)="onEditTeamGroup()" (deleteTeamGroup)="onDeleteTeamGroup()"
+        (autoBuildTeamGroup)="onAutoBuildTeamGroup()" (importTeamGroup)="onAddDefaultTeamGroups()">
+    </app-toolbar-teams>
+    -->
+
+    <!-- Tenancy Panel (Component) -->
+    <app-toolbar-tenancy [visible]="toolbarVisibility.tenancy" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.tenancy" [locked]="toolbarLocks.tenancy"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="tenancyExpanded" [organizations]="organizations"
+        [selectedTenantId]="currentSelectedTenantId" [roles]="roles" (close)="hideToolbar('tenancy')"
+        (toggleLock)="toggleToolbarLock('tenancy')" (dragStart)="onToolbarDragStart($event, 'tenancy')"
+        (toggleExpanded)="toggleTenancyExpanded()" (organizationSelected)="onTenancyOrganizationSelected($event)">
+    </app-toolbar-tenancy>
+
+    <!-- Team Roster Panel (Component) -->
+    <app-toolbar-team-roster [visible]="toolbarVisibility.teamRoster" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.teamRoster" [locked]="toolbarLocks.teamRoster"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="teamRosterExpanded" [title]="teamRosterTitle"
+        [selectedTeam]="selectedTeam" [teamPlayers]="getSelectedTeamPlayers()" [selectedPlayerIds]="selectedPlayerIds"
+        [playerFilterBy]="playerFilterBy" [playerSortBy]="playerSortBy" [playerFilterOptions]="playerFilterOptions"
+        [playerSortOptions]="playerSortOptions" [areAllVisiblePlayersSelected]="areAllVisiblePlayersSelected"
+        [areSomeVisiblePlayersSelected]="areSomeVisiblePlayersSelected" (close)="hideToolbar('teamRoster')"
+        (toggleLock)="toggleToolbarLock('teamRoster')" (dragStart)="onToolbarDragStart($event, 'teamRoster')"
+        (toggleExpanded)="toggleTeamRosterExpanded()" (playerFilterChange)="onPlayerFilterChange($event)"
+        (playerSortChange)="onPlayerSortChange($event)"
+        (selectAllChange)="$event ? deselectAllVisiblePlayers() : selectAllVisiblePlayers()"
+        (playerCheckboxChange)="onPlayerCheckboxChange($event.playerId, $event.checked)"
+        (playerEdit)="openPlayerEditPopup($event)" (addPlayer)="openAddPlayerPopup()"
+        (createTeamGroup)="onCreateTeamGroup()" (importTeamGroup)="onAddDefaultTeamGroups()">
+    </app-toolbar-team-roster>
+
+    <!-- Default Team Groups Panel (Component) -->
+    <app-toolbar-default-team-groups [visible]="toolbarVisibility.defaultTeamGroups" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.defaultTeamGroups" [locked]="toolbarLocks.defaultTeamGroups"
+        [applyConstraints]="applyToolbarConstraints" [expanded]="defaultTeamGroupsExpanded"
+        [editing]="defaultTeamGroupsEditing" [isViewingSystemDefault]="isViewingSystemDefault"
+        [defaultTeamGroups]="defaultTeamGroups" [selectedDefaultTeamGroup]="selectedDefaultTeamGroup"
+        [selectedTeam]="selectedTeam" [organizations]="organizations" [formName]="defaultGroupFormName"
+        [formOwnership]="defaultGroupFormOwnership" [formOrganizationId]="defaultGroupFormTenantId"
+        [formMatchingPositions]="defaultGroupFormMatchingPositions"
+        [formMatchingNumbers]="defaultGroupFormMatchingNumbers" [systemGroupsCount]="getSystemGroupsCount()"
+        [organizationalGroupsCount]="getOrganizationalGroupsCount()" (close)="hideToolbar('defaultTeamGroups')"
+        (toggleLock)="toggleToolbarLock('defaultTeamGroups')"
+        (dragStart)="onToolbarDragStart($event, 'defaultTeamGroups')"
+        (toggleExpanded)="toggleDefaultTeamGroupsExpanded()" (selectDefaultTeamGroup)="selectDefaultTeamGroup($event)"
+        (editDefaultTeamGroup)="editDefaultTeamGroup($event)" (deleteDefaultTeamGroup)="deleteDefaultTeamGroup($event)"
+        (createDefaultTeamGroup)="createDefaultTeamGroup()" (applyDefaultGroupToTeam)="applyDefaultGroupToTeam()"
+        (ownershipChange)="onDefaultGroupOwnershipChange()" (saveDefaultTeamGroup)="saveDefaultTeamGroup()"
+        (copySystemDefaultAsTemplate)="copySystemDefaultAsTemplate()" (cancelEdit)="cancelDefaultTeamGroupEdit()">
+    </app-toolbar-default-team-groups>
+
+    <!-- Selected Node State Panel (Component) -->
+    <app-toolbar-selected-node-state [visible]="toolbarVisibility.statusPanel" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.statusPanel" [locked]="toolbarLocks.statusPanel"
+        [applyConstraints]="applyToolbarConstraints" [selectedNode]="selectedNode" (close)="hideToolbar('statusPanel')"
+        (toggleLock)="toggleToolbarLock('statusPanel')" (dragStart)="onToolbarDragStart($event, 'statusPanel')">
+    </app-toolbar-selected-node-state>
+
+    <!-- Tooltip -->
+    <div class="tooltip" [class.dark-mode]="isDarkMode" *ngIf="tooltip.visible" [style.left.px]="tooltip.x + 10"
+        [style.top.px]="tooltip.y - 10">
+        {{ tooltip.text }}
+    </div>
+
+    <!-- Team Group Edit Dialog -->
+    <app-dialog-edit-team-group [visible]="showEditTeamGroupDialog" [editingTeamGroup]="editingTeamGroup"
+        [selectedTeam]="selectedTeam" [playerSortBy]="playerSortBy" [playerSortOptions]="playerSortOptions"
+        [tempSelectedPlayerIds]="tempSelectedPlayerIds" (close)="closeEditTeamGroupDialog()"
+        (save)="saveTeamGroupChanges()" (playerSortChange)="onPlayerSortChange($event)"
+        (tempPlayerCheckboxChange)="onTempPlayerCheckboxChange($event)">
+    </app-dialog-edit-team-group>
+
+    <!-- Player Edit Popup Modal -->
+    <app-dialog-edit-player [visible]="isPlayerEditPopupOpen" [editingPlayer]="editingPlayer"
+        [availablePositions]="getAvailablePositions()" [availableGenders]="getAvailableGenders()"
+        [availableAgeGroups]="getAvailableAgeGroups()" [availableTeamGroups]="getAvailableTeamGroups()"
+        [selectedTeamGroupIds]="selectedTeamGroupIds" (close)="closePlayerEditPopup()" (save)="savePlayerChanges()"
+        (positionChange)="onPositionChange()" (genderChange)="onGenderChange()"
+        (teamGroupCheckboxChange)="onTeamGroupCheckboxChange($event.teamGroupId, $event.event)">
+    </app-dialog-edit-player>
+
+    <!-- Add Player Popup Modal -->
+    <app-dialog-add-player [visible]="isAddPlayerPopupOpen" [newPlayer]="newPlayer"
+        [availablePositions]="getAvailablePositions()" [availableGenders]="getAvailableGenders()"
+        [availableAgeGroups]="getAvailableAgeGroups()" [availableTeamGroups]="getAvailableTeamGroups()"
+        [selectedTeam]="selectedTeam" [newPlayerPositions]="newPlayerPositions"
+        [newPlayerPrimaryPosition]="newPlayerPrimaryPosition" [selectedTeamGroupIds]="selectedTeamGroupIds"
+        (close)="closeAddPlayerPopup()" (save)="saveNewPlayer()" (genderChange)="onNewPlayerGenderChange()"
+        (ageGroupChange)="onNewPlayerAgeGroupChange()"
+        (positionCheckboxChange)="onPositionCheckboxChange($event.position, $event.event)"
+        (teamGroupCheckboxChange)="onTeamGroupCheckboxChange($event.teamGroupId, $event.event)">
+    </app-dialog-add-player>
+
+    <!-- Viewport Info Panel (Component) -->
+    <app-toolbar-viewport-info [visible]="toolbarVisibility.viewportInfo" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.viewportInfo" [locked]="toolbarLocks.viewportInfo"
+        [applyConstraints]="applyToolbarConstraints" [width]="width" [height]="height"
+        [visualModeLabel]="getCurrentVisualModeLabel()" [treeSizeModeLabel]="getCurrentTreeSizeModeLabel()"
+        [zoomLevel]="zoomLevel" [panX]="panX" [panY]="panY" [rotationAngle]="rotationAngle" [nodeCount]="nodeCount"
+        [selectedNodesCount]="selectedNodes.length" [drawingMode]="drawingMode" [strokesCount]="strokes.length"
+        (close)="hideToolbar('viewportInfo')" (visibilityChange)="onToolbarVisibilityChange('viewportInfo', $event)"
+        (toggleLock)="toggleToolbarLock('viewportInfo')"
+        (positionChange)="updateToolbarPosition('viewportInfo', $event)"
+        (dragStart)="onToolbarDragStart($event, 'viewportInfo')">
+    </app-toolbar-viewport-info>
+
+    <!-- Create Team Dialog -->
+    <app-dialog-create-team [visible]="showCreateTeamDialog" [newTeamName]="newTeamName"
+        [selectedTenantIdForNewTeam]="selectedTenantIdForNewTeam" [organizations]="organizations"
+        [availableDefaultTeamGroups]="getAvailableDefaultTeamGroups()"
+        [areAllDefaultTeamGroupsSelected]="areAllDefaultTeamGroupsSelected()"
+        [selectedDefaultTeamGroupsForNewTeam]="selectedDefaultTeamGroupsForNewTeam"
+        [newPlayerFirstName]="newPlayerFirstName" [newPlayerLastName]="newPlayerLastName"
+        [newPlayerPosition]="newPlayerPosition" [newPlayerJerseyNumber]="newPlayerJerseyNumber"
+        [newTeamPlayers]="newTeamPlayers" [isCreatingTeam]="isCreatingTeam" (close)="closeCreateTeamDialog()"
+        (save)="saveNewTeam()" (toggleSelectAllDefaultTeamGroups)="toggleSelectAllDefaultTeamGroups()"
+        (toggleDefaultTeamGroupSelection)="toggleDefaultTeamGroupSelection($event)"
+        (addPlayerToNewTeam)="addPlayerToNewTeam()" (removePlayerFromNewTeam)="removePlayerFromNewTeam($event)">
+    </app-dialog-create-team>
+
+    <!-- Edit Team Dialog -->
+    <app-dialog-edit-team [visible]="showEditTeamDialog" [editingTeam]="selectedTeam" [organizations]="organizations"
+        [genders]="getAvailableGenders()" [ageGroups]="getAvailableAgeGroups()" [editTeamName]="editTeamName"
+        [editTeamTenantId]="editTeamTenantId" [editTeamGenderId]="editTeamGenderId"
+        [editTeamAgeGroupId]="editTeamAgeGroupId" (close)="closeEditTeamDialog()" (save)="saveTeamChanges()"
+        (teamNameChange)="onEditTeamNameChange($event)" (teamOrganizationChange)="onEditTeamOrganizationChange($event)"
+        (teamGenderChange)="onEditTeamGenderChange($event)" (teamAgeGroupChange)="onEditTeamAgeGroupChange($event)">
+    </app-dialog-edit-team>
+
+    <!-- Delete Team Confirmation Dialog -->
+    <app-dialog-delete-team [visible]="showDeleteTeamDialog" [teamToDelete]="teamToDelete"
+        (close)="closeDeleteTeamDialog()" (confirm)="confirmDeleteTeam()">
+    </app-dialog-delete-team>
+
+    <!-- Delete Team Group Confirmation Dialog -->
+    <app-dialog-delete-team-group [visible]="showDeleteTeamGroupDialog" [teamGroupToDelete]="teamGroupToDelete"
+        (close)="closeDeleteTeamGroupDialog()" (confirm)="confirmDeleteTeamGroup()">
+    </app-dialog-delete-team-group>
+
+    <!-- Auto-Build Info Dialog -->
+    <app-confirmation-dialog [visible]="showAutoBuildInfoDialog" [title]="autoBuildInfoTitle"
+        [message]="autoBuildInfoMessage" [confirmText]="'OK'" [cancelText]="''" (confirmed)="closeAutoBuildInfoDialog()"
+        (closed)="closeAutoBuildInfoDialog()">
+    </app-confirmation-dialog>
+
+    <!-- Create Team Group Dialog -->
+    <app-dialog-create-team-group [visible]="showCreateTeamGroupDialog" [newTeamGroupName]="newTeamGroupName"
+        [selectedTeam]="selectedTeam" [playerSortBy]="playerSortBy" [playerSortOptions]="playerSortOptions"
+        [newTeamGroupPlayerIds]="newTeamGroupPlayerIds" [matchingPositionAbbreviations]="newTeamGroupMatchingPositions"
+        [matchingPositionNumbers]="newTeamGroupMatchingNumbers" (close)="closeCreateTeamGroupDialog()"
+        (save)="saveNewTeamGroup()" (playerSortChange)="onPlayerSortChange($event)"
+        (playerCheckboxChange)="onNewTeamGroupPlayerCheckboxChange($event)"
+        (matchingPositionsChange)="onNewTeamGroupMatchingPositionsChange($event)"
+        (matchingNumbersChange)="onNewTeamGroupMatchingNumbersChange($event)">
+    </app-dialog-create-team-group>
+
+    <!-- Add Default Team Groups Dialog -->
+    <app-dialog-add-default-team-groups [visible]="showAddDefaultTeamGroupsDialog" [selectedTeam]="selectedTeam"
+        [availableDefaultTeamGroups]="getAvailableDefaultTeamGroupsForTeam()"
+        [areAllDefaultTeamGroupsSelected]="areAllDefaultTeamGroupsSelectedForAdd()"
+        [selectedDefaultTeamGroupsToAdd]="selectedDefaultTeamGroupsToAdd" (close)="closeAddDefaultTeamGroupsDialog()"
+        (save)="addSelectedDefaultTeamGroupsWithPlayers()"
+        (toggleSelectAllDefaultTeamGroups)="toggleSelectAllDefaultTeamGroupsForAdd()"
+        (toggleDefaultTeamGroupSelection)="toggleDefaultTeamGroupSelectionForAdd($event)">
+    </app-dialog-add-default-team-groups>
+
+    <!-- Edit Lesson Dialog -->
+    <app-dialog-edit-lesson [visible]="showEditLessonDialog" [editLessonName]="editLessonName"
+        [editLessonDescription]="editLessonDescription" [editLessonChips]="editLessonChips"
+        (close)="closeEditLessonDialog()" (save)="saveEditedLesson($event)">
+    </app-dialog-edit-lesson>
+
+    <!-- Create Lesson Dialog -->
+    <app-dialog-create-lesson [visible]="showCreateLessonDialog" [newLessonName]="newLessonName"
+        [selectedNodesCount]="selectedNodes.length" [currentUserRoleId]="currentUserRoleId"
+        [selectedTenantId]="currentSelectedTenantId" [selectedTeamId]="currentSelectedTeamId"
+        [selectedTenantName]="selectedTenant?.TenantName || null" [selectedTeamName]="selectedTeam?.TeamName || null"
+        (close)="closeCreateLessonDialog()" (save)="saveNewLesson($event)"
+        (newLessonNameChange)="newLessonName = $event">
+    </app-dialog-create-lesson>
+
+    <!-- Create Dataset Dialog -->
+    <app-dialog-create-dataset [visible]="showCreateDatasetDialog" [organizations]="organizations"
+        [selectedTenantId]="currentSelectedTenantId" [selectedTeamId]="currentSelectedTeamId"
+        [selectedTeamName]="selectedTeam?.TeamName || null" [selectedTenantName]="selectedTenant?.TenantName || null"
+        [currentUserRoleId]="currentUserRoleId" (close)="closeCreateDatasetDialog()"
+        (create)="createNewDataset($event)">
+    </app-dialog-create-dataset>
+
+    <!-- Add Child Dialog -->
+    <app-dialog-add-child [visible]="showAddChildDialog" [isDarkMode]="isDarkMode" [parentNodeId]="selectedNode"
+        (confirm)="onAddChildConfirm($event)" (cancel)="closeAddChildDialog()">
+    </app-dialog-add-child>
+
+    <!-- Reparent Node Dialog -->
+    <app-dialog-reparent-node [visible]="showReparentNodeDialog" [isDarkMode]="isDarkMode"
+        [selectedNodeId]="selectedNode" [treeData]="treeData" (confirm)="onReparentNodeConfirm($event)"
+        (cancel)="closeReparentNodeDialog()">
+    </app-dialog-reparent-node>
+
+    <!-- Nodes List Toolbar (Component) -->
+    <app-toolbar-nodes-list [visible]="toolbarVisibility.nodesList" [isDarkMode]="isDarkMode"
+        [position]="toolbarPositions.nodesList" [locked]="toolbarLocks.nodesList"
+        [applyConstraints]="applyToolbarConstraints" [currentNodesList]="currentNodesList"
+        [selectedNodes]="selectedNodes" [selectedNode]="selectedNode" [followSelectedNode]="nodeListFollowEnabled"
+        (close)="hideToolbar('nodesList')" (toggleLock)="toggleToolbarLock('nodesList')"
+        (dragStart)="onToolbarDragStart($event, 'nodesList')"
+        (nodeClick)="onNodeClickFromList($event.node, $event.event)">
+    </app-toolbar-nodes-list>
+
+    <!-- Clear Children Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showClearChildrenDialog" title="Clear Children"
+        message="Are you sure you want to clear all of the children from the selected node?" confirmText="Clear"
+        cancelText="Cancel" (confirmed)="onClearChildrenConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Clear Drawings Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showClearDrawingsDialog" title="Clear All Drawings"
+        [message]="clearDrawingsMessage" confirmText="Clear All" cancelText="Cancel"
+        (confirmed)="onClearDrawingsConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Clear Selections Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showClearSelectionsDialog" title="Clear All Selections"
+        [message]="clearSelectionsMessage" confirmText="Clear All" cancelText="Cancel"
+        (confirmed)="onClearSelectionsConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- System Default Warning Dialog -->
+    <app-confirmation-dialog [visible]="showSystemDefaultWarningDialog" title="Cannot Edit System Default Group"
+        message="System-level default team groups cannot be modified once they are created. These groups are protected to ensure consistency across all organizations and teams. You can create a copy as an organization or team-specific group instead."
+        confirmText="OK" cancelText="" (confirmed)="onSystemDefaultWarningConfirmed($event)"
+        (closed)="onSystemDefaultWarningConfirmed(false)">
+    </app-confirmation-dialog>
+
+    <!-- Promote Children Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showPromoteChildrenDialog" title="Promote Children"
+        message="Are you sure you want to make all of the children from the selected node into siblings of the selected node?"
+        confirmText="Promote" cancelText="Cancel" (confirmed)="onPromoteChildrenConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Delete Node Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showDeleteNodeDialog" title="Delete Node" [message]="deleteConfirmationMessage"
+        confirmText="Delete" cancelText="Cancel" (confirmed)="onDeleteNodeConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Dataset Management Confirmation Dialogs -->
+    <!-- Promote Dataset Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showPromoteDatasetDialog" [title]="datasetConfirmationTitle"
+        [message]="datasetConfirmationMessage" confirmText="Promote" cancelText="Cancel"
+        (confirmed)="onPromoteDatasetConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Demote Dataset Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showDemoteDatasetDialog" [title]="datasetConfirmationTitle"
+        [message]="datasetConfirmationMessage" confirmText="Demote" cancelText="Cancel"
+        (confirmed)="onDemoteDatasetConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Delete Dataset Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showDeleteDatasetDialog" [title]="datasetConfirmationTitle"
+        [message]="datasetConfirmationMessage" confirmText="Delete" cancelText="Cancel"
+        (confirmed)="onDeleteDatasetConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Dataset Info Dialog -->
+    <app-confirmation-dialog [visible]="showDatasetInfoDialog" [title]="datasetInfoTitle" [message]="datasetInfoMessage"
+        confirmText="OK" cancelText="" (confirmed)="onDatasetInfoDialogClosed()" (closed)="onDatasetInfoDialogClosed()">
+    </app-confirmation-dialog>
+
+    <!-- Apply Selection Without Lesson Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showApplyNoLessonConfirmDialog" title="No Lesson Selected"
+        message="There's no lesson selected. Do you want to create a new lesson?" confirmText="OK" cancelText="Cancel"
+        (confirmed)="onApplyNoLessonConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Lesson Management Confirmation Dialogs -->
+    <!-- Delete Lesson Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showDeleteLessonDialog" [title]="lessonConfirmationTitle"
+        [message]="lessonConfirmationMessage" [confirmText]="lessonConfirmButtonText"
+        [cancelText]="lessonCancelButtonText" (confirmed)="onDeleteLessonConfirmed($event)">
+    </app-confirmation-dialog>
+
+    <!-- Combine Datasets Dialog -->
+    <app-dialog-combine-datasets [visible]="showCombineDatasetsDialog" [isDarkMode]="isDarkMode"
+        [availableDatasets]="decisionFlows" [currentUserRoleId]="currentUserRoleId"
+        [selectedTenantId]="currentSelectedTenantId" [selectedTeamId]="currentSelectedTeamId"
+        (confirm)="onCombineDatasetsConfirmed($event)" (cancel)="onCombineDatasetsCancel()">
+    </app-dialog-combine-datasets>
+
+    <!-- Edit Dataset Dialog -->
+    <app-dialog-edit-dataset [visible]="showEditDatasetDialog" [dataset]="editDatasetTarget"
+        (save)="onEditDatasetConfirmed($event)" (cancel)="onEditDatasetCancel()">
+    </app-dialog-edit-dataset>
+
+    <!-- Insert Node Dialog -->
+    <app-dialog-add-child [visible]="showInsertNodeDialog" title="Insert Node" confirmButtonText="Insert"
+        (confirm)="onInsertNodeConfirm($event)" (cancel)="closeInsertNodeDialog()">
+    </app-dialog-add-child>
+
+    <!-- Edit Node Dialog -->
+    <app-dialog-add-child [visible]="showEditNodeDialog" title="Edit Node" confirmButtonText="Save"
+        [initialName]="editNodeFormData.name" [initialDescription]="editNodeFormData.description"
+        (confirm)="onEditNodeConfirm($event)" (cancel)="closeEditNodeDialog()">
+    </app-dialog-add-child>
+
+    <!-- Black Background Layer for Auto-Fade Effects -->
+    <div class="black-background" [style.display]="blackBackgroundVisible ? 'block' : 'none'"
+        [class.dark-mode]="isDarkMode">
+    </div>
+
+    <!-- Black Background Layer (underneath logo) -->
+    <div class="logo-black-background" [class.dark-mode]="isDarkMode"></div>
+
+    <!-- Logo Fade Overlay -->
+    <div class="logo-fade" [class.dark-mode]="isDarkMode">
+        <img src="assets/images/logo.png" alt="Logo" class="logo-image"
+            onload="console.log('Logo image loaded successfully');" />
+    </div>
+
+    <!-- Login Drawer -->
+    <app-drawer-login [isOpen]="isLoginDrawerOpen" [selectedUserId]="selectedUserId" (close)="closeLoginDrawer()"
+        (userSelected)="onUserSelected($event)">
+    </app-drawer-login>
+
+    <!-- Tenant Selection Drawer -->
+    <app-drawer-tenant-selection [isOpen]="isTenantDrawerOpen" [organizations]="availableTenants"
+        [selectedTenantId]="currentSelectedTenantId" [roles]="roles" (close)="closeTenantDrawer()"
+        (organizationSelected)="onTenancyOrganizationSelected($event)">
+    </app-drawer-tenant-selection>
+
+    <!-- Player/Context User Selection Drawer -->
+    <app-drawer-context-user-selection [isOpen]="isPlayerSelectionDrawerOpen" [loggedInUser]="loggedInUser"
+        [availableUsers]="availableContextUsers"
+        [selectedUserId]="selectedContextUser?.UserId ?? loggedInUser?.UserId ?? null"
+        [canSelectSelf]="canSelectSelfAsContext" (close)="closePlayerSelectionDrawer()"
+        (userSelected)="onPlayerSelected($event)">
+    </app-drawer-context-user-selection>
+
+    <!-- Teams Drawer -->
+    <app-drawer-teams [isOpen]="isTeamsDrawerOpen" [teams]="teams" [staffTeams]="staffTeams"
+        [selectedTeam]="selectedTeam" [tenantLogoUrl]="selectedTenant?.LogoUrl || ''"
+        [tenantName]="selectedTenant?.TenantName || ''" (close)="closeTeamsDrawer()"
+        (selectTeam)="onSelectTeamFromDrawer($event)" (addTeam)="onAddTeam()" (editTeam)="onEditTeam()"
+        (deleteTeam)="onDeleteTeam()" (editPlayer)="openPlayerEditPopup($event)" (addPlayer)="openAddPlayerPopup()">
+    </app-drawer-teams>
+
+    <!-- Team Groups Drawer -->
+    <app-drawer-team-groups [isOpen]="isTeamGroupsDrawerOpen" [teamGroups]="teamGroups"
+        [selectedTeamGroup]="selectedTeamGroup" (close)="closeTeamGroupsDrawer()"
+        (selectTeamGroup)="onSelectTeamGroupFromDrawer($event)" (createTeamGroup)="onCreateTeamGroup()"
+        (editTeamGroup)="onEditTeamGroup()" (deleteTeamGroup)="onDeleteTeamGroup()"
+        (importDefaultTeamGroups)="onImportDefaultTeamGroups()">
+    </app-drawer-team-groups>
+
+    <!-- Datasets Drawer -->
+    <app-drawer-datasets [isOpen]="isDatasetsDrawerOpen" [decisionFlows]="decisionFlows" [teams]="teams"
+        [teamGroups]="teamGroups" [selectedOrganizationId]="currentSelectedTenantId"
+        [selectedTeamId]="currentSelectedTeamId" [currentTeamGroupId]="currentSelectedTeamGroupId"
+        (close)="closeDatasetsDrawer()" (promoteDataset)="onPromoteDataset()" (demoteDataset)="onDemoteDataset()"
+        (createDataset)="onCreateNewChart()" (combineDatasets)="onCombineDatasets()"
+        (deleteDataset)="onDeleteDataset()">
+    </app-drawer-datasets>
+
+    <!-- Lesson Selector Drawer -->
+    <app-drawer-lesson-selector [isOpen]="isLessonBuilderDrawerOpen" [loggedInUser]="loggedInUser"
+        [selectedTenantId]="currentSelectedTenantId" [selectedTeamId]="currentSelectedTeamId"
+        [currentTeamGroupId]="currentSelectedTeamGroupId" [teams]="teams" [teamGroups]="teamGroups"
+        [autopilotRunning]="autopilotRunning" (close)="closeLessonBuilderDrawer()" (createLesson)="createLesson()"
+        (editLesson)="editLesson()" (runLesson)="runLesson()" (autopilot)="autopilot()" (deleteLesson)="deleteLesson()"
+        (promoteLesson)="promoteLesson()" (demoteLesson)="demoteLesson()">
+    </app-drawer-lesson-selector>
+
+    <!-- Subscription Drawer -->
+    <app-drawer-subscription [isOpen]="isSubscriptionDrawerOpen" [subscription]="selectedTenant?.Subscription"
+        (close)="closeSubscriptionDrawer()">
+    </app-drawer-subscription>
+
+    <!-- Assigned Lessons Drawer -->
+    <app-drawer-assigned-lessons [isOpen]="isAssignedLessonsDrawerOpen" (close)="closeAssignedLessonsDrawer()">
+    </app-drawer-assigned-lessons>
+
+    <!-- Context Drawer -->
+    <app-drawer-context [isOpen]="isContextDrawerOpen" (close)="closeContextDrawer()">
+    </app-drawer-context>
+
+    <!-- Message Dialog -->
+    <app-dialog-message [visible]="showMessageDialog" [title]="messageDialogTitle" [message]="messageDialogMessage"
+        [icon]="messageDialogIcon" (close)="showMessageDialog = false">
+    </app-dialog-message>
+</div>

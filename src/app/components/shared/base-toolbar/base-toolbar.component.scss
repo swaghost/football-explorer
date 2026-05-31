@@ -1,0 +1,459 @@
+/**
+ * Base Toolbar Styles
+ * Common styles for all draggable toolbars
+ */
+
+.draggable-toolbar {
+  position: absolute;
+  background: var(--toolbar-bg, #2c3e50);
+  color: var(--toolbar-text, #ffffff);
+  border: 1px solid var(--toolbar-border, #34495e);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 250px;
+  max-width: 600px;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &.dragging {
+    z-index: 9999;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    cursor: grabbing;
+  }
+
+  &.locked {
+    .drag-handle {
+      cursor: default;
+    }
+    .drag-icon {
+      opacity: 0.5;
+    }
+  }
+
+  &.collapsed {
+    .panel-content,
+    .panel-footer {
+      display: none;
+    }
+  }
+
+  // Dark mode styles
+  &.dark-mode {
+    --toolbar-bg: #1a252f;
+    --toolbar-text: #ecf0f1;
+    --toolbar-border: #2c3e50;
+    --button-bg: #34495e;
+    --button-hover-bg: #4a6741;
+    --button-text: #ecf0f1;
+    --input-bg: #2c3e50;
+    --input-text: #ecf0f1;
+    --input-border: #34495e;
+  }
+
+  // Light mode styles (default)
+  &:not(.dark-mode) {
+    --toolbar-bg: #ffffff;
+    --toolbar-text: #2c3e50;
+    --toolbar-border: #bdc3c7;
+    --button-bg: #ecf0f1;
+    --button-hover-bg: #d5dbdb;
+    --button-text: #2c3e50;
+    --input-bg: #ffffff;
+    --input-text: #2c3e50;
+    --input-border: #bdc3c7;
+  }
+}
+
+// Header styles
+.panel-header {
+  background: var(--toolbar-bg);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--toolbar-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px 8px 0 0;
+
+  &.drag-handle {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--toolbar-text);
+
+    .toolbar-icon {
+      font-size: 16px;
+      display: inline-block;
+    }
+  }
+}
+
+// Header actions (buttons)
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  button {
+    background: transparent;
+    border: none;
+    color: var(--toolbar-text);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+
+  .drag-icon {
+    color: var(--toolbar-text);
+    cursor: grab;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:active {
+      cursor: grabbing;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Content area
+.panel-content {
+  padding: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+// Footer area
+.panel-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--toolbar-border);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0 0 8px 8px;
+}
+
+// Common form elements
+.form-group {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--toolbar-text);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    font-size: 13px;
+    transition: border-color 0.2s ease-in-out;
+
+    &:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    &[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+// Common button styles
+.btn {
+  padding: 8px 16px;
+  border: 1px solid var(--button-bg);
+  border-radius: 4px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover:not([disabled]) {
+    background: var(--button-hover-bg);
+    transform: translateY(-1px);
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // Button variants
+  &.btn-primary {
+    background: #3498db;
+    border-color: #3498db;
+    color: white;
+
+    &:hover:not([disabled]) {
+      background: #2980b9;
+      border-color: #2980b9;
+    }
+  }
+
+  &.btn-success {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+
+    &:hover:not([disabled]) {
+      background: #229954;
+      border-color: #229954;
+    }
+  }
+
+  &.btn-warning {
+    background: #f39c12;
+    border-color: #f39c12;
+    color: white;
+
+    &:hover:not([disabled]) {
+      background: #e67e22;
+      border-color: #e67e22;
+    }
+  }
+
+  &.btn-danger {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+
+    &:hover:not([disabled]) {
+      background: #c0392b;
+      border-color: #c0392b;
+    }
+  }
+
+  &.btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  &.btn-lg {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+// Icon buttons
+.icon-button {
+  padding: 6px 8px;
+  min-width: auto;
+}
+
+// Button containers
+.button-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+
+  &.justify-end {
+    justify-content: flex-end;
+  }
+
+  &.justify-center {
+    justify-content: center;
+  }
+}
+
+// Vertical Resize Handle
+.resize-handle {
+  position: absolute;
+  bottom: -4px; // Extend slightly outside the panel for easier grabbing
+  left: 0;
+  right: 0;
+  height: 12px; // Increased height for easier targeting
+  cursor: ns-resize;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; // Higher than panel z-index
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+
+    .resize-grip {
+      background: #666;
+
+      &::before,
+      &::after {
+        background: #666;
+      }
+    }
+  }
+
+  .resize-grip {
+    width: 40px;
+    height: 2px;
+    background: #bbb;
+    border-radius: 1px;
+    position: relative;
+    transition: background-color 0.2s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+  }
+}
+
+// Ensure resizable toolbars can accommodate the resize handle
+.draggable-toolbar.resizable {
+  position: relative; // For resize handle absolute positioning
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .draggable-toolbar {
+    min-width: 200px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .panel-content {
+    padding: 12px;
+  }
+
+  .panel-header {
+    padding: 8px 12px;
+
+    h3 {
+      font-size: 13px;
+    }
+  }
+}
+
+// Animation classes for smooth transitions
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .draggable-toolbar,
+  .btn,
+  .header-actions button,
+  .drag-icon {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .draggable-toolbar {
+    border-width: 2px;
+  }
+
+  .btn {
+    border-width: 2px;
+  }
+}

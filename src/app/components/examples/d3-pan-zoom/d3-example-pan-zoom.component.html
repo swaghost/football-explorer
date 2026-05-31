@@ -1,0 +1,100 @@
+<!-- Horizontal pan slider across top -->
+<div style="display:flex; align-items:center; margin-bottom:8px; width:800px;">
+    <label style="margin-right:8px; font-size:14px; width:80px;">H Pan:</label>
+    <input type="range" min="-400" max="400" step="1" [value]="panX" (input)="updatePan($event, 'x')"
+        style="width:660px; margin-right:8px;">
+    <span style="width:60px; font-size:14px;">{{ panX | number:'1.0-0' }}px</span>
+</div>
+
+<div style="display:flex; position:relative;">
+    <!-- SVG container -->
+    <div style="position:relative;">
+        <svg #svg></svg>
+        <ng-container *ngIf="tooltip.visible">
+            <div style="position:absolute; pointer-events:none; background:#222; color:#fff; padding:4px 10px; border-radius:4px; font-size:14px; z-index:10;"
+                [style.left.px]="tooltip.x + 10" [style.top.px]="tooltip.y - 10">
+                {{ tooltip.text }}
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Vertical pan slider on right side -->
+    <div style="display:flex; flex-direction:column; align-items:center; height:600px; width:60px;">
+        <label style="margin-bottom:4px; font-size:12px; writing-mode:vertical-rl; text-orientation:mixed;">V
+            Pan</label>
+        <input type="range" min="-300" max="300" step="1" [value]="panY" (input)="updatePan($event, 'y')"
+            style="writing-mode:bt-lr; width:520px; height:20px; transform:rotate(-90deg); margin:240px 0;">
+        <span style="margin-top:4px; font-size:12px; writing-mode:vertical-rl; text-orientation:mixed;">{{ panY |
+            number:'1.0-0' }}px</span>
+    </div>
+</div>
+
+<!-- Zoom slider -->
+<div style="display:flex; align-items:center; margin-top:8px; width:800px;">
+    <label style="margin-right:8px; font-size:14px; width:80px;">Zoom:</label>
+    <input type="range" min="0.5" max="5" step="0.1" [value]="zoomLevel" (input)="updateZoom($event)"
+        style="width:660px; margin-right:8px;">
+    <span style="width:60px; font-size:14px;">{{ zoomLevel | number:'1.2-2' }}x</span>
+</div>
+
+<!-- Rotation slider -->
+<div style="display:flex; align-items:center; margin-top:8px; width:800px;">
+    <label style="margin-right:8px; font-size:14px; width:80px;">Rotate:</label>
+    <input type="range" min="-180" max="180" step="1" [value]="rotationAngle" (input)="updateRotation($event)"
+        style="width:660px; margin-right:8px;" list="rotation-ticks">
+    <span style="width:60px; font-size:14px;">{{ rotationAngle }}°</span>
+</div>
+
+<!-- Node count slider -->
+<div style="display:flex; align-items:center; margin-top:8px; width:800px;">
+    <label style="margin-right:8px; font-size:14px; width:80px;">Nodes:</label>
+    <input type="range" min="1" max="2000" step="1" [value]="nodeCount" (input)="updateNodeCount($event)"
+        style="width:660px; margin-right:8px;" list="node-ticks">
+    <span style="width:60px; font-size:14px;">{{ nodeCount }}</span>
+</div>
+<datalist id="node-ticks">
+    <option value="1"></option>
+    <option value="100"></option>
+    <option value="200"></option>
+    <option value="300"></option>
+    <option value="400"></option>
+    <option value="500"></option>
+    <option value="600"></option>
+    <option value="700"></option>
+    <option value="800"></option>
+    <option value="900"></option>
+    <option value="1000"></option>
+    <option value="1100"></option>
+    <option value="1200"></option>
+    <option value="1300"></option>
+    <option value="1400"></option>
+    <option value="1500"></option>
+    <option value="1600"></option>
+    <option value="1700"></option>
+    <option value="1800"></option>
+    <option value="1900"></option>
+    <option value="2000"></option>
+</datalist>
+
+<datalist id="rotation-ticks">
+    <option value="-180"></option>
+    <option value="-135"></option>
+    <option value="-90"></option>
+    <option value="-45"></option>
+    <option value="0"></option>
+    <option value="45"></option>
+    <option value="90"></option>
+    <option value="135"></option>
+    <option value="180"></option>
+</datalist>
+
+<div style="margin-top:8px;color:#888;">
+    <b>Instructions:</b> Drag anywhere to rotate, scroll to zoom, click a circle to zoom to it, double-click background
+    to reset.
+</div>
+<div *ngIf="selectedNode" style="margin-top:12px; font-size:16px; color:#4a90e2;">
+    <b>Selected Node:</b> {{ selectedNode }}
+</div>
+<div style="margin-top:12px; font-size:16px; color:#666;">
+    <b>Zoom Level:</b> {{ zoomLevel | number:'1.2-2' }}x
+</div>

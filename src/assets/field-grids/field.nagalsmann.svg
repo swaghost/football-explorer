@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 660 1000"
+   width="660"
+   height="1000"
+   version="1.1"
+   id="svg27"
+   sodipodi:docname="field.nagalsmann.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs27" />
+  <sodipodi:namedview
+     id="namedview27"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.6758431"
+     inkscape:cx="-87.418686"
+     inkscape:cy="154.25072"
+     inkscape:window-width="3440"
+     inkscape:window-height="1387"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg27" />
+  <!-- Background -->
+  <rect
+     width="660"
+     height="1000"
+     fill="#3d4a52"
+     id="rect1"
+     x="0.73529136"
+     y="0.0031050546"
+     style="stroke-width:1" />
+  <!-- Outer boundary -->
+  <rect
+     x="32"
+     y="32"
+     width="596"
+     height="936"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="rect2" />
+  <!-- Corner arcs -->
+  <path
+     d="M 32 32 Q 32 32 47 32"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path2" />
+  <path
+     d="M 32 32 Q 32 32 32 47"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path3" />
+  <path
+     d="M 628 32 Q 628 32 613 32"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path4" />
+  <path
+     d="M 628 32 Q 628 32 628 47"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path5" />
+  <path
+     d="M 32 968 Q 32 968 47 968"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path6" />
+  <path
+     d="M 32 968 Q 32 968 32 953"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path7" />
+  <path
+     d="M 628 968 Q 628 968 613 968"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path8" />
+  <path
+     d="M 628 968 Q 628 968 628 953"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path9" />
+  <!-- Top penalty area -->
+  <rect
+     x="238.75554"
+     y="31.88327"
+     width="183.68234"
+     height="71.204292"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.26655"
+     id="rect9" />
+  <rect
+     x="240.46181"
+     y="896.43884"
+     width="183.68234"
+     height="71.204292"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.26655"
+     id="rect9-7" />
+  <!-- Top goal box (6-yard box) -->
+  <rect
+     x="284.84131"
+     y="-31.658697"
+     width="90.317398"
+     height="27.342857"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.18261"
+     id="rect10"
+     transform="scale(1,-1)" />
+  <!-- Bottom penalty area -->
+  <!-- Bottom goal box (6-yard box) -->
+  <rect
+     x="284.87518"
+     y="967.87518"
+     width="90.249626"
+     height="29.08905"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.25038"
+     id="rect12" />
+  <!-- Halfway line -->
+  <line
+     x1="32"
+     y1="500"
+     x2="628"
+     y2="500"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line12" />
+  <!-- Center circle -->
+  <ellipse
+     cx="330"
+     cy="500"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.63994"
+     id="circle12"
+     rx="78.897179"
+     ry="75.316887" />
+  <!-- Center spot -->
+  <circle
+     cx="330"
+     cy="500"
+     r="3"
+     fill="#d97941"
+     id="circle13" />
+  <!-- Top penalty spot -->
+  <circle
+     cx="330"
+     cy="178"
+     r="3"
+     fill="#d97941"
+     id="circle14" />
+  <!-- Bottom penalty spot -->
+  <circle
+     cx="330"
+     cy="822"
+     r="3"
+     fill="#d97941"
+     id="circle15" />
+  <!-- Top penalty arc -->
+  <path
+     d="m 252,776.66161 a 78,78 0 0 1 156,0"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path15" />
+  <!-- Bottom penalty arc -->
+  <path
+     d="m 252,223.93511 a 78,78 0 0 0 156,0"
+     fill="none"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="path16" />
+  <!-- Vertical grid lines (left to right) -->
+  <line
+     x1="160"
+     y1="32"
+     x2="160"
+     y2="968"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line16" />
+  <line
+     x1="250"
+     y1="225.29733"
+     x2="250"
+     y2="777.28693"
+     stroke="#d97941"
+     stroke-width="2.17095"
+     id="line17" />
+  <line
+     x1="410"
+     y1="225.89404"
+     x2="410"
+     y2="777.28687"
+     stroke="#d97941"
+     stroke-width="2.16978"
+     id="line18" />
+  <line
+     x1="500"
+     y1="32"
+     x2="500"
+     y2="968"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line19" />
+  <line
+     x1="562.25"
+     y1="32"
+     x2="562.25"
+     y2="968"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line19-1" />
+  <line
+     x1="96.25"
+     y1="31"
+     x2="96.25"
+     y2="967"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line19-1-1" />
+  <!-- Horizontal grid lines (top to bottom) -->
+  <line
+     x1="32"
+     y1="224"
+     x2="160"
+     y2="224"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line20" />
+  <line
+     x1="161"
+     y1="224.25"
+     x2="289"
+     y2="224.25"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line20-0" />
+  <line
+     x1="273"
+     y1="224.25"
+     x2="401"
+     y2="224.25"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line20-0-4" />
+  <line
+     x1="371"
+     y1="224.25"
+     x2="499"
+     y2="224.25"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line20-0-8" />
+  <line
+     x1="500"
+     y1="224"
+     x2="628"
+     y2="224"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line21" />
+  <line
+     x1="30.657393"
+     y1="368"
+     x2="97.494148"
+     y2="368"
+     stroke="#d97941"
+     stroke-width="1.80652"
+     id="line22" />
+  <line
+     x1="561.0141"
+     y1="368"
+     x2="629.19342"
+     y2="368"
+     stroke="#d97941"
+     stroke-width="1.82458"
+     id="line23" />
+  <line
+     x1="30.80657"
+     y1="632"
+     x2="97.344971"
+     y2="632"
+     stroke="#d97941"
+     stroke-width="1.80248"
+     id="line24" />
+  <line
+     x1="561.31244"
+     y1="632"
+     x2="629.19342"
+     y2="632"
+     stroke="#d97941"
+     stroke-width="1.82057"
+     id="line25" />
+  <line
+     x1="32"
+     y1="776"
+     x2="160"
+     y2="776"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line26" />
+  <line
+     x1="160.05463"
+     y1="776.04016"
+     x2="288.05463"
+     y2="776.04016"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line26-2" />
+  <line
+     x1="286.8623"
+     y1="776.06989"
+     x2="414.8623"
+     y2="776.06989"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line26-2-4" />
+  <line
+     x1="375.67511"
+     y1="776.08966"
+     x2="503.67511"
+     y2="776.08966"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line26-2-4-5" />
+  <line
+     x1="500"
+     y1="776"
+     x2="628"
+     y2="776"
+     stroke="#d97941"
+     stroke-width="2.5"
+     id="line27" />
+</svg>

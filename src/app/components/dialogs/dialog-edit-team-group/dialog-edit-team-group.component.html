@@ -1,0 +1,55 @@
+<!-- Team Group Edit Dialog -->
+<app-base-dialog [visible]="visible" [title]="'Edit Team Group: ' + (editingTeamGroup?.TeamGroupName || '')"
+    [icon]="'✏️'" [maxWidth]="'600px'" (close)="onCancel()">
+
+    <!-- Team Group Name Input -->
+    <div class="form-group" *ngIf="editingTeamGroup">
+        <label for="editTeamGroupName">Team Group Name:</label>
+        <input type="text" id="editTeamGroupName" [(ngModel)]="editingTeamGroup.TeamGroupName" class="name-input"
+            placeholder="Enter team group name" required />
+    </div>
+
+    <p>Select players for this team group:</p>
+
+    <!-- Sort dropdown for edit dialog -->
+    <div class="sort-controls" *ngIf="selectedTeam">
+        <label for="editPlayerSort">Sort by:</label>
+        <select id="editPlayerSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)" class="sort-select">
+            <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                {{ option.label }}
+            </option>
+        </select>
+    </div>
+
+    <div class="edit-players-list" *ngIf="selectedTeam">
+        <div *ngFor="
+            let player of getSelectedTeamPlayers();
+            trackBy: trackByPlayerId
+          " class="edit-player-item">
+            <label class="player-checkbox">
+                <input type="checkbox" [checked]="isTempPlayerSelected(player.PlayerID)" (change)="
+                onTempPlayerCheckboxChange(
+                  player.PlayerID,
+                  $event.target.checked
+                )
+              " />
+                <span class="player-name">{{ getPlayerFullName(player) }}</span>
+            </label>
+            <span class="player-position">{{ player.PositionAbbrev || 'None Specified' }}</span>
+        </div>
+    </div>
+
+    <div class="selected-count">
+        Selected: {{ tempSelectedPlayerIds.length }} players
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button class="dialog-button cancel-button" (click)="onCancel()">
+            Cancel
+        </button>
+        <button class="dialog-button confirm-button" (click)="onSave()"
+            [disabled]="tempSelectedPlayerIds.length === 0 || !editingTeamGroup?.TeamGroupName?.trim()">
+            Save Changes
+        </button>
+    </div>
+</app-base-dialog>

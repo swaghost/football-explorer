@@ -1,0 +1,125 @@
+<app-base-dialog [visible]="visible" [title]="'Create New Lesson'" [icon]="'📚'" [maxWidth]="'600px'"
+    (close)="onCancel()">
+    <div class="form-group">
+        <label for="newLessonName">Lesson Name:</label>
+        <input #nameInput type="text" id="newLessonName" [(ngModel)]="newLessonName" (ngModelChange)="onNameChange()"
+            placeholder="Enter lesson name" class="text-input" maxlength="100" />
+    </div>
+
+    <!-- Lesson Description -->
+    <div class="form-group">
+        <label for="newLessonDescription">Lesson Description:</label>
+        <textarea id="newLessonDescription" [(ngModel)]="newLessonDescription"
+            placeholder="Enter lesson description (optional)" class="text-input textarea-input" maxlength="500"
+            rows="3"></textarea>
+    </div>
+
+    <!-- Lesson Chips -->
+    <div class="form-group">
+        <label>Categories & Tags:</label>
+        <div class="chips-container">
+            <div class="chips-list" *ngIf="lessonChips.length > 0">
+                <span class="chip" *ngFor="let chip of lessonChips; let i = index">
+                    {{ chip }}
+                    <button type="button" class="chip-remove" (click)="removeChip(i)" title="Remove tag">×</button>
+                </span>
+            </div>
+            <div class="chip-input-container">
+                <input type="text" id="chipInput" [(ngModel)]="currentChipInput" (keydown)="onChipInputKeyDown($event)"
+                    placeholder="Add tags like 'Press Resistance', 'Defense', etc." class="text-input chip-input"
+                    maxlength="50" />
+                <button type="button" class="add-chip-button" (click)="addChip()" [disabled]="!currentChipInput.trim()"
+                    title="Add tag">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ownership Context Selection -->
+    <div class="form-group">
+        <div class="ownership-context-list">
+            <h4>Ownership Context</h4>
+            <div class="context-selector-list">
+                <!-- Personal Lesson - Always Available -->
+                <div class="context-item" [class.selected]="ownershipContext === 'PERSONAL'"
+                    (click)="selectOwnershipContext('PERSONAL')">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="ownershipContext === 'PERSONAL'">✓</span>
+                        <span class="checkbox" *ngIf="ownershipContext !== 'PERSONAL'">□</span>
+                    </div>
+                    <div class="context-details">
+                        <div class="context-line-1">Personal Lesson</div>
+                        <div class="context-line-2">Available only to you</div>
+                        <div class="context-line-3">ID: 0</div>
+                    </div>
+                </div>
+
+                <!-- System Lesson - Only for Developer (99) and Administrator (1) -->
+                <div class="context-item" *ngIf="canCreateSystemLevel()"
+                    [class.selected]="ownershipContext === 'SYSTEM'" (click)="selectOwnershipContext('SYSTEM')">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="ownershipContext === 'SYSTEM'">✓</span>
+                        <span class="checkbox" *ngIf="ownershipContext !== 'SYSTEM'">□</span>
+                    </div>
+                    <div class="context-details">
+                        <div class="context-line-1">System Lesson</div>
+                        <div class="context-line-2">Available to all users across all tenants and teams</div>
+                        <div class="context-line-3">ID: -1</div>
+                    </div>
+                </div>
+
+                <!-- Tenant Lesson - Only if tenant is selected and user can create tenant level -->
+                <div class="context-item" *ngIf="selectedTenantId !== null && canCreateTenantLevel()"
+                    [class.selected]="ownershipContext === 'TENANT'" (click)="selectOwnershipContext('TENANT')">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="ownershipContext === 'TENANT'">✓</span>
+                        <span class="checkbox" *ngIf="ownershipContext !== 'TENANT'">□</span>
+                    </div>
+                    <div class="context-details">
+                        <div class="context-line-1">{{ selectedTenantName || 'Tenant' }} Lesson</div>
+                        <div class="context-line-2">Available to all teams within this tenant</div>
+                        <div class="context-line-3">ID: {{ selectedTenantId }}</div>
+                    </div>
+                </div>
+
+                <!-- Team Lesson - Only if team is selected and user can create team level -->
+                <div class="context-item" *ngIf="selectedTeamId !== null && canCreateTeamLevel()"
+                    [class.selected]="ownershipContext === 'TEAM'" (click)="selectOwnershipContext('TEAM')">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="ownershipContext === 'TEAM'">✓</span>
+                        <span class="checkbox" *ngIf="ownershipContext !== 'TEAM'">□</span>
+                    </div>
+                    <div class="context-details">
+                        <div class="context-line-1">{{ selectedTeamName || 'Team' }} Lesson</div>
+                        <div class="context-line-2">Available only to members of this specific team</div>
+                        <div class="context-line-3">ID: {{ selectedTeamId }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Information -->
+    <div class="form-group">
+        <div class="info-text">
+            <p>This lesson will include <strong>{{ selectedNodesCount }}</strong> selected node{{
+                selectedNodesCount === 1 ? '' : 's' }} and will be available for:</p>
+            <p><strong>{{ getContextDescription() }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Help Text -->
+    <div class="info-text">
+        <p><kbd>Enter</kbd> to save • <kbd>Esc</kbd> to cancel</p>
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button class="dialog-button cancel-button" (click)="onCancel()">
+            Cancel
+        </button>
+        <button class="dialog-button confirm-button" (click)="onSave()" [disabled]="!newLessonName.trim()">
+            📚 Create Lesson
+        </button>
+    </div>
+</app-base-dialog>

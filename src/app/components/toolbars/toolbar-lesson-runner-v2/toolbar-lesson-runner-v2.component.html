@@ -1,0 +1,217 @@
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="lesson-runner-v2-panel">
+
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <!-- Favorites inline -->
+            <div class="favorites-list" *ngIf="favoriteNodes && favoriteNodes.length">
+                <div #favoriteItems class="favorite-item" *ngFor="let favId of favoriteNodes"
+                    [class.selected]="favId === selectedLessonNode">
+                    <span>{{ favId }}</span>
+                </div>
+            </div>
+
+            <button class="star-button" [ngClass]="{'favorited': isFavorite}" (click)="onToggleFavorite($event)"
+                *ngIf="selectedLessonNode">⭐</button>
+            <button class="bookmark-button" [ngClass]="{'bookmarked': isBookmarked}" (click)="onToggleBookmark($event)"
+                *ngIf="selectedLessonNode">🔖</button>
+            <button class="share-button header-btn" [ngClass]="{'copied': shareUrlCopied}" (click)="onShare($event)"
+                *ngIf="selectedLessonNode">📤</button>
+
+            <button class="left-pane-toggle" (click)="toggleLeftPane()" title="Toggle lesson progress pane">{{
+                leftCollapsed
+                ? '▸' : '◂' }}</button>
+
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">❓</button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">{{ expanded ?
+                '🔼' : '🔽' }}</button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">✖️</button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">{{ locked ? '🔒' : '🔓'
+                }}</button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded" [attr.data-panel-mode]="panelMode">
+        <!-- Left panel toggle button -->
+        <button class="left-panel-toggle-btn" (click)="toggleLeftPanel()"
+            [title]="panelMode === 'normal' ? 'Minimize (hide list)' : panelMode === 'minimized' ? 'Maximize (expand content)' : 'Normal (show list)'">
+            {{ panelMode === 'normal' ? '◀' : panelMode === 'minimized' ? '⇲' : '▶' }}
+        </button>
+
+        <!-- Right panel toggle button -->
+        <button class="right-panel-toggle-btn" (click)="toggleRightPanel()" title="Toggle right panel">
+            {{ rightPanelOpen ? '◀' : '▶' }}
+        </button>
+
+        <div class="two-pane-container" [class.panel-minimized]="panelMode === 'minimized'"
+            [class.panel-maximized]="panelMode === 'maximized'">
+            <div class="left-pane" *ngIf="showListPanel">
+                <!-- Lesson progress list - no drag/drop, checkboxes instead of X -->
+                <div class="selected-nodes-list">
+                    <div #nodeListItem *ngFor="let nodeId of selectedNodes; let i = index"
+                        class="common-list-item selected-node-item"
+                        [class.current-selected]="nodeId === selectedLessonNode"
+                        [class.current-active]="nodeId === selectedLessonNode"
+                        [class.completed]="isNodeCompleted(nodeId)" [class.visited]="isNodeVisited(nodeId)"
+                        (click)="onNodeClick(nodeId, i)">
+                        <!-- Checkbox indicator (three states: empty, blue visited, green completed) -->
+                        <span class="node-status-checkbox"
+                            [class.visited-only]="isNodeVisited(nodeId) && !isNodeCompleted(nodeId)"
+                            [class.completed]="isNodeCompleted(nodeId)"
+                            title="[Blue Check] - Visited previously, [Green Check] - Completed as part of this lesson.">
+                            {{ getNodeCheckmark(nodeId) }}
+                        </span>
+                        <span class="common-list-item-title">{{ getNodeName(nodeId) }}</span>
+                        <!-- Completion indicator at RIGHT end (for autopilot) -->
+
+                    </div>
+                    <div *ngIf="selectedNodes.length === 0" class="no-nodes-message">
+                        <p>No nodes in this lesson.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-pane-wrapper" [class.right-panel-open]="rightPanelOpen">
+                <div class="right-pane">
+                    <!-- Lesson Title Section -->
+                    <div class="lesson-title-section">
+                        <h4 class="lesson-title" *ngIf="selectedContextLessonRunnerLesson">
+                            {{ selectedContextLessonRunnerLesson.LessonName || 'Unnamed Lesson' }}
+                        </h4>
+                        <h4 class="lesson-title no-lesson" *ngIf="!selectedContextLessonRunnerLesson">
+                            No lesson specified.
+                        </h4>
+                    </div>
+
+                    <!-- Lesson Runner content -->
+                    <div class="node-title-section" *ngIf="selectedLessonNode && nodeData">
+                        <h5 class="node-title">{{ selectedLessonNode }} - {{ nodeData?.name || 'Unknown Node' }}</h5>
+                    </div>
+
+                    <div class="node-content" #nodeContent>
+                        <div class="waiting-mode" *ngIf="!selectedLessonNode">
+                            <div class="waiting-icon">{{ toolbarIcon }}</div>
+                            <p class="waiting-message">To begin training, select a lesson from Assigned Lessons</p>
+                        </div>
+
+                        <div class="node-details" *ngIf="selectedLessonNode && nodeData">
+                            <div class="node-description-section">
+                                <div class="node-description-content" [innerHTML]="getNodeDescription()"></div>
+                                <div class="node-video-container"
+                                    [style.display]="(nodeData?.videoUrl && nodeData.videoUrl.trim()) ? 'block' : 'none'">
+                                    <video #lessonVideo autoplay loop muted class="node-video-inline"
+                                        (click)="toggleVideoMute(lessonVideo)"
+                                        (loadstart)="onVideoLoadStart(lessonVideo)"
+                                        (canplay)="onVideoCanPlay(lessonVideo); lessonVideo.muted = true"
+                                        [src]="nodeData.videoUrl">
+                                        <source [src]="nodeData.videoUrl" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-panel" *ngIf="rightPanelOpen">
+                    <div class="right-panel-content">
+                        <!-- Dropdown Section -->
+                        <div class="right-panel-controls">
+                            <div class="control-section">
+                                <label for="background-select">Background:</label>
+                                <select id="background-select" [(ngModel)]="selectedFieldBackground"
+                                    class="form-control">
+                                    <option *ngFor="let option of fieldBackgroundOptions" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="control-section">
+                                <label for="formation-select">Base Formation:</label>
+                                <select id="formation-select" [(ngModel)]="selectedBaseFormation" class="form-control">
+                                    <option *ngFor="let option of baseFormationOptions" [value]="option">
+                                        {{ option }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Field Section -->
+                        <div class="right-panel-field">
+                            <img [src]="getSelectedFieldBackgroundPath()" alt="Field Background" class="field-svg"
+                                #fieldSvg />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer area: left: Play/Autopilot buttons, right: lesson runner navigation -->
+        <!-- Fixed at bottom (outside scrollable content) -->
+        <div class="panel-footer combined-footer" *ngIf="expanded && selectedLessonNode">
+            <div class="footer-left">
+                <!-- Play and Autopilot Buttons (apply to RUNNER tour state) -->
+                <button type="button" class="btn btn-success icon-button" title="Run Selected Lesson"
+                    (click)="onPlayLesson()">
+                    ▶️ Play
+                </button>
+                <button type="button" [class.btn-info]="!isAutopilotRunning" [class.btn-danger]="isAutopilotRunning"
+                    class="btn icon-button" [title]="isAutopilotRunning ? 'Stop Autopilot' : 'Run Lesson on Autopilot'"
+                    (click)="toggleAutopilot()">
+                    {{ isAutopilotRunning ? '⏹️ Stop' : '🚗 AutoPilot' }}
+                </button>
+            </div>
+            <div class="footer-right">
+                <div class="nav-buttons">
+                    <button class="nav-btn" [disabled]="isFirstNode" (click)="goToFirst()">First</button>
+                    <button class="nav-btn" [disabled]="isFirstNode" (click)="goToPrevious()">Prev</button>
+                    <button class="nav-btn" [disabled]="shouldDisableNext" (click)="goToNext()">Next</button>
+                    <button class="nav-btn" [disabled]="isLastNode" (click)="goToLast()">Last</button>
+                    <button class="nav-btn" [disabled]="!shouldEnableFinish" (click)="finish()">Finish</button>
+                    <button class="nav-btn quit-btn" (click)="quit()">Quit</button>
+                </div>
+                <div class="nav-stats">
+                    {{ currentNodeNumber || 1 }} of {{ totalNodes || 1 }}, {{ remainingNodes || 0 }} remaining
+                </div>
+            </div>
+        </div>
+
+        <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)"
+            title="Drag to resize vertically">
+            <div class="resize-grip"></div>
+        </div>
+
+    </div>
+
+    <!-- Quit Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showQuitDialog" title="Quit Lesson"
+        message="Do you want to save your lesson progress before quitting?" confirmText="Save & Quit"
+        cancelText="Quit Without Saving" (confirmed)="onQuitConfirmed($event)" (closed)="onQuitDialogClosed()">
+    </app-confirmation-dialog>
+
+    <!-- Finish Confirmation Dialog -->
+    <app-confirmation-dialog [visible]="showFinishDialog" title="Complete Lesson"
+        message="Do you want to save your lesson results?" confirmText="Yes, Save Results" cancelText="No, Don't Save"
+        (confirmed)="onFinishConfirmed($event)" (closed)="showFinishDialog = false">
+    </app-confirmation-dialog>
+
+    <!-- Content Quality Survey Dialog -->
+    <app-dialog-lesson-survey [visible]="showSurveyDialog" [isDarkMode]="isDarkMode" [lessonId]="currentLessonId || ''"
+        [lessonTitle]="currentLessonTitle" [nodeId]="selectedNode || ''" [nodeName]="nodeData?.name || 'Unknown Node'"
+        [surveyType]="'lesson'" (submit)="onSurveySubmitted($event)" (skip)="onSurveySkipped()"
+        (close)="onSurveyDialogClosed()">
+    </app-dialog-lesson-survey>

@@ -1,0 +1,56 @@
+<!-- Quick-Nav Panel (Draggable) -->
+@if (visible) {
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="quick-nav-panel">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    @if (expanded) {
+    <div class="panel-content">
+        <!-- Default Level Expansion Control -->
+        <div class="control-row">
+            <div class="level-expansion-controls">
+                <label for="defaultLevelExpansion">Default Level Expansion:</label>
+                <input type="number" id="defaultLevelExpansion" class="level-input" [value]="defaultLevelExpansion"
+                    (input)="onDefaultLevelExpansionChange($event)" min="0" max="10"
+                    title="Number of levels to expand by default" />
+            </div>
+        </div>
+        <div class="tree-container" #treeContainer></div>
+    </div>
+    <!-- Footer with node count -->
+    <div class="panel-footer">
+        <div class="footer-stats">
+            <span class="stat-item">Total Nodes: <strong>{{ currentNodeCount }}</strong></span>
+        </div>
+    </div>
+    }
+</div>
+}

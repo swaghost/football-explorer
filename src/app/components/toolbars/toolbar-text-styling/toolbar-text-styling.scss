@@ -1,0 +1,961 @@
+// Style Vertical Tab Strip Component Styles
+// Extends base toolbar styling with vertical tab-specific styles
+
+// CSS Variable for dynamic tab width
+:host {
+  --tab-width: 35px;
+  --num-tabs: 3;
+  --tab-bg: #2196f3;
+  --tab-hover-bg: #64b5f6;
+  --tab-active-bg: #0052a3;
+  --tab-text: #333;
+  --tab-active-text: #fff;
+  --tab-border: #ccc;
+  --content-bg: #fffef9;
+  --content-text: #333;
+  background-color: #fffacd;
+
+  &.dark-mode {
+    --tab-bg: #1976d2;
+    --tab-hover-bg: #1565c0;
+    --tab-active-bg: #0066cc;
+    --tab-text: #e0e0e0;
+    --tab-active-text: #fff;
+    --tab-border: #444;
+    --content-bg: #1e1e1e;
+    --content-text: #e0e0e0;
+    background-color: #fffacd;
+  }
+}
+
+// Main vertical tab strip panel
+.style-toolbar-panel {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: #fffacd !important;
+  border: 2px solid var(--tab-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: visible;
+  width: 100%;
+  max-width: 420px;
+  min-height: calc(var(--tab-width) * var(--num-tabs) + 20px);
+  box-sizing: border-box;
+
+  &.dark-mode {
+    background: var(--content-bg) !important;
+    border-color: var(--tab-border);
+  }
+
+  // Header styling
+  .panel-header {
+    border-radius: 8px 8px 0 0 !important;
+    padding: 8px 12px !important;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
+    border: 2px solid #000 !important;
+    border-bottom: 2px solid #000 !important;
+    cursor: move;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 36px;
+    box-sizing: border-box;
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    margin-right: -12px;
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #ffffff;
+
+      .toolbar-icon {
+        font-size: 16px;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+
+      button {
+        background: transparent;
+        border: 1px solid transparent;
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 14px;
+        transition: all 0.2s;
+        color: #ffffff;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      .drag-icon {
+        cursor: grab;
+        color: #ffffff;
+        font-size: 12px;
+      }
+    }
+
+    &.dark-mode {
+      background: linear-gradient(to bottom, #2a2a2a, #1f1f1f) !important;
+    }
+  }
+}
+
+// Tab container layout
+.tab-container {
+  display: flex;
+  flex: 1;
+  min-height: 200px;
+  gap: 0;
+  position: relative;
+  overflow: visible;
+  width: 100%;
+  box-sizing: border-box;
+
+  &.strip-left {
+    flex-direction: row;
+    padding-left: var(--tab-width);
+  }
+
+  &.strip-right {
+    flex-direction: row-reverse;
+    padding-right: var(--tab-width);
+  }
+}
+
+// Vertical Tab Strip Styling
+.vertical-tab-strip {
+  display: flex;
+  flex-direction: column;
+  width: var(--tab-width);
+  background: transparent;
+  gap: 0;
+  padding: 0;
+  flex-shrink: 0;
+  overflow: visible;
+  position: absolute;
+  top: calc(36px - 50px + 2px);
+  height: fit-content;
+  z-index: 10;
+
+  &.tab-strip-left {
+    left: calc(var(--tab-width) * -1 - 2px - 50px + 20px + 18px + 5px);
+  }
+
+  &.tab-strip-right {
+    right: calc(var(--tab-width) * -1 - 2px - 50px + 20px + 18px - 5px);
+  }
+
+  // Individual Tab Button
+  .vertical-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 110px;
+    padding: 6px 4px;
+    background: var(--tab-bg);
+    border: 2px solid var(--tab-border);
+    color: var(--tab-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    position: relative;
+    clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+
+    // Content wrapper for icon + label
+    .tab-content-wrapper {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      height: 100%;
+      padding: 6px 8px;
+    }
+
+    .tab-icon {
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+
+    .tab-label {
+      font-size: 10px;
+      line-height: 1.2;
+      display: inline-block;
+      padding: 2px 4px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+    }
+
+    // Hover state
+    &:not(.tab-disabled):hover {
+      background: var(--tab-hover-bg);
+      border-color: var(--tab-border);
+      box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    // Active state
+    &.tab-active {
+      background: var(--tab-active-bg);
+      color: var(--tab-active-text);
+      border-color: var(--tab-active-bg);
+      font-weight: 600;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15);
+
+      .tab-label,
+      .tab-icon {
+        color: var(--tab-active-text);
+      }
+    }
+
+    // Disabled state
+    &.tab-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f0f0f0;
+      color: #999;
+
+      &:hover {
+        background: #f0f0f0;
+      }
+
+      :host.dark-mode & {
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    // Text rotation - vertical (default)
+    &.vertical-text {
+      .tab-label {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+      }
+    }
+
+    // Text rotation - horizontal
+    &.horizontal-text {
+      .tab-label {
+        writing-mode: horizontal-tb;
+        text-orientation: initial;
+      }
+    }
+  }
+}
+
+// Tab Content Area
+.tab-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fffacd !important;
+  color: var(--content-text);
+  overflow: hidden;
+  position: relative;
+  padding: 2px 0;
+  box-sizing: border-box;
+
+  :host.dark-mode & {
+    background: var(--content-bg) !important;
+  }
+
+  &.strip-left {
+    border-left: none;
+  }
+
+  &.strip-right {
+    border-right: none;
+  }
+
+  // Individual tab content
+  .tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    overflow-y: auto;
+    height: 100%;
+    background: #fffacd;
+
+    :host.dark-mode & {
+      background: var(--content-bg);
+    }
+
+    // Default content styling
+    .default-content {
+      h4 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--content-text);
+      }
+
+      p {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--content-text);
+        opacity: 0.8;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+// Tab Section Styles
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+
+  :host.dark-mode & {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  // Allow checkbox-groups within section-group to override column layout
+  .checkbox-group {
+    flex-direction: row !important;
+  }
+
+  .section-title {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--content-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 4px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    :host.dark-mode & {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.indent-section {
+  margin-left: 6px;
+  padding-left: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  // Allow checkbox-groups within indent-section to override column layout
+  .checkbox-group {
+    flex-direction: row !important;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--content-text);
+
+  // When form-group contains a checkbox (but NOT checkbox-group), display it in a row
+  &:has(input[type="checkbox"]):not(.checkbox-group) {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // Checkbox group for multiple checkboxes on same line
+  &.checkbox-group {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    align-items: center !important;
+
+    label {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 4px !important;
+      margin: 0 !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+  }
+
+  // Horizontal checkbox layout for title controls
+  &.checkbox-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 16px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    > label {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      gap: 6px !important;
+      margin: 0 !important;
+      font-weight: 400 !important;
+      align-items: center !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+
+      input[type="checkbox"] {
+        margin: 0 !important;
+        cursor: pointer !important;
+      }
+    }
+  }
+
+  label {
+    font-weight: 500;
+    color: var(--content-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    input[type="checkbox"] {
+      margin: 0;
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: #2196f3;
+
+      :host.dark-mode & {
+        accent-color: #64b5f6;
+      }
+    }
+  }
+
+  select,
+  input[type="number"],
+  input[type="text"],
+  input[type="color"] {
+    padding: 3px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    transition: all 0.2s;
+
+    :host.dark-mode & {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #e0e0e0;
+    }
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.3);
+
+      :host.dark-mode & {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #2196f3;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+
+      :host.dark-mode & {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  input[type="color"] {
+    padding: 4px;
+    height: 36px;
+    cursor: pointer;
+    background: white;
+
+    :host.dark-mode & {
+      background: #2a2a2a;
+    }
+  }
+
+  input[type="color"].color-input-small {
+    height: 24px;
+    width: 50px;
+    padding: 2px;
+    background: white;
+
+    :host.dark-mode & {
+      background: #2a2a2a;
+    }
+  }
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  color: var(--content-text);
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+// Opacity Button Styling
+.opacity-button {
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 60px;
+
+  :host.dark-mode & {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+  }
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+
+    :host.dark-mode & {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  &.active {
+    background: #2196f3;
+    color: white;
+    border-color: #1976d2;
+    font-weight: 600;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+
+    :host.dark-mode & {
+      background: #1565c0;
+      border-color: #0d47a1;
+    }
+
+    &:hover {
+      background: #1976d2;
+
+      :host.dark-mode & {
+        background: #1565c0;
+      }
+    }
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// Scrollbar styling for tab strip and content
+.vertical-tab-strip,
+.tab-content {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  &.dark-mode {
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+// Animation for tab switch
+.tab-content {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Visualization Options Styles
+.visualization-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  }
+
+  option {
+    background: white;
+    color: #333;
+  }
+
+  &.dark-mode {
+    background: #2d2d2d;
+    border-color: #555;
+    color: #e0e0e0;
+
+    &:focus {
+      border-color: #ff8a65;
+      box-shadow: 0 0 0 3px rgba(255, 138, 101, 0.2);
+    }
+
+    option {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+  }
+}
+
+// Slider bounds labels
+.slider-bounds {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  margin-top: 4px;
+
+  .min-label,
+  .max-label {
+    font-weight: 600;
+    font-family: "Courier New", monospace;
+  }
+
+  .dark-mode & {
+    color: #999;
+  }
+}
+
+// Size buttons for node size control
+.size-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+
+  .size-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f5f5f5;
+      border-color: #ff6b35;
+    }
+
+    &.active {
+      background: #ff6b35;
+      border-color: #ff6b35;
+      color: white;
+    }
+
+    .dark-mode & {
+      background: #2d2d2d;
+      border-color: #555;
+      color: #e0e0e0;
+
+      &:hover {
+        background: #3d3d3d;
+        border-color: #ff8a65;
+      }
+
+      &.active {
+        background: #ff8a65;
+        border-color: #ff8a65;
+        color: #1a1a1a;
+      }
+    }
+  }
+}
+
+// Toggle label styling
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    background: rgba(255, 107, 53, 0.05);
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ff6b35;
+  }
+
+  span {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .dark-mode & {
+    &:hover {
+      background: rgba(255, 138, 101, 0.1);
+    }
+
+    input[type="checkbox"] {
+      accent-color: #ff8a65;
+    }
+
+    span {
+      color: #e0e0e0;
+    }
+  }
+}
+
+.visualization-dropdown {
+  width: 100%;
+}
+
+.tool-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  border-left: 3px solid #ff6b35;
+
+  .dark-mode & {
+    background: rgba(45, 45, 45, 0.5);
+    border-left-color: #ff8a65;
+  }
+
+  h4,
+  h5 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    .dark-mode & {
+      color: #e0e0e0;
+    }
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.node-count-group {
+  div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    input[type="number"] {
+      flex: 1;
+      min-width: 60px;
+      padding: 6px 8px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+
+      .dark-mode & {
+        background: #2d2d2d;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+    }
+
+    .regenerate-btn {
+      padding: 6px 10px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f5f5f5;
+        border-color: #ff6b35;
+      }
+
+      .dark-mode & {
+        background: #2d2d2d;
+        border-color: #555;
+
+        &:hover {
+          background: #3d3d3d;
+          border-color: #ff8a65;
+        }
+      }
+    }
+  }
+}
+
+.slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: #ff6b35;
+
+  .dark-mode & {
+    accent-color: #ff8a65;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .vertical-tab-strip {
+    width: 36px;
+
+    .vertical-tab {
+      min-height: 36px;
+      padding: 4px 2px;
+
+      .tab-label {
+        font-size: 9px;
+      }
+
+      .tab-icon {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .tab-content-area {
+    .tab-content {
+      padding: 12px;
+
+      .form-group.compact-select {
+        label {
+          font-size: 11px;
+          margin-bottom: 2px;
+        }
+
+        select {
+          font-size: 11px;
+          padding: 4px 6px;
+          height: 24px;
+          min-height: 24px;
+        }
+      }
+
+      .form-group.narrow-select {
+        width: 100px !important;
+      }
+
+      .form-group.checkbox-group {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 12px !important;
+        align-items: center !important;
+        color: var(--content-text) !important;
+
+        label {
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 4px !important;
+          margin: 0 !important;
+          flex-shrink: 0 !important;
+          white-space: nowrap !important;
+          color: var(--content-text) !important;
+        }
+      }
+
+      .color-input-compact {
+        height: auto;
+        width: 40px;
+        padding: 2px 3px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .color-picker-small {
+        width: 36px !important;
+        padding: 2px 3px !important;
+      }
+
+      .color-picker-key {
+        width: 32px !important;
+        padding: 2px 2px !important;
+      }
+    }
+  }
+}

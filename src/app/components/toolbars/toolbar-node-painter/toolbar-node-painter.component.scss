@@ -1,0 +1,44 @@
+@use "../../../styles/components/toolbar-base";
+
+// Node Painter Toolbar Component Styles
+// Component-specific styles can be added here
+
+.node-painter-panel {
+  width: 240px !important; // Make narrower (was 420px)
+  overflow: hidden; // Ensure header/footer gradients are clipped to border-radius
+
+  // Light yellow background for light mode
+  background: #fffef0 !important;
+
+  // Reduce padding for footer spacing and make buttons smaller
+  .tool-section {
+    padding-bottom: 35px !important; // Reduced space for footer to see pencil modifiers
+
+    .button-grid {
+      gap: 3px !important; // Smaller gap between buttons
+      margin-bottom: 4px !important; // Smaller bottom margin
+      padding: 3px !important; // Smaller padding around grid
+    }
+  }
+
+  // Make buttons smaller
+  .tool-button {
+    min-height: 45px !important; // Smaller button height (was ~60px)
+    padding: 4px 6px !important; // Smaller padding
+    font-size: 11px !important; // Smaller text
+
+    .button-icon {
+      font-size: 18px !important; // Smaller icons
+    }
+  }
+
+  // Dark mode: reset to default background
+  &.dark-mode {
+    background: #2d2d2d !important;
+
+    .panel-footer {
+      background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%) !important;
+      border-top-color: #646464 !important;
+    }
+  }
+}

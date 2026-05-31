@@ -1,0 +1,344 @@
+@use "../../../styles/components/toolbar-base";
+
+// Bookmarks Toolbar Component Styles
+.bookmarks-panel {
+  // CRITICAL: Prevent header/footer content from bleeding outside rounded borders
+  overflow: hidden;
+
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Blue highlight for current selected bookmark - matches Quick-Nav SVG selection colors
+  // This applies to ANY list item with current-selected class
+  .common-list-item.current-selected {
+    // Light mode
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-left: 4px solid #2563eb !important;
+    border-radius: 4px;
+    color: #4169e1 !important; // Royal blue for light mode
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+    transform: scale(1.02);
+
+    .common-list-item-title {
+      color: #4169e1 !important;
+      font-weight: 600;
+    }
+
+    .common-list-item-subtitle {
+      color: rgba(65, 105, 225, 0.8) !important;
+    }
+  }
+
+  &.dark-mode {
+    // Dark mode styling for consistency with Quick-Nav
+    .common-list-item.current-selected {
+      background: rgba(59, 130, 246, 0.3) !important;
+      border-left: 4px solid #3b82f6 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
+
+      .common-list-item-title {
+        color: #ffffff !important;
+      }
+
+      .common-list-item-subtitle {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+  }
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 320px;
+  max-width: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  z-index: 1000;
+
+  &.dark-mode {
+    background: #2d2d2d;
+    border-color: #555;
+    color: #ffffff;
+
+    .panel-header {
+      background: linear-gradient(
+        135deg,
+        #505050 0%,
+        #3c3c3c 100%
+      ); // Gradient gray for dark mode
+      border-bottom-color: #646464;
+
+      h3 {
+        color: #ffffff;
+      }
+
+      .header-actions button {
+        color: #ffffff;
+
+        &:hover {
+          background: rgba(
+            255,
+            255,
+            255,
+            0.15
+          ); // Slightly different hover for dark mode
+        }
+      }
+
+      .drag-icon {
+        color: #ffffff;
+      }
+    }
+
+    .bookmarks-content {
+      background: #2d2d2d;
+    }
+
+    .bookmark-item {
+      background: #404040;
+      border-color: #555;
+
+      &:hover {
+        background: #4a4a4a;
+      }
+    }
+
+    .empty-state {
+      color: #bbb;
+    }
+  }
+
+  &.collapsed {
+    .panel-content {
+      display: none;
+    }
+  }
+
+  .panel-header {
+    // Remove custom background - let base styles handle it with blue gradient
+    // background: linear-gradient(135deg, #c8c8c8 0%, #b4b4b4 100%); // Removed
+    // border-bottom: 1px solid #a0a0a0; // Removed - using base styles
+    padding: 8px 12px;
+    border-radius: 8px 8px 0 0;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &.locked {
+      cursor: default;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #e2e8f0; // Light text on gradient
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        color: #e2e8f0;
+        padding: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      .drag-icon {
+        cursor: move;
+        color: #e2e8f0;
+        font-size: 12px;
+        padding: 4px;
+      }
+    }
+  }
+
+  .panel-content {
+    padding: 12px;
+    max-height: 400px;
+    overflow: hidden;
+  }
+
+  .bookmarks-content {
+    .bookmarks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e9ecef;
+
+      h4 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .count {
+        font-size: 12px;
+        color: #6c757d;
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 12px;
+      }
+    }
+
+    .bookmarks-list {
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+
+        &:hover {
+          background: #a8a8a8;
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: #666;
+
+      .empty-icon {
+        font-size: 64px;
+        margin-bottom: 12px;
+      }
+
+      .empty-text {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .empty-hint {
+        font-size: 13px;
+        color: #888;
+      }
+    }
+
+    // Using common-list-item styles from _toolbar-base.scss
+    // Component-specific child element styles
+    .bookmark-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .bookmark-info {
+        flex: 1;
+        min-width: 0;
+
+        .bookmark-meta {
+          display: flex;
+          gap: 8px;
+          font-size: 11px;
+        }
+      }
+
+      .remove-bookmark {
+        background: none;
+        border: none;
+        padding: 4px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        opacity: 0.6;
+        transition: all 0.2s ease;
+        margin-left: 8px;
+
+        &:hover {
+          background: rgba(220, 53, 69, 0.1);
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+// Dark mode specific adjustments for component-specific elements
+.bookmarks-panel.dark-mode {
+  .panel-header h3 {
+    color: #ffffff;
+  }
+
+  .bookmarks-header h4 {
+    color: #ffffff;
+  }
+
+  .bookmarks-header .count {
+    background: #555;
+    color: #ffffff;
+  }
+
+  .empty-state {
+    color: #aaa;
+
+    .empty-text {
+      color: #fff;
+    }
+
+    .empty-hint {
+      color: #888;
+    }
+  }
+
+  // List item styles are handled by common-list-item classes
+
+  .bookmarks-list::-webkit-scrollbar-track {
+    background: #3d3d3d;
+  }
+
+  .bookmarks-list::-webkit-scrollbar-thumb {
+    background: #666;
+
+    &:hover {
+      background: #777;
+    }
+  }
+}
+
+// Panel content needs bottom padding for footer
+.bookmarks-panel .panel-content {
+  padding-bottom: 50px; /* Space for footer */
+}

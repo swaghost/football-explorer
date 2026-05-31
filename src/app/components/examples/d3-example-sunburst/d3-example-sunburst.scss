@@ -1,0 +1,110 @@
+.sunburst-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fafafa;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+
+  .header {
+    padding: 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .instructions {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    flex-wrap: wrap;
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    input[type="range"] {
+      width: 250px;
+      cursor: pointer;
+    }
+  }
+
+  .chart-container {
+    flex: 1;
+    width: 100%;
+    background-color: #fff;
+    overflow: hidden;
+    position: relative;
+
+    svg {
+      display: block;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  :host ::ng-deep {
+    path {
+      transition: fill-opacity 0.2s;
+
+      &:hover {
+        fill-opacity: 1 !important;
+      }
+    }
+
+    text {
+      pointer-events: none;
+      font-size: 10px;
+      font-family: sans-serif;
+    }
+
+    circle {
+      cursor: pointer;
+      fill: #fff;
+      stroke: #ddd;
+      stroke-width: 2;
+      transition: all 0.2s;
+
+      &:hover {
+        fill: #f0f0f0;
+      }
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .sunburst-container {
+    .chart-container {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+  }
+}

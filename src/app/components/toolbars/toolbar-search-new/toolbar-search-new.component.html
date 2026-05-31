@@ -1,0 +1,72 @@
+<!-- Search Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" class="search-panel"
+    [attr.data-toolbar-type]="toolbarId" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>{{ toolbarIcon }} {{ toolbarTitle }}</h3>
+        <div class="header-actions">
+            <!-- Additional header buttons from child component (if any) -->
+            <ng-container *ngIf="hasAdditionalHeaderButtons()">
+                <ng-container *ngTemplateOutlet="additionalHeaderButtons"></ng-container>
+            </ng-container>
+            <!-- Standard header buttons -->
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">❓</button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">✖️</button>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <h4>{{ toolbarIcon }} {{ toolbarTitle }}</h4>
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" [style.display]="expanded ? 'block' : 'none'">
+        <!-- Search Inputs Section -->
+        <div class="search-inputs">
+            <div class="search-group">
+                <label for="idSearch">Search by ID:</label>
+                <div class="input-with-clear">
+                    <input id="idSearch" type="text" [(ngModel)]="idSearchTerm" placeholder="Enter node ID"
+                        class="search-input" (keyup.enter)="performSearch()" />
+                    <button class="clear-btn" (click)="clearIdSearch()" [disabled]="!idSearchTerm"
+                        title="Clear ID search">✖️</button>
+                </div>
+            </div>
+
+            <div class="search-group">
+                <label for="termsSearch">Search by Terms:</label>
+                <div class="input-with-clear">
+                    <input id="termsSearch" type="text" [(ngModel)]="termsSearchTerm" placeholder="Enter search terms"
+                        class="search-input" (keyup.enter)="performSearch()" />
+                    <button class="clear-btn" (click)="clearTermsSearch()" [disabled]="!termsSearchTerm"
+                        title="Clear terms search">✖️</button>
+                </div>
+            </div>
+
+            <button class="search-btn" (click)="performSearch()" [disabled]="!idSearchTerm && !termsSearchTerm">
+                🔍 Search
+            </button>
+        </div>
+
+        <!-- Search Results Section -->
+        <div class="search-results" *ngIf="searchPerformed">
+            <h4>Search Results ({{ searchResults.length }})</h4>
+            <div class="results-list">
+                <div *ngFor="let result of searchResults" class="result-item" (click)="selectSearchResult(result)">
+                    <span class="result-id">{{ result.id }}</span>
+                    <span class="result-name">{{ result.name }}</span>
+                    <span class="result-match-type">[{{ result.matchType }}]</span>
+                </div>
+                <div *ngIf="searchResults.length === 0" class="no-results">
+                    No results found
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

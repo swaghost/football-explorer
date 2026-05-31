@@ -1,0 +1,23 @@
+// Default Team Groups Toolbar Component Styles
+@use "../../../styles/components/toolbar-base";
+
+// Footer positioning and styling
+.panel-footer {
+  position: absolute;
+  left: calc(var(--spacing-3) - 1px);
+  right: calc(var(--spacing-3) - 1px);
+  bottom: calc(var(--spacing-3) - 1px);
+  padding: 8px 12px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+// Dark mode footer override
+.dark-mode .panel-footer {
+  background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%) !important;
+  border-top-color: #646464 !important;
+}
+
+// Adjust content area to account for footer
+.panel-content {
+  padding-bottom: 50px;
+}

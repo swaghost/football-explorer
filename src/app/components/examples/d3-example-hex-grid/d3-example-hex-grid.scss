@@ -1,0 +1,124 @@
+.hex-grid-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+
+  .control-panel {
+    display: flex;
+    gap: 20px;
+    padding: 15px 20px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .control-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+
+      label {
+        min-width: 60px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      input[type="range"] {
+        width: 120px;
+        cursor: pointer;
+      }
+
+      span {
+        min-width: 50px;
+        text-align: right;
+        color: #666;
+        font-family: monospace;
+      }
+
+      .randomize-btn {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+
+      h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #333;
+      }
+
+      p {
+        margin: 5px 0 0 0;
+        color: #999;
+        font-size: 12px;
+      }
+    }
+
+    .svg-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: #fafafa;
+
+      svg {
+        cursor: grab;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+    }
+  }
+}
+
+// Node styles
+:host ::ng-deep {
+  .node {
+    cursor: pointer;
+
+    circle {
+      transition: opacity 0.2s ease;
+    }
+
+    text {
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  .link {
+    transition: stroke 0.2s ease;
+  }
+}

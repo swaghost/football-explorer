@@ -1,0 +1,148 @@
+<div class="dialog-backdrop" *ngIf="visible" (click)="onClose()">
+    <div class="dialog-container" (click)="$event.stopPropagation()" [class.dark-mode]="isDarkMode">
+
+        <!-- Dialog Header -->
+        <div class="dialog-header">
+            <div class="header-content">
+                <h2>
+                    <span class="survey-icon">📊</span>
+                    {{ contentType | titlecase }} Survey
+                </h2>
+                <p class="lesson-title" *ngIf="contentTitle">{{ contentTitle }}</p>
+            </div>
+            <button class="close-btn" (click)="onClose()" title="Close Survey">
+                <span class="close-icon">×</span>
+            </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+            </div>
+            <div class="progress-text">
+                Step {{ currentStep + 1 }} of {{ totalSteps }}
+            </div>
+        </div>
+
+        <!-- Dialog Content -->
+        <div class="dialog-content">
+
+            <!-- Rating Questions -->
+            <div *ngIf="currentQuestion && currentStep < questions.length" class="survey-step rating-step">
+                <div class="question-container">
+                    <h3 class="question-title">{{ currentQuestion.question }}</h3>
+                    <p class="question-description" *ngIf="currentQuestion.description">
+                        {{ currentQuestion.description }}
+                    </p>
+
+                    <div class="rating-container">
+                        <div class="rating-scale">
+                            <div *ngFor="let option of currentQuestion.options" class="rating-option"
+                                [class.selected]="getSurveyResponseValue(currentQuestion.id) === option.value"
+                                (click)="updateRating(currentQuestion.id, option.value)">
+                                <div class="rating-number">{{ option.value }}</div>
+                                <div class="rating-stars">
+                                    <span *ngFor="let star of getFilledStarsArray(option.value)"
+                                        class="star filled">★</span>
+                                    <span *ngFor="let emptyStar of getEmptyStarsArray(option.value)"
+                                        class="star empty">☆</span>
+                                </div>
+                                <div class="rating-label">{{ option.description }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Current selection display -->
+                        <div class="current-selection" *ngIf="getRatingDescription(currentQuestion.id)">
+                            <strong>Selected:</strong> {{ getRatingDescription(currentQuestion.id) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Information Step -->
+            <div *ngIf="currentStep === questions.length" class="survey-step more-info-step">
+                <div class="question-container">
+                    <h3 class="question-title">More Information</h3>
+                    <p class="question-description">
+                        Based on this lesson, would you like more content like this?
+                    </p>
+
+                    <div class="more-info-options">
+                        <div *ngFor="let option of moreInfoOptions" class="more-info-option"
+                            [class.selected]="surveyResponse.moreInformation === option.value"
+                            (click)="updateMoreInformation(option.value)">
+                            <div class="option-content">
+                                <div class="option-label">{{ option.label }}</div>
+                                <div class="option-description">{{ option.description }}</div>
+                            </div>
+                            <div class="option-indicator">
+                                <span class="checkmark" *ngIf="surveyResponse.moreInformation === option.value">✓</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optional Comments -->
+                    <div class="comments-section">
+                        <label for="survey-comments" class="comments-label">
+                            Additional Comments (Optional)
+                        </label>
+                        <textarea id="survey-comments" class="comments-textarea"
+                            placeholder="Share any additional thoughts about this lesson..."
+                            [value]="surveyResponse.comments || ''" (input)="updateComments($any($event.target).value)"
+                            maxlength="500"></textarea>
+                        <div class="character-count">
+                            {{ (surveyResponse.comments || '').length }} / 500
+                        </div>
+                    </div>
+
+                    <!-- Don't Show Again Option -->
+                    <div class="dont-show-again-section">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="surveyResponse.dontShowAgain" id="dont-show-again">
+                            <span class="checkbox-text">
+                                Don't show {{ contentType }} surveys again
+                            </span>
+                        </label>
+                        <div class="checkbox-description">
+                            You can re-enable surveys in the Visualization Options panel
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Dialog Footer -->
+        <div class="dialog-footer">
+            <div class="footer-left">
+                <button *ngIf="canSkip" class="btn btn-secondary skip-btn" (click)="onSkip()"
+                    title="Skip survey and complete lesson">
+                    Skip Survey
+                </button>
+            </div>
+
+            <div class="footer-right">
+                <button *ngIf="!isFirstStep" class="btn btn-secondary" (click)="previousStep()"
+                    title="Go to previous question">
+                    Previous
+                </button>
+
+                <button *ngIf="!isLastStep" class="btn btn-primary" (click)="nextStep()"
+                    [disabled]="!isValidCurrentStep()" title="Continue to next question">
+                    Next
+                </button>
+
+                <button *ngIf="isLastStep" class="btn btn-primary submit-btn" (click)="onSubmit()"
+                    [disabled]="!isValidSurvey() || isSubmitting" title="Submit survey and complete lesson">
+                    <span *ngIf="!isSubmitting">Complete Lesson</span>
+                    <span *ngIf="isSubmitting" class="loading-text">
+                        <span class="spinner"></span>
+                        Submitting...
+                    </span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

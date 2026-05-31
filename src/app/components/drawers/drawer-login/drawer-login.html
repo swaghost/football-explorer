@@ -1,0 +1,39 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Mock Login'" [drawerId]="'login-drawer'" [drawerHelp]="drawerHelp"
+    (close)="onClose()">
+    <div class="login-drawer-content">
+        <!-- Current User Display -->
+        <div class="current-user-section" *ngIf="selectedUser">
+            <h4>Current User</h4>
+            <div class="current-user-display">
+                <div class="user-icon">👤</div>
+                <div class="user-info">
+                    <div class="user-name">{{ getUserDisplayName(selectedUser) }}</div>
+                    <div class="user-email">{{ getUserEmail(selectedUser) }}</div>
+                    <div class="user-location">{{ getUserLocation(selectedUser) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedUser"></div>
+
+        <!-- User List -->
+        <div class="user-list">
+            <h4>Available Users</h4>
+            <div class="users">
+                <div *ngFor="let user of users" class="user-item" [class.selected]="isUserSelected(user.UserId)"
+                    (click)="onUserSelect(user)">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="isUserSelected(user.UserId)">✓</span>
+                        <span class="checkbox" *ngIf="!isUserSelected(user.UserId)">□</span>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-line-1">{{ getUserDisplayName(user) }}</div>
+                        <div class="user-line-2">{{ getUserEmail(user) }}</div>
+                        <div class="user-line-3">{{ getUserLocation(user) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

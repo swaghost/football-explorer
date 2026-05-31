@@ -1,0 +1,51 @@
+<app-base-dialog [visible]="visible" [title]="'Edit Lesson'" [icon]="'✏️'" [maxWidth]="'600px'" (close)="onCancel()">
+    <div class="form-group">
+        <label for="editLessonName">Lesson Name:</label>
+        <input #nameInput type="text" id="editLessonName" [(ngModel)]="editLessonName" placeholder="Enter lesson name"
+            class="text-input" maxlength="100" (keydown.escape)="onCancel()" />
+    </div>
+
+    <!-- Lesson Description -->
+    <div class="form-group">
+        <label for="editLessonDescription">Lesson Description:</label>
+        <textarea id="editLessonDescription" [(ngModel)]="lessonDescription"
+            placeholder="Enter lesson description (optional)" class="text-input textarea-input" maxlength="500"
+            rows="3"></textarea>
+    </div>
+
+    <!-- Lesson Chips -->
+    <div class="form-group">
+        <label>Categories & Tags:</label>
+        <div class="chips-container">
+            <div class="chips-list" *ngIf="lessonChips.length > 0">
+                <span class="chip" *ngFor="let chip of lessonChips; let i = index">
+                    {{ chip }}
+                    <button type="button" class="chip-remove" (click)="removeChip(i)" title="Remove tag">×</button>
+                </span>
+            </div>
+            <div class="chip-input-container">
+                <input type="text" id="chipInput" [(ngModel)]="currentChipInput" (keydown)="onChipInputKeyDown($event)"
+                    placeholder="Add tags like 'Press Resistance', 'Defense', etc." class="text-input chip-input"
+                    maxlength="50" />
+                <button type="button" class="add-chip-button" (click)="addChip()" [disabled]="!currentChipInput.trim()"
+                    title="Add tag">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-text">
+        💡 Update the lesson details. Press <kbd>Esc</kbd> to cancel changes.
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button class="dialog-button cancel-button" (click)="onCancel()" title="Cancel (Esc)">
+            Cancel
+        </button>
+        <button class="dialog-button confirm-button" (click)="onSave()" [disabled]="!editLessonName.trim()"
+            title="Save Changes (Enter)">
+            💾 Save Changes
+        </button>
+    </div>
+</app-base-dialog>

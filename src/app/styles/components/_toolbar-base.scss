@@ -1,0 +1,1047 @@
+/**
+ * Shared Toolbar Base Styles
+ * Used by D3UIV6 and all toolbar components
+ */
+
+// Static toolbar controls (top bar) - enhanced with gradient background
+.static-toolbar-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  backdrop-filter: var(--backdrop-blur-base);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: var(--spacing-2) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  z-index: var(--z-fixed);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 44px;
+  box-sizing: border-box;
+  color: white;
+
+  .dark-mode & {
+    background: linear-gradient(135deg, #1976d2, #0d47a1);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Draggable toolbar base styles
+.draggable-toolbar {
+  position: fixed;
+  z-index: var(--z-dropdown);
+  width: 380px;
+  background: rgba(
+    255,
+    250,
+    230,
+    0.95
+  ); // Light yellow (#fffae6) with 95% opacity
+  border: 2px solid var(--color-gray-800);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  max-height: calc(100vh - 120px);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--backdrop-blur-base);
+  box-sizing: border-box;
+  overflow: hidden; /* Clip header/footer gradients to border-radius */
+  font-family: var(--font-family-base);
+
+  // Compact variant for smaller toolbars
+  &.compact {
+    width: 220px;
+    padding: var(--spacing-2);
+  }
+
+  // Wide variant for larger toolbars
+  &.wide {
+    width: 400px;
+  }
+
+  // Dark mode
+  &.dark-mode {
+    background: rgba(45, 45, 45, 0.7);
+    border-color: var(--border-dark);
+  }
+
+  // Collapsed state - ensures panel content is hidden when collapsed
+  &.collapsed {
+    // Force hide all content when collapsed using multiple targeting approaches
+    .panel-content,
+    .tool-section,
+    .panel-footer,
+    .node-viewer-footer,
+    .navigation-buttons,
+    .tree-container,
+    .nodes-list-container,
+    .default-groups-list,
+    .groups-container,
+    .mode-buttons,
+    .drawing-canvas,
+    .control-row,
+    .level-expansion-controls,
+    .form-group,
+    .action-buttons,
+    .panel-body,
+    .toolbar-content,
+    .content-section,
+    .main-content,
+    .nodes-scroll-list,
+    .selection-tools-container,
+    .tenancy-container,
+    .lesson-controls,
+    .video-container,
+    .org-selector-list,
+    .tenancy-info,
+    .organization-list,
+    .node-content,
+    .node-title-section,
+    .scrollable-content,
+    .two-column-toggles,
+    .toggle-column,
+    .control-group,
+    .teams-container,
+    .lesson-content,
+    .lesson-list,
+    .tabs,
+    .tab-content,
+    .filter-info,
+    .regenerate-btn {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    // More aggressive hiding - target any element that's not the header
+    > *:not(.panel-header):not(.drag-handle) {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    // Ensure the toolbar takes minimal space when collapsed
+    max-height: none !important;
+    min-height: auto !important;
+    height: auto !important;
+
+    // Remove padding except for header area
+    padding: 0 !important;
+
+    // Ensure header is visible and properly styled
+    .panel-header,
+    .drag-handle {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      margin: 0 !important;
+      padding: var(--spacing-2) var(--spacing-3) !important;
+
+      // Make sure header content is visible
+      * {
+        display: initial !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      // Specific header elements
+      h3,
+      .header-actions,
+      button,
+      span {
+        display: initial !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .header-actions {
+        display: flex !important;
+      }
+    }
+
+    // Remove borders and background that might cause white boxes
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: transparent !important;
+  }
+}
+
+// Panel header (toolbar title bar)
+.panel-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: calc(var(--spacing-3) * -1 - 4px) calc(var(--spacing-3) * -1 - 4px)
+    var(--spacing-3) calc(var(--spacing-3) * -1 - 4px);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  background-clip: padding-box; /* Ensure background extends to edges */
+  border-bottom: 2px solid var(--color-primary-darker);
+  border-radius: 0; /* No radius - let toolbar's overflow: hidden clip it */
+  overflow: hidden; /* Clip gradient to border-radius */
+
+  &.drag-handle {
+    cursor: move;
+    user-select: none;
+
+    &:hover:not(.locked) {
+      background: linear-gradient(
+        135deg,
+        var(--color-primary-light) 0%,
+        var(--color-primary) 100%
+      );
+    }
+
+    &.locked {
+      cursor: not-allowed;
+      opacity: 0.8;
+      background: linear-gradient(
+        135deg,
+        var(--color-gray-500) 0%,
+        var(--color-gray-600) 100%
+      );
+    }
+  }
+
+  h3 {
+    margin: 0;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-white);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    text-shadow: var(--shadow-sm);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  // Dark mode adjustments - keep blue gradient for headers
+  .dark-mode & {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary) 0%,
+      var(--color-primary-dark) 100%
+    );
+    border-bottom-color: var(--color-primary-darker);
+
+    h3 {
+      color: var(--text-white);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+
+// Header actions (buttons in toolbar header)
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+
+  // Base button style for header actions
+  button,
+  .lock-toggle,
+  .theme-toggle,
+  .close-button,
+  .expand-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-sm);
+    padding: 2px var(--spacing-1);
+    cursor: pointer;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-white);
+    transition: var(--transition-base);
+    letter-spacing: var(--tracking-normal);
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:active {
+      background: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .close-button {
+    &:hover {
+      background: rgba(255, 100, 100, 0.3);
+      border-color: rgba(255, 100, 100, 0.5);
+      color: #ffcccc;
+    }
+  }
+
+  .expand-toggle {
+    min-width: 24px;
+    text-align: center;
+    font-size: var(--font-size-sm);
+  }
+
+  .help-toggle {
+    min-width: 24px;
+    text-align: center;
+    font-size: var(--font-size-sm);
+
+    &:hover {
+      background: rgba(255, 200, 100, 0.3);
+      border-color: rgba(255, 200, 100, 0.5);
+      color: #fff8dc;
+    }
+  }
+
+  .drag-icon {
+    font-size: var(--font-size-base);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: move;
+    opacity: 0.8;
+    padding: 2px;
+
+    &:hover {
+      opacity: 1;
+      color: var(--text-white);
+    }
+  }
+
+  // Dark mode adjustments
+  .dark-mode & {
+    button,
+    .lock-toggle,
+    .theme-toggle,
+    .close-button,
+    .expand-toggle {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-white);
+      background: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+// Panel content area
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  max-height: calc(100vh - 200px);
+  background-color: #fffef0; // Light yellow background in light mode
+  padding: var(--spacing-3);
+  margin: 0 calc(var(--spacing-3) * -1); // Negative horizontal margins to extend to toolbar edges
+  margin-bottom: calc(var(--spacing-3) * -1); // Negative bottom margin
+
+  // Dark mode - keep original dark background
+  .dark-mode & {
+    background-color: transparent;
+  }
+
+  // Scrollable content areas
+  &.scrollable {
+    overflow-y: auto;
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--color-gray-100);
+      border-radius: var(--radius-sm);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-gray-400);
+      border-radius: var(--radius-sm);
+
+      &:hover {
+        background: var(--color-gray-500);
+      }
+    }
+
+    .dark-mode &::-webkit-scrollbar-track {
+      background: var(--color-gray-700);
+    }
+
+    .dark-mode &::-webkit-scrollbar-thumb {
+      background: var(--color-gray-500);
+
+      &:hover {
+        background: var(--color-gray-400);
+      }
+    }
+  }
+}
+
+// Toolbar separators
+.toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--border-medium);
+  margin: 0 var(--spacing-1);
+
+  .dark-mode & {
+    background: var(--border-dark);
+  }
+}
+
+.toolbar-spacer {
+  flex: 1;
+  height: 1px;
+}
+
+// Static bottom toolbar
+.static-bottom-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  backdrop-filter: var(--backdrop-blur-base);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: var(--spacing-2) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: var(--z-fixed);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  height: 44px;
+  box-sizing: border-box;
+  color: white;
+
+  .dark-mode & {
+    background: linear-gradient(135deg, #1976d2, #0d47a1);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .bottom-toolbar-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .bottom-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .breadcrumb-container {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: #6fb3e0; /* Light blue background */
+    padding: 2px var(--spacing-2); /* Reduced vertical padding */
+    border-radius: var(--radius-sm);
+
+    .breadcrumb-content {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .breadcrumb-item {
+      color: #1a365d; /* Dark blue for good contrast */
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #0f2537; /* Darker blue on hover */
+      }
+
+      .dark-mode & {
+        color: #1a365d; /* Keep dark blue even in dark mode for light blue background */
+
+        &:hover {
+          color: #0f2537;
+        }
+      }
+    }
+
+    .breadcrumb-separator {
+      margin: 0 var(--spacing-1);
+      color: #2d5a87; /* Medium blue for separators */
+
+      .dark-mode & {
+        color: #2d5a87; /* Keep consistent in dark mode */
+      }
+    }
+  }
+
+  .key-state-indicators {
+    display: flex;
+    gap: var(--spacing-1);
+    align-items: center;
+
+    .key-indicator-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.active {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: white;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .key-label {
+        font-family: var(--font-family-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+// ========================================
+// COMPREHENSIVE COLLAPSE FUNCTIONALITY
+// ========================================
+
+// Enhanced collapsed state with aggressive element hiding
+.draggable-toolbar.collapsed {
+  // Force hide all content except header
+  > *:not(.panel-header):not(.drag-handle) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  // Preserve header but make it more compact
+  .panel-header {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    overflow: hidden !important;
+  }
+
+  // Hide all content sections with maximum specificity
+  .panel-content,
+  .content,
+  .tool-section,
+  .section,
+  .controls,
+  .button-grid,
+  .control-group,
+  .form-group,
+  .toolbar-content,
+  .main-content,
+  .body,
+  .panel-body,
+  .content-section,
+  .nodes-scroll-list,
+  .selection-tools-container,
+  .tenancy-container,
+  .lesson-controls,
+  .video-container,
+  .org-selector-list,
+  .tenancy-info,
+  .organization-list,
+  .node-content,
+  .node-title-section,
+  .scrollable-content,
+  .two-column-toggles,
+  .toggle-column,
+  .teams-container,
+  .node-viewer-footer,
+  .navigation-buttons,
+  .tree-container,
+  .nodes-list-container,
+  .default-groups-list,
+  .groups-container,
+  .mode-buttons,
+  .drawing-canvas,
+  .control-row,
+  .level-expansion-controls,
+  .action-buttons,
+  div[class*="content"],
+  div[class*="section"],
+  div[class*="controls"],
+  div[class*="container"],
+  div[class*="body"],
+  div[class*="tools"],
+  div[class*="grid"],
+  div[class*="group"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    transform: scaleY(0) !important;
+    transform-origin: top !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+  }
+
+  // Force collapsed height
+  max-height: 40px !important;
+  min-height: 32px !important;
+  height: auto !important;
+
+  // Remove any bottom padding/margin when collapsed
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+
+  // Ensure proper z-index
+  z-index: 1000 !important;
+
+  .panel-header {
+    z-index: 1001 !important;
+    position: relative !important;
+  }
+}
+
+// Universal collapse utility class for emergency use
+.force-collapse-content {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  transform: scaleY(0) !important;
+  transform-origin: top !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
+
+// Force expand state (in case of conflicts)
+.draggable-toolbar:not(.collapsed) {
+  .panel-content,
+  .content,
+  .tool-section,
+  .section,
+  .controls,
+  .button-grid,
+  .control-group,
+  .form-group,
+  .toolbar-content,
+  .main-content,
+  .body,
+  .panel-body {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    max-height: none !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+  }
+}
+
+// ========================================
+// Common List Item Styles
+// ========================================
+// Standardized list item styles for consistency across all toolbars
+// Use these classes for list items in lessons, bookmarks, favorites, teams, etc.
+
+.common-list-item {
+  padding: 12px;
+  background: #fffae6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  &.selected {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  }
+
+  // Dark mode
+  .dark-mode & {
+    background: #404040;
+    border-color: #555;
+    color: #ffffff;
+
+    &:hover {
+      background: #4a4a4a;
+    }
+
+    &.selected {
+      background: #1a365d;
+      border-left-color: #63b3ed;
+      box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2);
+    }
+  }
+}
+
+// Title/name within list items
+.common-list-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .dark-mode & {
+    color: #ffffff;
+  }
+}
+
+// Subtitle/description within list items
+.common-list-item-subtitle {
+  font-size: 12px;
+  color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .dark-mode & {
+    color: #ccc;
+  }
+}
+
+/* Vertical Resize Handle - Common for all draggable toolbars */
+.resize-handle {
+  position: absolute;
+  bottom: -4px; /* Extend slightly outside the panel for easier grabbing */
+  left: 0;
+  right: 0;
+  height: 12px; /* Increased height for easier targeting */
+  cursor: ns-resize;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* Higher than panel z-index */
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 123, 255, 0.15);
+
+    .resize-grip {
+      background: #007bff;
+
+      &::before,
+      &::after {
+        background: #007bff;
+      }
+    }
+  }
+
+  .resize-grip {
+    width: 40px;
+    height: 2px;
+    background: #bbb;
+    border-radius: 1px;
+    position: relative;
+    transition: background-color 0.2s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+  }
+
+  .dark-mode & {
+    &:hover {
+      background: rgba(59, 130, 246, 0.2);
+
+      .resize-grip {
+        background: #60a5fa;
+
+        &::before,
+        &::after {
+          background: #60a5fa;
+        }
+      }
+    }
+
+    .resize-grip {
+      background: #666;
+
+      &::before,
+      &::after {
+        background: #666;
+      }
+    }
+  }
+}
+
+/* Ensure draggable toolbars can be resized */
+.draggable-toolbar {
+  min-height: 200px; /* Minimum height for usability */
+  max-height: none !important; /* Remove max-height to allow resizing */
+  overflow: visible; /* Allow resize handle to be visible */
+}
+
+/* Common Panel Footer - Full width with rounded bottom edges */
+.panel-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  border-top: 2px solid var(--color-primary-darker);
+  border-radius: 0 0 5px 5px; /* Slightly smaller to ensure full coverage with anti-aliasing */
+  padding: 10px 16px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 40px;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+  overflow: hidden; /* Clip background gradient to border-radius */
+
+  .footer-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-white);
+    font-weight: 500;
+    flex-wrap: wrap;
+
+    .stat-item,
+    .group-name,
+    .visible-count,
+    .selected-count,
+    .member-count {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      strong {
+        color: var(--text-white);
+        font-weight: 700;
+      }
+    }
+
+    .stat-separator {
+      color: rgba(255, 255, 255, 0.3);
+      margin: 0 4px;
+    }
+  }
+
+  // Dark mode - use dark gray gradient
+  .dark-mode & {
+    background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%);
+    border-top-color: #646464;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+
+    .footer-stats {
+      color: #ffffff;
+
+      .stat-item strong,
+      .group-name,
+      .visible-count strong,
+      .selected-count strong,
+      .member-count strong {
+        color: #ffffff;
+      }
+
+      .stat-separator {
+        color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+// Help Overlay Styles
+.help-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-in-out;
+
+  .help-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: var(--font-size-base);
+    transition: var(--transition-base);
+    z-index: 10001; // Ensure it's above the help content
+
+    &:hover {
+      background: rgba(255, 100, 100, 0.3);
+      border-color: rgba(255, 100, 100, 0.5);
+      color: #ffcccc;
+    }
+  }
+
+  .help-content {
+    background: rgba(30, 30, 30, 0.95);
+    color: #ffffff;
+    padding: var(--spacing-4);
+    border-radius: var(--radius-sm);
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    line-height: 1.6;
+    font-size: var(--font-size-sm);
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+    hyphens: auto;
+
+    p {
+      margin: 0;
+      color: #e0e0e0;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      white-space: normal;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #ffffff;
+      margin: 0 0 var(--spacing-2) 0;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: var(--font-size-xl);
+    }
+
+    h2 {
+      font-size: var(--font-size-lg);
+    }
+
+    h3 {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  // Dark mode version (lighter background)
+  .dark-mode & .help-content {
+    background: rgba(50, 50, 50, 0.95);
+
+    p {
+      color: #f0f0f0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #ffffff;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

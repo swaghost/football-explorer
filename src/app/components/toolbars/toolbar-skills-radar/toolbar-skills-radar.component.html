@@ -1,0 +1,101 @@
+<!-- Skills Radar Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="skills-radar-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <app-help-overlay [visible]="showHelpOverlay" [helpText]="toolbarHelp" (close)="onCloseHelp()">
+    </app-help-overlay>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Skill Levels Legend - Horizontal across top -->
+        <div class="skill-levels-legend" *ngIf="nodes.length > 0">
+            <h4>Skill Levels:</h4>
+            <div class="level-items-horizontal">
+                <div class="level-item">
+                    <div class="level-ring level-1"></div>
+                    <span>No Knowledge</span>
+                </div>
+                <div class="level-item">
+                    <div class="level-ring level-2"></div>
+                    <span>Introduced</span>
+                </div>
+                <div class="level-item">
+                    <div class="level-ring level-3"></div>
+                    <span>Working Knowledge</span>
+                </div>
+                <div class="level-item">
+                    <div class="level-ring level-4"></div>
+                    <span>Applied Knowledge</span>
+                </div>
+                <div class="level-item">
+                    <div class="level-ring level-5"></div>
+                    <span>Mastery</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Container - Full width -->
+        <div class="chart-container-full">
+            <div class="chart-wrapper">
+                <div #radarChart class="radar-chart"></div>
+            </div>
+        </div>
+
+        <!-- Data Types Controls - Horizontal at bottom -->
+        <div class="data-types-controls" *ngIf="nodes.length > 0">
+            <div class="controls-row">
+                <h4>Data Types:</h4>
+                <button class="reset-btn" (click)="resetRadarValues()"
+                    title="Reset all values to defaults (Perceived: 1, Desired: 3, Elite: 4)">
+                    🔄 Reset Values
+                </button>
+            </div>
+            <div class="data-type-items">
+                <div class="data-type-item" [class.active]="showPerceived" (click)="togglePerceived()"
+                    title="Click to toggle Perceived (Red)">
+                    <div class="shader-circle perceived" [class.inactive]="!showPerceived"></div>
+                    <span>Perceived (Red)</span>
+                </div>
+                <div class="data-type-item" [class.active]="showDesired" (click)="toggleDesired()"
+                    title="Click to toggle Desired (Blue)">
+                    <div class="shader-circle desired" [class.inactive]="!showDesired"></div>
+                    <span>Desired (Blue)</span>
+                </div>
+                <div class="data-type-item" [class.active]="showPro" (click)="togglePro()"
+                    title="Click to toggle Pro/Elite (Green)">
+                    <div class="shader-circle pro" [class.inactive]="!showPro"></div>
+                    <span>Pro/Elite (Green)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+<!-- Selected Nodes Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="selected-nodes-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <!-- Additional header buttons from child component (if any) -->
+            <ng-container *ngIf="hasAdditionalHeaderButtons()">
+                <ng-container *ngTemplateOutlet="additionalHeaderButtons"></ng-container>
+            </ng-container>
+            <!-- Standard header buttons -->
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <div class="header-buttons">
+            <button *ngIf="shouldShowApplyButton" class="apply-btn"
+                [class.create-lesson-btn]="!selectedLesson && hasUnsavedChanges" [class.has-changes]="hasUnsavedChanges"
+                (click)="onApplySelectionToLesson()" [disabled]="applyButtonDisabled" [title]="applyButtonTitle">
+                {{ applyButtonText }}
+                <span *ngIf="hasUnsavedChanges" class="unsaved-indicator">●</span>
+            </button>
+            <button class="clear-selection-btn small-btn" (click)="onClearNodeSelection()" title="Clear All Selections">
+                🗑️ Clear
+            </button>
+        </div>
+        <div *ngIf="hasUnsavedChanges && selectedNodes.length > 0" class="unsaved-changes-notice">
+            <span class="unsaved-text">⚠️ Unsaved changes</span>
+        </div>
+    </div>
+    <div class="selected-nodes-list" *ngIf="expanded">
+        <div *ngFor="let nodeId of selectedNodes; let i = index" class="common-list-item selected-node-item"
+            [class.current-selected]="nodeId === currentSelectedNode" [class.dragged]="isDraggedItem(i)"
+            [class.drop-target]="isDropTarget(i)" draggable="true" (dragstart)="onNodeDragStart($event, i)"
+            (dragover)="onDragOver($event, i)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event, i)"
+            (dragend)="onNodeDragEnd($event)">
+            <span class="drag-handle" title="Drag to reorder">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                    <rect x="1" y="2" width="2" height="2" rx="0.5" />
+                    <rect x="5" y="2" width="2" height="2" rx="0.5" />
+                    <rect x="9" y="2" width="2" height="2" rx="0.5" />
+                    <rect x="1" y="5" width="2" height="2" rx="0.5" />
+                    <rect x="5" y="5" width="2" height="2" rx="0.5" />
+                    <rect x="9" y="5" width="2" height="2" rx="0.5" />
+                    <rect x="1" y="8" width="2" height="2" rx="0.5" />
+                    <rect x="5" y="8" width="2" height="2" rx="0.5" />
+                    <rect x="9" y="8" width="2" height="2" rx="0.5" />
+                </svg>
+            </span>
+            <span class="common-list-item-title node-link" (click)="onNodeSelect(nodeId)"
+                title="Click to select/navigate to node">{{ nodeId }}</span>
+            <button class="remove-btn" (click)="onRemoveNodeFromSelection(nodeId)"
+                title="Remove from selection">✖️</button>
+        </div>
+        <div *ngIf="selectedNodes.length === 0 && selectedLesson" class="no-nodes-message">
+            <p>No nodes selected. Select nodes to update the lesson.</p>
+        </div>
+    </div>
+    <!-- Footer with node count -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="footer-stats">
+            <span class="stat-item">Total Nodes: <strong>{{ selectedNodes.length }}</strong></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,155 @@
+<div class="kaizen-board">
+    <!-- Trash Icon Area and Create Icon Area -->
+    <div class="board-actions">
+        <div class="create-area" (click)="openCreateDialog()" title="Create a new to-do item">
+            <div class="plus-icon">➕</div>
+            <p class="action-label">Create New</p>
+        </div>
+
+        <div class="trash-area" (dragover)="onDragOver($event)" (drop)="onDropTrash($event)" (click)="onTrashClick()"
+            title="Click to view recycle bin or drag to delete">
+            <div class="trash-icon">🗑️</div>
+            <p class="trash-label">Drag here to delete</p>
+        </div>
+    </div>
+
+    <div class="board-columns">
+        <div *ngFor="let column of columns" class="kaizen-column" [attr.data-column]="column.key">
+            <div class="column-header">
+                <h3>{{ column.title }}</h3>
+                <span class="item-count">({{ column.items.length }})</span>
+            </div>
+
+            <div class="column-content" (dragover)="onDragOver($event)" (drop)="onDrop($event, column)"
+                [class.drag-over]="false">
+                <div *ngFor="let item of column.items" class="to-do-card" draggable="true"
+                    (dragstart)="onDragStart($event, item, column)" (dragend)="onDragEnd($event)">
+                    <div class="card-header">
+                        <h4>{{ item.title }}</h4>
+                        <span class="priority-badge" [class]="'priority-' + item.priority">
+                            {{ item.priority }}
+                        </span>
+                    </div>
+
+                    <p class="card-description">{{ item.description }}</p>
+
+                    <div class="card-meta">
+                        <span class="target-type">{{ item.targetType }}</span>
+                        <span class="target">{{ item.target }}</span>
+                    </div>
+
+                    <div class="card-status">
+                        <span class="status-badge">{{ item.status }}</span>
+                    </div>
+
+                    <div *ngIf="item.comments && item.comments.length > 0" class="comments-section">
+                        <div class="comments-count">💬 {{ item.comments.length }}</div>
+                    </div>
+                </div>
+
+                <div *ngIf="column.items.length === 0" class="empty-column">
+                    <p>No items in this column</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drop Dialog -->
+    <div *ngIf="showDropDialog" class="modal-overlay" (click)="closedropDialog()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <h2>Move Item</h2>
+
+            <div class="dialog-body">
+                <div class="item-info">
+                    <p><strong>Item:</strong> {{ dropDialogData?.item.title }}</p>
+                    <p><strong>From:</strong> {{ dropDialogData?.sourceColumn.title }}</p>
+                    <p><strong>To:</strong> {{ dropDialogData?.targetColumn.title }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="target-status">Select Status:</label>
+                    <select id="target-status" [(ngModel)]="selectedTargetStatus" class="form-control">
+                        <option *ngFor="let status of getTargetStatusOptions()" [value]="status">
+                            {{ status }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Add Comment (optional):</label>
+                    <textarea id="comment" [(ngModel)]="commentText" class="form-control"
+                        placeholder="Add a comment about this move..." rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="dialog-actions">
+                <button class="btn-cancel" (click)="closedropDialog()">Cancel</button>
+                <button class="btn-confirm" (click)="confirmDrop()">Move Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Dialog -->
+    <div *ngIf="showCreateDialog" class="modal-overlay" (click)="closeCreateDialog()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <h2>Create New To-Do Item</h2>
+
+            <div class="dialog-body">
+                <div class="form-group">
+                    <label for="create-title">Title <span class="required">*</span>:</label>
+                    <input id="create-title" [(ngModel)]="newToDoForm.title" class="form-control" type="text"
+                        placeholder="Enter to-do title" />
+                </div>
+
+                <div class="form-group">
+                    <label for="create-description">Description:</label>
+                    <textarea id="create-description" [(ngModel)]="newToDoForm.description" class="form-control"
+                        placeholder="Enter description..." rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="create-priority">Priority:</label>
+                        <select id="create-priority" [(ngModel)]="newToDoForm.priority" class="form-control">
+                            <option *ngFor="let priority of getAllPriorities()" [value]="priority">
+                                {{ priority }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="create-target-type">Target Type:</label>
+                        <select id="create-target-type" [(ngModel)]="newToDoForm.targetType" class="form-control"
+                            (change)="newToDoForm.specificTargetType = getAvailableSpecificTargets()[0]">
+                            <option value="Development">Development</option>
+                            <option value="Architecting">Architecting</option>
+                            <option value="Teaching">Teaching</option>
+                            <option value="Exploration">Exploration</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="create-specific-target">Specific Target Type:</label>
+                    <select id="create-specific-target" [(ngModel)]="newToDoForm.specificTargetType"
+                        class="form-control">
+                        <option *ngFor="let target of getAvailableSpecificTargets()" [value]="target">
+                            {{ target }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="create-target">Target (e.g., Player Name, Team Name, Date):</label>
+                    <input id="create-target" [(ngModel)]="newToDoForm.target" class="form-control" type="text"
+                        placeholder="Enter target reference..." />
+                </div>
+            </div>
+
+            <div class="dialog-actions">
+                <button class="btn-cancel" (click)="closeCreateDialog()">Cancel</button>
+                <button class="btn-confirm" (click)="createToDoItem()">Create Item</button>
+            </div>
+        </div>
+    </div>
+</div>

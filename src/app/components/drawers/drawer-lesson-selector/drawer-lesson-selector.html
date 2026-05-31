@@ -1,0 +1,57 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Lesson Selector'" [drawerHelp]="drawerHelp" [width]="'500px'"
+    (close)="onClose()">
+    <!-- Main Content -->
+    <div class="drawer-body">
+        <!-- Selected Lesson Display -->
+        <div class="selected-lesson-info" [class.no-selection]="!selectedContextLesson">
+            <div class="lesson-card" *ngIf="selectedContextLesson">
+                <h3>{{ selectedContextLesson.LessonName }}</h3>
+                <p *ngIf="selectedContextLesson.LessonDesc">{{ selectedContextLesson.LessonDesc }}</p>
+            </div>
+            <div class="no-lesson-message" *ngIf="!selectedContextLesson">
+                <span class="icon">📚</span>
+                <span class="message">No lesson selected</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="drawer-actions">
+            <button type="button" class="btn btn-primary icon-button" (click)="onCreateLesson()"
+                title="Create Lesson from Selected Nodes">
+                ➕
+            </button>
+            <button type="button" class="btn btn-secondary icon-button" (click)="onEditLesson()"
+                [disabled]="!selectedContextLesson" title="Edit Selected Lesson">
+                ✏️
+            </button>
+            <button type="button" class="btn btn-success icon-button" (click)="onRunLesson()"
+                [disabled]="!selectedContextLesson" title="Run Selected Lesson">
+                ▶️
+            </button>
+            <button type="button" class="btn btn-info icon-button" (click)="onAutopilot()"
+                [disabled]="!selectedContextLesson"
+                [title]="autopilotRunning ? 'Stop Autopilot' : 'Run Lesson on Autopilot'">
+                {{ autopilotRunning ? '⏹️' : '🚗' }}
+            </button>
+            <button type="button" class="btn btn-danger icon-button" (click)="onDeleteLesson()"
+                [disabled]="!selectedContextLesson" title="Delete Selected Lesson">
+                🗑️
+            </button>
+            <button type="button" class="btn btn-success icon-button" (click)="onPromoteLesson()"
+                [disabled]="!selectedContextLesson" title="Promote Lesson Ownership Level">
+                ⬆️
+            </button>
+            <button type="button" class="btn btn-warning icon-button" (click)="onDemoteLesson()"
+                [disabled]="!selectedContextLesson" title="Demote Lesson Ownership Level">
+                ⬇️
+            </button>
+            <button type="button" class="btn btn-primary icon-button" (click)="onAssignLesson()"
+                [disabled]="!selectedContextLesson" title="Assign Lesson to Teams/Groups">
+                ⚡
+            </button>
+        </div>
+
+        <!-- D3 Tree Container -->
+        <div #treeContainer class="tree-container"></div>
+    </div>
+</app-base-sliding-drawer>

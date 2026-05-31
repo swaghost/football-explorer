@@ -1,0 +1,136 @@
+/* Confirmation Dialog Styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.dialog-container {
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  min-width: 400px;
+  max-width: 500px;
+  padding: 0;
+  animation: dialogSlideIn 0.2s ease-out;
+
+  .dark-mode & {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-dark);
+  }
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  border-bottom: 2px solid #0d47a1;
+  color: white;
+  padding: 16px 20px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  // Dark mode uses a darker blue gradient
+  .dark-mode & {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    border-bottom: 2px solid #0a3d62;
+    color: white;
+
+    h3 {
+      color: white !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+.dialog-content {
+  padding: var(--spacing-3) var(--spacing-4);
+
+  p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--text-secondary);
+  }
+}
+
+.dialog-actions {
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-4);
+  display: flex;
+  gap: var(--spacing-2);
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-light);
+
+  .dark-mode & {
+    border-top-color: var(--border-dark);
+  }
+
+  // Center single button when only one button is present
+  &:has(.btn:only-child) {
+    justify-content: center;
+  }
+
+  .btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid;
+
+    &.btn-primary {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+
+      &:hover {
+        background: var(--color-primary-dark);
+        border-color: var(--color-primary-dark);
+      }
+    }
+
+    &.btn-secondary {
+      background: transparent;
+      border-color: var(--border-light);
+      color: var(--text-secondary);
+
+      &:hover {
+        background: var(--bg-gray-50);
+        border-color: var(--border-gray);
+      }
+
+      .dark-mode & {
+        border-color: var(--border-dark);
+        color: var(--text-secondary);
+
+        &:hover {
+          background: var(--bg-gray-800);
+        }
+      }
+    }
+  }
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

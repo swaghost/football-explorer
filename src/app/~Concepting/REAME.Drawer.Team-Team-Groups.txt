@@ -1,0 +1,20 @@
+1. Create a "Teams" toolbar drawer that opens from the left, with a list of my accessible teams for the tenant.  It should have a drawer toggle toolbar next to tenant selection toggle.
+
+2. It should look similar to the Tenant Selection Drawer in that the Selected Team is at the top (or is says "No team selected").
+
+3. That said, the "Available Teams" section needs to be responsive to role/volume. If a person is a simple coach they might have a limited number (<=5) teams and they should show as a list like Available Organizations.   If they have more than 5 teams, they should show as a d3 tree organized by gender and then by age group and only those genders and age groups that have teams are visible. And if it's a lot of teams it should scroll as necessary.
+
+4. You can select a team by clicking on it, and unselect it by clicking it when it's selected.
+
+5. the action buttons from the Teams toolbar should be across the bottom (add, edit, delete) in a non-scrollable region.
+
+
+6. Create a "Team Groups" toolbar drawer that opens from the left,  and within it are the team groups for the selected team. 
+
+7.  It should have a drawer toggle toolbar next to team selection toggle.
+
+8. You can select a team group by clicking on it, and unselect it by clicking it when it's selected.
+
+9. the action buttons from the Team Groups section of the Teams toolbar should be across the bottom  non-scrollable region.
+
+Team Groups need the ability to specify the position abbreviations or positions numbers.

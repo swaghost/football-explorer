@@ -1,0 +1,135 @@
+<app-base-dialog [visible]="visible" [title]="'Create New Team'" [icon]="'👥'" [maxWidth]="'600px'" (close)="onClose()">
+    <form #createTeamForm="ngForm" (ngSubmit)="onSave()" id="createTeamForm">
+        <div class="form-group">
+            <label for="newTeamName">Team Name:</label>
+            <input type="text" id="newTeamName" name="newTeamName" [(ngModel)]="newTeamName"
+                placeholder="Enter team name" class="text-input" maxlength="50" required />
+        </div>
+
+        <!-- Organization Selection -->
+        <div class="form-group">
+            <label for="teamOrganization">Organization:</label>
+            <select id="teamOrganization" name="teamOrganization" [(ngModel)]="selectedTenantIdForNewTeam"
+                class="text-input" required>
+                <option [value]="null" disabled>Select Organization</option>
+                <option *ngFor="let org of organizations" [value]="org.TenantID">
+                    {{ org.TenantName }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Available Default Team Groups -->
+        <div class="form-group" *ngIf="availableDefaultTeamGroups.length > 0">
+            <label>Select Default Team Groups to Copy:</label>
+
+            <!-- Select All/Deselect All Button -->
+            <div class="select-all-container">
+                <button type="button" class="select-all-toggle-btn" (click)="onToggleSelectAllDefaultTeamGroups()">
+                    {{
+                    areAllDefaultTeamGroupsSelected
+                    ? 'Deselect All'
+                    : 'Select All'
+                    }}
+                </button>
+            </div>
+
+            <div class="default-groups-selection">
+                <div *ngFor="let group of availableDefaultTeamGroups" class="group-selection-item">
+                    <label class="checkbox-label">
+                        <input type="checkbox" [checked]="isDefaultTeamGroupSelected(group.TeamGroupID)" (change)="
+                    onToggleDefaultTeamGroupSelection(group.TeamGroupID)
+                  " />
+                        <span class="group-name">{{ group.TeamGroupName }}</span>
+                        <span class="ownership-badge" [class]="
+                    'ownership-' +
+                    group.OwnershipContext.Context.toLowerCase()
+                  ">
+                            {{ getOwnershipLabel(group.OwnershipContext) }}
+                        </span>
+                    </label>
+                    <div class="group-info" *ngIf="group.MatchingPositions.length > 0">
+                        <small>Positions:
+                            {{ group.MatchingPositions.join(', ') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Creation Section -->
+        <div class="form-group">
+            <label>Add Players to Team:</label>
+            <div class="players-creation-section">
+                <div class="player-input-row">
+                    <input type="text" placeholder="First Name" [(ngModel)]="newPlayerFirstName"
+                        class="player-name-input" name="newPlayerFirstName" />
+                    <input type="text" placeholder="Last Name" [(ngModel)]="newPlayerLastName" class="player-name-input"
+                        name="newPlayerLastName" />
+                    <select [(ngModel)]="newPlayerPosition" class="player-position-select" name="newPlayerPosition">
+                        <option value="">Select Position</option>
+                        <option value="GK">Goalkeeper</option>
+                        <option value="CB">Center Back</option>
+                        <option value="LB">Left Back</option>
+                        <option value="RB">Right Back</option>
+                        <option value="CDM">Defensive Midfielder</option>
+                        <option value="CM">Central Midfielder</option>
+                        <option value="CAM">Attacking Midfielder</option>
+                        <option value="LM">Left Midfielder</option>
+                        <option value="RM">Right Midfielder</option>
+                        <option value="LW">Left Winger</option>
+                        <option value="RW">Right Winger</option>
+                        <option value="CF">Center Forward</option>
+                        <option value="ST">Striker</option>
+                    </select>
+                    <input type="number" placeholder="Jersey #" [(ngModel)]="newPlayerJerseyNumber"
+                        class="jersey-number-input" min="1" max="99" name="newPlayerJerseyNumber" />
+                    <button type="button" class="add-player-btn" (click)="onAddPlayerToNewTeam()" [disabled]="
+                  !newPlayerFirstName ||
+                  !newPlayerLastName ||
+                  !newPlayerPosition ||
+                  !newPlayerJerseyNumber
+                ">
+                        ➕ Add
+                    </button>
+                </div>
+
+                <!-- Players List - This will be the scrollable section -->
+                <div class="new-team-players-list" *ngIf="newTeamPlayers.length > 0">
+                    <h4>Players ({{ newTeamPlayers.length }}):</h4>
+                    <div class="players-grid-container">
+                        <div class="players-grid">
+                            <div *ngFor="let player of newTeamPlayers; let i = index" class="player-card">
+                                <div class="player-info">
+                                    <span class="player-name">{{ player.FirstName }} {{ player.LastName
+                                        }}</span>
+                                    <span class="player-position">{{
+                                        player.PositionAbbrev
+                                        }}</span>
+                                    <span class="jersey-number">#{{ player.JerseyNumber }}</span>
+                                </div>
+                                <button type="button" class="remove-player-btn" (click)="onRemovePlayerFromNewTeam(i)"
+                                    title="Remove Player">
+                                    ✖
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-text">
+            Team will be created in the selected organization. Selected
+            default team groups will be copied as starting templates.
+        </div>
+    </form>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="dialog-button cancel-button" (click)="onClose()">
+            Cancel
+        </button>
+        <button type="submit" form="createTeamForm" class="dialog-button confirm-button"
+            [disabled]="!createTeamForm.form.valid || isCreatingTeam">
+            {{ isCreatingTeam ? 'Creating...' : 'Create Team' }}
+        </button>
+    </div>
+</app-base-dialog>

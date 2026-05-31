@@ -1,0 +1,1 @@
+create a new component in the examples folder which uses greensock (gsap) to make an svg soccer field with moveable players, and keyframe creation so I can save, run and rerun the animation sequence. 

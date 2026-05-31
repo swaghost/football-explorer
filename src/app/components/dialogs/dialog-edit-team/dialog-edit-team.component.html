@@ -1,0 +1,58 @@
+<app-base-dialog [visible]="visible" [title]="'Edit Team'" [icon]="'✏️'" [maxWidth]="'600px'" (close)="onCancel()">
+    <form #editTeamForm="ngForm" (ngSubmit)="onSave()" id="editTeamForm">
+
+        <!-- Team Name -->
+        <div class="form-group">
+            <label for="editTeamName">Team Name:</label>
+            <input type="text" id="editTeamName" name="editTeamName" [(ngModel)]="editTeamName"
+                (ngModelChange)="onTeamNameChange($event)" placeholder="Enter team name" class="text-input"
+                maxlength="50" required />
+        </div>
+
+        <!-- Organization Selection -->
+        <div class="form-group">
+            <label for="editTeamOrganization">Organization:</label>
+            <select id="editTeamOrganization" name="editTeamOrganization" [(ngModel)]="editTeamTenantId"
+                (change)="onTeamOrganizationChange($event)" class="text-input" required>
+                <option [value]="null" disabled>Select Organization</option>
+                <option *ngFor="let org of organizations" [value]="org.TenantID">
+                    {{ org.TenantName }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Gender Selection -->
+        <div class="form-group">
+            <label for="editTeamGender">Gender:</label>
+            <select id="editTeamGender" name="editTeamGender" [(ngModel)]="editTeamGenderId"
+                (change)="onTeamGenderChange($event)" class="text-input" required>
+                <option [value]="null" disabled>Select Gender</option>
+                <option *ngFor="let gender of genders" [value]="gender.GenderID">
+                    {{ gender.GenderName }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Age Group Selection -->
+        <div class="form-group">
+            <label for="editTeamAgeGroup">Age Group:</label>
+            <select id="editTeamAgeGroup" name="editTeamAgeGroup" [(ngModel)]="editTeamAgeGroupId"
+                (change)="onTeamAgeGroupChange($event)" class="text-input" required>
+                <option [value]="null" disabled>Select Age Group</option>
+                <option *ngFor="let ageGroup of ageGroups" [value]="ageGroup.AgeGroupID">
+                    {{ ageGroup.AgeGroupName }}
+                </option>
+            </select>
+        </div>
+
+    </form>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="dialog-button cancel-button" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="submit" form="editTeamForm" class="dialog-button confirm-button" [disabled]="!canSave()">
+            Save Changes
+        </button>
+    </div>
+</app-base-dialog>

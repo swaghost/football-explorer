@@ -1,0 +1,155 @@
+<!-- Player Edit Popup Modal -->
+<app-base-dialog [visible]="visible" [title]="'Edit Player Information'" [icon]="'✏️'" [maxWidth]="'700px'"
+    (close)="onClose()">
+    <div *ngIf="editingPlayer">
+        <form class="player-form" (ngSubmit)="onSave()" #playerForm="ngForm">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3>Basic Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" [(ngModel)]="editingPlayer.FirstName"
+                            required placeholder="Enter first name" maxlength="50" />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" [(ngModel)]="editingPlayer.LastName" required
+                            placeholder="Enter last name" maxlength="50" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jersey Number -->
+            <div class="form-section">
+                <h3>Jersey Number</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jerseyNumber">Jersey Number *</label>
+                        <input type="number" id="jerseyNumber" name="jerseyNumber"
+                            [(ngModel)]="editingPlayer.JerseyNumber" required min="0" max="99"
+                            placeholder="Enter jersey number" />
+                        <small class="form-hint">0 for Goalkeeper, 1-99 for field players</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Positions (Multiple Selection) -->
+            <div class="form-section">
+                <h3>Positions Player Can Play</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Select all positions this player can play:</label>
+                        <div class="checkbox-grid">
+                            <label *ngFor="let position of availablePositions; trackBy: trackByAbbreviation"
+                                class="checkbox-label">
+                                <input type="checkbox" [value]="position.abbreviation"
+                                    [checked]="editingPlayer?.PossiblePositionAbbreviations?.includes(position.abbreviation) || false"
+                                    (change)="onPositionCheckboxChange(position.abbreviation, $event)"
+                                    [id]="'position-' + position.abbreviation" />
+                                <span>{{ position.name }} <small>({{ position.abbreviation }})</small></span>
+                            </label>
+                        </div>
+                        <small class="form-hint"
+                            *ngIf="(editingPlayer?.PossiblePositionAbbreviations?.length || 0) === 0">
+                            Please select at least one position
+                        </small>
+                        <small class="form-hint"
+                            *ngIf="(editingPlayer?.PossiblePositionAbbreviations?.length || 0) > 0">
+                            {{ editingPlayer?.PossiblePositionAbbreviations?.length || 0 }} position{{
+                            (editingPlayer?.PossiblePositionAbbreviations?.length || 0) === 1 ? '' : 's' }} selected
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Position (Radio Selection) -->
+            <div class="form-section" *ngIf="(editingPlayer?.PossiblePositionAbbreviations?.length || 0) > 0">
+                <h3>Primary Position *</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Select primary position:</label>
+                        <div class="radio-grid">
+                            <label *ngFor="let abbrev of (editingPlayer?.PossiblePositionAbbreviations || [])"
+                                class="radio-label">
+                                <input type="radio" name="primaryPosition" [value]="abbrev"
+                                    [(ngModel)]="editingPlayer.PositionAbbrev" (change)="onPrimaryPositionChange()" />
+                                <span>{{ getPositionName(abbrev) }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-section">
+                <h3>Gender</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="genderName">Gender *</label>
+                        <select id="genderName" name="genderName" [(ngModel)]="editingPlayer.GenderName" required
+                            (change)="onGenderChange()">
+                            <option value="">Select Gender</option>
+                            <option *ngFor="let gender of availableGenders" [value]="gender.GenderName">
+                                {{ gender.GenderName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Age Group -->
+            <div class="form-section">
+                <h3>Age Group</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ageGroupName">Age Group *</label>
+                        <select id="ageGroupName" name="ageGroupName" [(ngModel)]="editingPlayer.AgeGroupName" required
+                            (change)="onAgeGroupChange()">
+                            <option value="">Select Age Group</option>
+                            <option *ngFor="let ageGroup of availableAgeGroups" [value]="ageGroup.AgeGroupName">
+                                {{ ageGroup.AgeGroupName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Groups (Multiple Selection) -->
+            <div class="form-section">
+                <h3>Team Groups</h3>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Select team groups this player belongs to:</label>
+                        <div class="checkbox-grid" *ngIf="availableTeamGroups.length > 0">
+                            <label *ngFor="let teamGroup of availableTeamGroups; trackBy: trackByTeamGroupId"
+                                class="checkbox-label">
+                                <input type="checkbox" [value]="teamGroup.TeamGroupID"
+                                    [checked]="selectedTeamGroupIds?.includes(teamGroup.TeamGroupID) || false"
+                                    (change)="onTeamGroupCheckboxChange(teamGroup.TeamGroupID, $event)"
+                                    [id]="'group-' + teamGroup.TeamGroupID" />
+                                <span>{{ teamGroup.TeamGroupName }}</span>
+                            </label>
+                        </div>
+                        <p *ngIf="availableTeamGroups.length === 0" class="no-groups-message">
+                            No team groups available. Create a team group first.
+                        </p>
+                        <small class="form-hint" *ngIf="availableTeamGroups.length > 0">
+                            {{ selectedTeamGroupIds.length }} group{{ selectedTeamGroupIds.length === 1 ? '' : 's' }}
+                            selected
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div slot="footer" class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="onClose()">
+            Cancel
+        </button>
+        <button type="submit" class="btn btn-save" [disabled]="!isFormValid()" (click)="onSave()">
+            Save Changes
+        </button>
+    </div>
+</app-base-dialog>

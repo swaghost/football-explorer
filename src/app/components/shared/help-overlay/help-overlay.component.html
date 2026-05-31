@@ -1,0 +1,7 @@
+<!-- Help Overlay Component -->
+<div class="help-overlay" *ngIf="visible" (click)="onOverlayClick()">
+    <button class="help-close" (click)="onCloseClick()" title="Close help">✖️</button>
+    <div class="help-content" (click)="onContentClick($event)">
+        <p [innerHTML]="helpText"></p>
+    </div>
+</div>

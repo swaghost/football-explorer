@@ -1,0 +1,213 @@
+<!-- Colorization Options Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="colorization-options-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Colorization Category & Strategy Selection -->
+        <div class="tool-section">
+            <h4>Colorization Category</h4>
+            <div class="control-group">
+                <select id="colorization-category" [(ngModel)]="colorizationCategory"
+                    (change)="onColorizationCategoryChange(colorizationCategory)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorizationCategoryOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Colorization Strategy Selection -->
+        <div class="tool-section">
+            <h4>Colorization Strategy</h4>
+            <div class="control-group">
+                <select id="colorization-strategy" [(ngModel)]="colorStrategy"
+                    (change)="onColorStrategyChange(colorStrategy)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of getFilteredColorStrategies()" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Color Target Selection -->
+        <div class="tool-section">
+            <h4>Color Target
+                <span *ngIf="isColorTargetLocked()" class="lock-indicator" title="Locked by strategy">🔒</span>
+            </h4>
+            <div class="control-group" *ngIf="!isColorTargetLocked()">
+                <select [(ngModel)]="colorTarget" (change)="onColorTargetChange(colorTarget)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorTargetOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+            <div class="control-group" *ngIf="isColorTargetLocked()"
+                style="padding: 8px; background: #f5f5f5; border-radius: 4px;">
+                <strong>{{ getColorTargetDisplay() }}</strong>
+                <span style="font-size: 11px; color: #666; margin-left: 8px;">(locked by strategy)</span>
+            </div>
+        </div>
+
+        <!-- Conditional color pickers side-by-side -->
+        <div style="display: flex; gap: 16px; align-items: flex-start;">
+
+        </div>
+
+        <!-- Strategy Details Section -->
+        <div class="tool-section strategy-details" *ngIf="currentStrategy">
+            <!-- Color Selection Mode -->
+            <div style="margin-bottom: 12px;">
+                <h5 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600;">Color Selection Mode:</h5>
+                <span class="strategy-value" style="display: block; padding-left: 0; font-size: 12px;">
+                    {{ currentStrategy.colorSelectionMode }}
+                </span>
+            </div>
+
+            <!-- User-Defined Color Selection (only show for User-Defined-Color mode) -->
+            <!-- For Branch/Selection strategy: Show Qualified & Unqualified colors on same line -->
+            <div *ngIf="currentStrategy.colorSelectionMode === 'User-Defined-Color' && currentStrategy.strategyId === 'branch-selection'"
+                style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                    <label for="qualified-color" style="display: block; margin-bottom: 4px;">Qualified Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="qualified-color" [value]="qualifiedColor"
+                            (change)="onQualifiedColorChange($event)" class="color-picker"
+                            [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                        <span style="font-size: 11px; color: #666;">
+                            {{ qualifiedColor }}
+                        </span>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <label for="unqualified-color" style="display: block; margin-bottom: 4px;">Unqualified
+                        Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="unqualified-color" [value]="unqualifiedColor"
+                            (change)="onUnqualifiedColorChange($event)" class="color-picker"
+                            [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                        <span style="font-size: 11px; color: #666;">
+                            {{ unqualifiedColor }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For other strategies: Show default color -->
+            <div class="control-group"
+                *ngIf="currentStrategy.colorSelectionMode === 'User-Defined-Color' && currentStrategy.strategyId !== 'branch-selection'">
+                <label for="strategy-default-color">Default Color:</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="color" id="strategy-default-color" [value]="currentStrategy.defaultColor || '#0000FF'"
+                        (change)="onStrategyDefaultColorChange($event)" class="color-picker"
+                        [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                    <span style="font-size: 11px; color: #666;">
+                        {{ currentStrategy.defaultColor || '#0000FF' }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Color Uniformity -->
+            <div class="control-group">
+                <label for="color-uniformity">Color Uniformity:</label>
+                <!-- Locked (Display as text) -->
+                <span *ngIf="isColorUniformityLocked()" class="strategy-locked">
+                    🔒 {{ getColorUniformityDisplay() }}
+                </span>
+                <!-- Unlocked (Display as dropdown) -->
+                <select *ngIf="!isColorUniformityLocked()" id="color-uniformity" [(ngModel)]="colorUniformity"
+                    (change)="onColorUniformityChange(colorUniformity)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorUniformityOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Color Gradient Directionality (only show if Gradient is selected) -->
+            <div class="control-group" *ngIf="colorUniformity === 'Gradient'">
+                <label for="color-gradient-directionality">Gradient Direction:</label>
+                <!-- Locked (Display as text) -->
+                <span *ngIf="isColorGradientDirectionalityLocked()" class="strategy-locked">
+                    🔒 {{ getColorGradientDirectionalityDisplay() }}
+                </span>
+                <!-- Unlocked (Display as dropdown) -->
+                <select *ngIf="!isColorGradientDirectionalityLocked()" id="color-gradient-directionality"
+                    [(ngModel)]="colorGradientDirectionality"
+                    (change)="onColorGradientDirectionalityChange(colorGradientDirectionality)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorGradientDirectionalityOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Selected Branch (only show for branch-selection strategy) -->
+            <div class="control-group"
+                *ngIf="currentStrategy.strategyId === 'branch-selection' && availableBranches.length > 0">
+                <label for="selected-branch">Selected Branch:</label>
+                <select id="selected-branch" [(ngModel)]="selectedBranchIndex"
+                    (change)="onSelectedBranchIndexChange(selectedBranchIndex)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let branch of availableBranches; let i = index" [value]="i">
+                        {{ branch }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Node Opacity Controls -->
+        <!-- (Moved to Text Style Toolbar) -->
+
+        <!-- Apply Colorization Button -->
+        <div class="tool-section">
+            <button class="action-button primary" (click)="onApplyColorization()"
+                style="width: 100%; padding: 10px; font-weight: 600;">
+                ✨ Apply Colorization
+            </button>
+        </div>
+
+        <!-- If color target is 'both', don't show any color picker options -->
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

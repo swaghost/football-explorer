@@ -1,0 +1,504 @@
+/**
+ * D3UIV6 Component-Specific Styles
+ * This file contains only styles specific to the D3 visualization
+ * Shared styles are loaded globally from styles.scss
+ */
+
+// D3 SVG specific styles
+svg {
+  width: 100%;
+  height: 100%;
+  border: none;
+  overflow: visible;
+  background: transparent;
+}
+
+// Node and link styling for D3 tree
+.node {
+  cursor: pointer;
+
+  circle {
+    stroke-width: 2px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      stroke-width: 3px;
+      filter: brightness(1.1);
+    }
+  }
+
+  text {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-anchor: middle;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.link {
+  fill: none;
+  stroke: var(--color-gray-400);
+  stroke-width: 2px;
+  stroke-opacity: 0.6;
+  transition: all 0.3s ease;
+
+  &.selected {
+    stroke: var(--color-primary);
+    stroke-width: 3px;
+    stroke-opacity: 1;
+  }
+
+  .dark-mode & {
+    stroke: var(--color-gray-500);
+  }
+}
+
+// Zoom and pan controls
+.zoom-controls {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  z-index: var(--z-overlay);
+
+  button {
+    // Use shared button styles that are loaded globally
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-light);
+    backdrop-filter: var(--backdrop-blur-sm);
+
+    // Include base button properties directly
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2);
+    border-radius: var(--radius-base);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-base);
+    user-select: none;
+
+    // Icon button specific
+    width: 40px;
+    height: 40px;
+    padding: var(--spacing-2);
+
+    &:hover {
+      background: var(--bg-white);
+    }
+
+    .dark-mode & {
+      background: rgba(45, 45, 45, 0.9);
+      border-color: var(--border-dark);
+      color: var(--text-white);
+
+      &:hover {
+        background: var(--bg-white);
+      }
+    }
+  }
+}
+
+// Breadcrumb navigation specific to D3 - HIGH SPECIFICITY OVERRIDE
+.static-bottom-toolbar .bottom-toolbar-left .breadcrumb-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  background-color: #8bb5e8 !important; /* Lighter blue than toolbar - force override */
+  padding: 4px 8px !important; /* More visible padding */
+  border-radius: 6px !important;
+  margin-right: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important; /* Add shadow for visibility */
+  position: relative !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  min-height: 24px !important; /* Ensure visible height */
+  z-index: 9999 !important; /* Force above everything */
+}
+
+.static-bottom-toolbar .bottom-toolbar-left .breadcrumb-content {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  overflow: hidden !important;
+  gap: 0 !important;
+}
+
+.static-bottom-toolbar .bottom-toolbar-left .breadcrumb-item {
+  font-size: 12px !important;
+  color: white !important; /* White text - force override */
+  white-space: nowrap !important;
+  padding: 2px 4px !important;
+  border-radius: 3px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  display: inline !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5) !important; /* Add text shadow for contrast */
+
+  &:hover {
+    background: rgba(
+      255,
+      255,
+      255,
+      0.2
+    ) !important; /* White highlight on hover */
+    color: white !important;
+  }
+}
+
+.static-bottom-toolbar .bottom-toolbar-left .breadcrumb-separator {
+  color: white !important; /* White separators - force override */
+  margin: 0 4px !important;
+  font-size: 12px !important;
+  opacity: 0.8 !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5) !important; /* Add text shadow for contrast */
+}
+
+// Additional fallback rules with even higher specificity
+:host .static-bottom-toolbar .bottom-toolbar-left .breadcrumb-container {
+  background-color: #8bb5e8 !important;
+}
+
+:host .static-bottom-toolbar .bottom-toolbar-left .breadcrumb-item {
+  color: white !important;
+}
+
+:host .static-bottom-toolbar .bottom-toolbar-left .breadcrumb-separator {
+  color: white !important;
+}
+
+// Lasso selection styles
+.lasso {
+  stroke: var(--color-primary);
+  stroke-width: 2px;
+  stroke-dasharray: 5, 5;
+  fill: rgba(33, 150, 243, 0.1);
+  opacity: 0.8;
+}
+
+// Selection highlight styles
+.selection-highlight {
+  stroke: var(--color-secondary);
+  stroke-width: 3px;
+  fill: none;
+  stroke-dasharray: 3, 3;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -6;
+  }
+}
+
+// Tree layout specific styles
+.tree-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+// Minimap styles
+.minimap {
+  position: absolute;
+  bottom: var(--spacing-4);
+  right: var(--spacing-4);
+  width: 200px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-base);
+  backdrop-filter: var(--backdrop-blur-sm);
+  z-index: var(--z-overlay);
+
+  .dark-mode & {
+    background: rgba(45, 45, 45, 0.9);
+    border-color: var(--border-dark);
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .viewport-indicator {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 1px;
+    opacity: 0.7;
+  }
+}
+
+// Drawing tools specific styles
+.drawing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: var(--z-raised);
+
+  &.drawing-active {
+    pointer-events: all;
+  }
+
+  .drawing-path {
+    stroke: var(--color-secondary);
+    stroke-width: 3px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.8;
+  }
+}
+
+// Rotation control specific styles
+.rotation-control {
+  .rotation-wheel {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-round);
+    backdrop-filter: var(--backdrop-blur-base);
+
+    .dark-mode & {
+      background: rgba(45, 45, 45, 0.95);
+      border-color: var(--border-dark);
+    }
+  }
+
+  .rotation-indicator {
+    fill: var(--color-primary);
+    stroke: var(--text-white);
+    stroke-width: 1px;
+  }
+}
+
+// Viewport info specific styles
+.viewport-info {
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-2);
+
+    .info-item {
+      background: var(--color-gray-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-2);
+
+      .dark-mode & {
+        background: var(--color-gray-700);
+        border-color: var(--border-dark);
+      }
+
+      .info-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        margin-bottom: var(--spacing-1);
+      }
+
+      .info-value {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+        font-family: var(--font-family-mono);
+      }
+    }
+  }
+}
+
+// Skills radar specific styles
+.skills-radar {
+  .radar-chart {
+    .radar-grid {
+      stroke: var(--color-gray-300);
+      stroke-width: 1px;
+      fill: none;
+
+      .dark-mode & {
+        stroke: var(--color-gray-600);
+      }
+    }
+
+    .radar-axis {
+      stroke: var(--color-gray-400);
+      stroke-width: 1px;
+
+      .dark-mode & {
+        stroke: var(--color-gray-500);
+      }
+    }
+
+    .radar-area {
+      fill-opacity: 0.3;
+      stroke-width: 2px;
+
+      &.current-level {
+        fill: var(--color-primary);
+        stroke: var(--color-primary);
+      }
+
+      &.desired-level {
+        fill: var(--color-success);
+        stroke: var(--color-success);
+      }
+
+      &.pro-level {
+        fill: var(--color-warning);
+        stroke: var(--color-warning);
+      }
+    }
+
+    .radar-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      fill: var(--text-primary);
+      text-anchor: middle;
+    }
+  }
+}
+
+// Search component specific styles
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-base);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-md);
+
+  .dark-mode & {
+    background: var(--bg-white);
+    border-color: var(--border-dark);
+  }
+
+  .search-result-item {
+    padding: var(--spacing-2) var(--spacing-3);
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover {
+      background: var(--color-gray-50);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .dark-mode & {
+      border-bottom-color: var(--border-dark);
+
+      &:hover {
+        background: var(--color-gray-700);
+      }
+    }
+
+    .result-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-1);
+    }
+
+    .result-path {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      font-family: var(--font-family-mono);
+    }
+  }
+}
+
+// Component-specific collapsed states
+.collapsed {
+  .panel-content {
+    display: none;
+  }
+}
+
+// Animation utilities for D3 transitions
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Responsive design for mobile
+@media (max-width: 768px) {
+  .draggable-toolbar {
+    width: calc(100vw - var(--spacing-4));
+    max-width: 300px;
+
+    &.compact {
+      width: calc(100vw - var(--spacing-4));
+      max-width: 250px;
+    }
+  }
+
+  .zoom-controls {
+    right: var(--spacing-2);
+    top: var(--spacing-2);
+  }
+
+  // Mobile breadcrumb adjustments - DO NOT override our main styles
+  .static-bottom-toolbar .bottom-toolbar-left .breadcrumb-container {
+    margin-right: var(--spacing-1) !important; /* Smaller margin on mobile */
+    padding: 2px 6px !important; /* Slightly smaller padding on mobile */
+  }
+
+  .minimap {
+    width: 150px;
+    height: 100px;
+    right: var(--spacing-2);
+    bottom: var(--spacing-2);
+  }
+}

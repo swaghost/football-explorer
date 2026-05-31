@@ -1,0 +1,120 @@
+<!-- Explorer Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" class="explorer-panel"
+    [attr.data-toolbar-type]="toolbarId" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>{{ toolbarIcon }} {{ toolbarTitle }}</h3>
+        <div class="header-actions">
+            <!-- Additional header buttons from child component (if any) -->
+            <ng-container *ngIf="hasAdditionalHeaderButtons()">
+                <ng-container *ngTemplateOutlet="additionalHeaderButtons"></ng-container>
+            </ng-container>
+            <!-- Standard header buttons -->
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">❓</button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">✖️</button>
+        </div>
+    </div>
+
+    <!-- Template for additional header buttons -->
+    <ng-template #additionalHeaderButtons>
+        <button class="favorites-toggle header-btn" (click)="showFavoritesManager = true"
+            title="Manage favorites and bookmarks">
+            ⭐
+        </button>
+    </ng-template>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <h4>{{ toolbarIcon }} {{ toolbarTitle }}</h4>
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Toolbar Actions -->
+        <div class="toolbar-actions">
+            <button class="action-btn manage-favorites-btn" (click)="showFavoritesManager = true"
+                title="Manage favorites and bookmarks">
+                <span class="btn-icon">⭐</span>
+                <span class="btn-text">Manage Favorites</span>
+            </button>
+        </div>
+
+        <!-- Shared Node Display -->
+        <app-shared-node-display [selectedNodeId]="selectedNodeId$ | async">
+        </app-shared-node-display>
+
+        <!-- Explorer Actions -->
+        <div class="explorer-actions" *ngIf="selectedNodeId$ | async as nodeId">
+            <!-- System Dataset Actions -->
+            <div class="system-actions" *ngIf="isSystemDataset$ | async">
+                <div class="favorites-section">
+                    <div class="section-header">
+                        <h4>Add to Favorites</h4>
+                    </div>
+                    <div class="favorites-buttons">
+                        <button class="action-btn star-btn" [class.active]="isFavorite$ | async"
+                            (click)="toggleFavorite(nodeId, 'Movements')" title="Add to Movements favorites">
+                            <span class="btn-icon">⭐</span>
+                            <span class="btn-text">Movements</span>
+                        </button>
+                        <button class="action-btn star-btn" [class.active]="isFavorite$ | async"
+                            (click)="toggleFavorite(nodeId, 'Match Skills')" title="Add to Match Skills favorites">
+                            <span class="btn-icon">⭐</span>
+                            <span class="btn-text">Match Skills</span>
+                        </button>
+                        <button class="action-btn star-btn" [class.active]="isFavorite$ | async"
+                            (click)="toggleFavorite(nodeId, 'Technique')" title="Add to Technique favorites">
+                            <span class="btn-icon">⭐</span>
+                            <span class="btn-text">Technique</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bookmark-section">
+                    <button class="action-btn bookmark-btn" [class.active]="isBookmarked$ | async"
+                        (click)="toggleBookmark(nodeId)" title="Toggle bookmark to pick up where you left off">
+                        <span class="btn-icon">🔖</span>
+                        <span class="btn-text">{{
+                            (isBookmarked$ | async) ? 'Remove Bookmark' : 'Add Bookmark'
+                            }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Regular Explorer Actions -->
+            <div class="regular-actions">
+                <button class="action-btn completed-btn" (click)="markAsCompleted(nodeId)"
+                    title="Mark this node as completed">
+                    <span class="btn-icon">✓</span>
+                    <span class="btn-text">Mark Completed</span>
+                </button>
+
+                <button class="action-btn review-btn" (click)="markAsNeedsReview(nodeId)"
+                    title="Mark this node as needing review">
+                    <span class="btn-icon">👁</span>
+                    <span class="btn-text">Mark as Needs Review</span>
+                </button>
+            </div>
+
+            <div class="node-status">
+                <div class="status-item">
+                    <span class="status-icon">📋</span>
+                    <span class="status-text">Node ID: {{ nodeId }}</span>
+                </div>
+                <div class="status-item" *ngIf="isSystemDataset$ | async">
+                    <span class="status-icon">🌐</span>
+                    <span class="status-text">System Dataset</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Favorites Manager Dialog -->
+<app-dialog-favorites-manager [visible]="showFavoritesManager" (close)="showFavoritesManager = false"
+    (navigate)="onNavigateToNode($event)"></app-dialog-favorites-manager>

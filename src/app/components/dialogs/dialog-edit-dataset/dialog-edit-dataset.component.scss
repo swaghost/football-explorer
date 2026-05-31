@@ -1,0 +1,270 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(2px);
+}
+
+.edit-dataset-dialog {
+  background: white;
+  border-radius: 12px;
+  width: 90vw;
+  max-width: 500px;
+  max-height: 80vh;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  border-bottom: 2px solid #0d47a1;
+  color: #ffffff;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  .dark-mode & {
+    background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%);
+    border-bottom-color: #646464;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::before {
+      content: "📝";
+      font-size: 16px;
+    }
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: #ffffff;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.dialog-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .text-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #2196f3;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    &.error {
+      border-color: #f44336;
+      box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  .textarea-input {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.4;
+  }
+
+  .validation-message {
+    margin-top: 4px;
+    color: #f44336;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .character-count {
+    margin-top: 4px;
+    color: #666;
+    font-size: 12px;
+    text-align: right;
+  }
+}
+
+.ownership-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.ownership-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.system {
+    background: #e8f5e8;
+    color: #2e7d32;
+  }
+
+  &.organization {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  &.team {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+
+  &.personal {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+}
+
+.ownership-details {
+  font-size: 12px;
+  color: #666;
+  font-family: monospace;
+}
+
+.dialog-actions {
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  border-top: 1px solid #eee;
+  background: #f9f9f9;
+
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-secondary {
+      background: #6c757d;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #5a6268;
+      }
+    }
+
+    &.btn-primary {
+      background: #2196f3;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #1976d2;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+      }
+    }
+  }
+}
+
+// Dark mode support
+.dark-mode {
+  .edit-dataset-dialog {
+    background: #2d3748;
+    color: #f7fafc;
+  }
+
+  .dialog-content {
+    .form-group {
+      label {
+        color: #f7fafc;
+      }
+
+      .text-input {
+        background: #4a5568;
+        border-color: #718096;
+        color: #f7fafc;
+
+        &:focus {
+          border-color: #63b3ed;
+          box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        &.error {
+          border-color: #fc8181;
+          box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.1);
+        }
+
+        &::placeholder {
+          color: #a0aec0;
+        }
+      }
+
+      .character-count {
+        color: #a0aec0;
+      }
+    }
+  }
+
+  .ownership-details {
+    color: #a0aec0;
+  }
+
+  .dialog-actions {
+    background: #4a5568;
+    border-top-color: #718096;
+  }
+}

@@ -1,0 +1,417 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 2px solid #0d47a1;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  border-radius: 8px 8px 0 0;
+
+  .dark-mode & {
+    background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%);
+    border-bottom-color: #646464;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::before {
+      content: "🔗";
+      font-size: 16px;
+    }
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: #ffffff;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+.dialog-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-section {
+  margin-bottom: 24px;
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  .form-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+  }
+}
+
+.help-text {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.datasets-selection {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.dataset-option {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #f8f9fa;
+  }
+
+  &.selected {
+    background: #e3f2fd;
+    border-color: #2196f3;
+  }
+}
+
+.dataset-checkbox {
+  margin-right: 12px;
+  margin-top: 2px;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+}
+
+.dataset-info {
+  flex: 1;
+
+  .dataset-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .dataset-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .dataset-description {
+    color: #666;
+    font-style: italic;
+  }
+
+  .ownership-badge {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 11px;
+
+    &.system {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    &.organization {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+
+    &.team {
+      background: #e8f5e8;
+      color: #388e3c;
+    }
+  }
+
+  .flow-id {
+    color: #999;
+    font-family: monospace;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #666;
+  font-style: italic;
+}
+
+.selection-summary {
+  text-align: center;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 13px;
+
+  .warning-text {
+    color: #dc3545;
+    font-weight: 500;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.btn-primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+
+    &:hover:not(:disabled) {
+      background: #0056b3;
+      border-color: #0056b3;
+    }
+
+    &:disabled {
+      background: #6c757d;
+      border-color: #6c757d;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border-color: #6c757d;
+
+    &:hover {
+      background: #545b62;
+      border-color: #545b62;
+    }
+  }
+}
+
+// Dark mode styles
+.dark-mode {
+  .dialog-container {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  .dialog-header {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    border-bottom: 2px solid #0a3d62;
+
+    h3 {
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-button {
+      color: #ffffff;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+
+  .form-section h4 {
+    color: #e0e0e0;
+    border-bottom-color: #555;
+  }
+
+  .form-group {
+    label {
+      color: #ccc;
+    }
+
+    .form-control {
+      background: #3a3a3a;
+      border-color: #555;
+      color: #e0e0e0;
+
+      &:focus {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.25);
+      }
+    }
+
+    .form-text {
+      color: #999;
+    }
+  }
+
+  .help-text {
+    color: #999;
+  }
+
+  .datasets-selection {
+    border-color: #555;
+    background: #3a3a3a;
+  }
+
+  .dataset-option {
+    border-bottom-color: #555;
+
+    &:hover {
+      background: #4a4a4a;
+    }
+
+    &.selected {
+      background: #1e3a5f;
+      border-color: #64b5f6;
+    }
+  }
+
+  .dataset-info {
+    .dataset-name {
+      color: #e0e0e0;
+    }
+
+    .dataset-description {
+      color: #bbb;
+    }
+
+    .ownership-badge {
+      &.system {
+        background: #1e3a5f;
+        color: #64b5f6;
+      }
+
+      &.organization {
+        background: #4a1e4a;
+        color: #ce93d8;
+      }
+
+      &.team {
+        background: #1e4a1e;
+        color: #81c784;
+      }
+    }
+
+    .flow-id {
+      color: #888;
+    }
+  }
+
+  .empty-state {
+    color: #999;
+  }
+
+  .selection-summary {
+    background: #3a3a3a;
+    color: #e0e0e0;
+  }
+
+  .dialog-actions {
+    background: #2d2d2d;
+    border-top-color: #404040;
+  }
+
+  .btn.btn-primary {
+    background: #0d47a1;
+    border-color: #0d47a1;
+
+    &:hover:not(:disabled) {
+      background: #1565c0;
+      border-color: #1565c0;
+    }
+  }
+}

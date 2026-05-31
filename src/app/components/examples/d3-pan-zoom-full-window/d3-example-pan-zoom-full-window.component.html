@@ -1,0 +1,105 @@
+<!-- Full Window D3 Component -->
+<div class="full-window-container">
+
+    <!-- Control Panel (Top) -->
+    <div class="control-panel">
+        <div class="control-row">
+            <label>H Pan:</label>
+            <input type="range" [min]="panXMin" [max]="panXMax" step="1" [value]="panX"
+                (input)="updatePan($event, 'x')">
+            <span>{{ panX | number:'1.0-0' }}px</span>
+        </div>
+
+        <div class="control-row">
+            <label>Zoom:</label>
+            <input type="range" min="0.5" max="5" step="0.1" [value]="zoomLevel" (input)="updateZoom($event)">
+            <span>{{ zoomLevel | number:'1.2-2' }}x</span>
+        </div>
+
+        <div class="control-row">
+            <label>Rotate:</label>
+            <input type="range" min="-180" max="180" step="1" [value]="rotationAngle" (input)="updateRotation($event)"
+                list="rotation-ticks">
+            <span>{{ rotationAngle }}°</span>
+        </div>
+
+        <div class="control-row">
+            <label>Nodes:</label>
+            <input type="range" min="1" max="2000" step="1" [value]="nodeCount" (input)="updateNodeCount($event)"
+                list="node-ticks">
+            <span>{{ nodeCount }}</span>
+        </div>
+    </div>
+
+    <!-- Main content area (Full Window SVG) -->
+    <div class="main-content">
+        <!-- SVG container -->
+        <div class="svg-container">
+            <svg #svg [attr.width]="width" [attr.height]="height"></svg>
+            <ng-container *ngIf="tooltip.visible">
+                <div class="tooltip" [style.left.px]="tooltip.x + 10" [style.top.px]="tooltip.y - 10">
+                    {{ tooltip.text }}
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- Vertical pan slider (fixed position on right) -->
+        <div class="vertical-control">
+            <label>V Pan</label>
+            <input type="range" [min]="panYMin" [max]="panYMax" step="1" [value]="panY" (input)="updatePan($event, 'y')"
+                class="vertical-slider">
+            <span>{{ panY | number:'1.0-0' }}px</span>
+        </div>
+    </div>
+
+    <!-- Info panel (Bottom) -->
+    <div class="info-panel">
+        <div class="instructions">
+            <b>Instructions:</b> Scroll to zoom, click a circle to zoom to it, double-click background to reset.
+        </div>
+        <div *ngIf="selectedNode" class="selected-node">
+            <b>Selected Node:</b> {{ selectedNode }}
+        </div>
+        <div class="zoom-info">
+            <b>Window:</b> {{ width }}×{{ height }} | <b>Zoom:</b> {{ zoomLevel | number:'1.2-2' }}x
+        </div>
+    </div>
+
+</div>
+
+<!-- Datalists for slider ticks -->
+<datalist id="node-ticks">
+    <option value="1"></option>
+    <option value="100"></option>
+    <option value="200"></option>
+    <option value="300"></option>
+    <option value="400"></option>
+    <option value="500"></option>
+    <option value="600"></option>
+    <option value="700"></option>
+    <option value="800"></option>
+    <option value="900"></option>
+    <option value="1000"></option>
+    <option value="1100"></option>
+    <option value="1200"></option>
+    <option value="1300"></option>
+    <option value="1400"></option>
+    <option value="1500"></option>
+    <option value="1600"></option>
+    <option value="1700"></option>
+    <option value="1800"></option>
+    <option value="1900"></option>
+    <option value="2000"></option>
+</datalist>
+
+<datalist id="rotation-ticks">
+    <option value="-180"></option>
+    <option value="-135"></option>
+    <option value="-90"></option>
+    <option value="-45"></option>
+    <option value="0"></option>
+    <option value="45"></option>
+    <option value="90"></option>
+    <option value="135"></option>
+    <option value="180"></option>
+</datalist>

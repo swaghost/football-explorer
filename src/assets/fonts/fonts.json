@@ -1,0 +1,412 @@
+{
+  "customFonts": [
+    {
+      "id": "arial",
+      "name": "Arial",
+      "family": "Arial",
+      "path": "assets/fonts/STANDARD/ARIAL.TTF",
+      "displayName": "Arial",
+      "fallback": "sans-serif",
+      "folder": "Standard"
+    },
+    {
+      "id": "times-new-roman",
+      "name": "Times New Roman",
+      "family": "Times",
+      "path": "assets/fonts/STANDARD/times.ttf",
+      "displayName": "Times New Roman",
+      "fallback": "sans-serif",
+      "folder": "Standard"
+    },
+    {
+      "id": "courier-new-regular",
+      "name": "Courier New Regular",
+      "family": "Courier",
+      "path": "assets/fonts/STANDARD/Courier_New_Regular.ttf",
+      "displayName": "Courier New Regular",
+      "fallback": "sans-serif",
+      "folder": "Standard"
+    },
+    {
+      "id": "bttf",
+      "name": "Back to the Future",
+      "family": "BTTF",
+      "path": "assets/fonts/SCI-FI/Back-To-The-Future.ttf",
+      "displayName": "Back to the Future",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "battlestar-galatica",
+      "name": "Battlestar Galatica",
+      "family": "Battlestar-Galatica",
+      "path": "assets/fonts/SCI-FI/Battlestar-Galatica.TTF",
+      "displayName": "Battlestar Galatica",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "federation-classic",
+      "name": "Federation Classic",
+      "family": "Federation-Classic",
+      "path": "assets/fonts/SCI-FI/Federation_Classic.ttf",
+      "displayName": "Federation (Classic)",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "federation-regular",
+      "name": "Federation Regular",
+      "family": "Federation-Regular",
+      "path": "assets/fonts/SCI-FI/Federation_Regular.ttf",
+      "displayName": "Federation (Regular)",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "space-1999",
+      "name": "Space 1999 Regular",
+      "family": "'Space1999Regular'",
+      "path": "assets/fonts/SCI-FI/Space1999Regular Regular.ttf",
+      "displayName": "Space 1999",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "tet-v2",
+      "name": "TET v2",
+      "family": "TET-V2",
+      "path": "assets/fonts/SCI-FI/tet_2.ttf",
+      "displayName": "TET v2",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "tron",
+      "name": "TRON",
+      "family": "TRON",
+      "path": "assets/fonts/SCI-FI/TRON.TTF",
+      "displayName": "TRON",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "adventure",
+      "name": "Adventure",
+      "family": "Adventure",
+      "path": "assets/fonts/SCI-FI/Adventure.otf",
+      "displayName": "Adventure",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "adventure-hollow",
+      "name": "Adventure Hollow",
+      "family": "'Adventure Hollow'",
+      "path": "assets/fonts/SCI-FI/Adventure Hollow.otf",
+      "displayName": "Adventure Hollow",
+      "fallback": "sans-serif",
+      "folder": "Sci-Fi"
+    },
+    {
+      "id": "eurostile-normal",
+      "name": "Eurostile",
+      "family": "Eurostile-Normal",
+      "path": "assets/fonts/SPORTING/eurostile.ttf",
+      "displayName": "Eurostile Normal",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "eurostile-bold",
+      "name": "Eurostile Bold",
+      "family": "Eurostile-Bold",
+      "path": "assets/fonts/SPORTING/Eurostile-LT-Std-Demi-Oblique_16309.ttf",
+      "displayName": "Eurostile (Bold Oblique)",
+      "fallback": "sans-serif",
+      "weight": "bold",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "eurostile-oblique",
+      "name": "Eurostile Oblique",
+      "family": "Eurostile-Oblique",
+      "path": "assets/fonts/SPORTING/Eurostile-LT-Std-Oblique_16312.ttf",
+      "displayName": "Eurostile (Oblique)",
+      "fallback": "sans-serif",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "klops-display",
+      "name": "Klops Display",
+      "family": "Klops-Display",
+      "path": "assets/fonts/SPORTING/klop.s-d-personal.ttf",
+      "displayName": "Klops Display",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "klops-free",
+      "name": "Klops Free",
+      "family": "Klops-Free",
+      "path": "assets/fonts/SPORTING/klop.s-free.otf",
+      "displayName": "Klops Free",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "klops-regular",
+      "name": "Klops Regular",
+      "family": "Klops-Regular",
+      "path": "assets/fonts/SPORTING/klop.s-regular-personal.ttf",
+      "displayName": "Klops Regular",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "porsche",
+      "name": "Porsche Regular",
+      "family": "Porsche",
+      "path": "assets/fonts/SPORTING/Porsche Regular.ttf",
+      "displayName": "Porsche",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "blaugrana-personal-use",
+      "name": "Blaugrana Personal Use",
+      "family": "Blaugrana",
+      "path": "assets/fonts/SPORTING/Blaugrana Personal Use.ttf",
+      "displayName": "Blaugrana Personal Use",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "crows-driven",
+      "name": "Crows Driven",
+      "family": "Crows Driven",
+      "path": "assets/fonts/SPORTING/Crows Driven.otf",
+      "displayName": "Crows Driven",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sportland-demo",
+      "name": "Sportland DEMO",
+      "family": "Sportland",
+      "path": "assets/fonts/SPORTING/Sportland DEMO.otf",
+      "displayName": "Sportland DEMO",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "tottenham-personal-1",
+      "name": "Tottenham Personal 1",
+      "family": "Tottenham 1",
+      "path": "assets/fonts/SPORTING/Tottenham - Personal 1.otf",
+      "displayName": "Tottenham - Personal 1",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "tottenham-personal-2",
+      "name": "Tottenham Personal 2",
+      "family": "Tottenham 2",
+      "path": "assets/fonts/SPORTING/Tottenham - Personal 2.otf",
+      "displayName": "Tottenham - Personal 2",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "tottenham-personal-3",
+      "name": "Tottenham Personal 3",
+      "family": "Tottenham 3",
+      "path": "assets/fonts/SPORTING/Tottenham - Personal 3.otf",
+      "displayName": "Tottenham - Personal 3",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "tottenham-personal-4",
+      "name": "Tottenham Personal 4",
+      "family": "Tottenham 4",
+      "path": "assets/fonts/SPORTING/Tottenham - Personal 4.otf",
+      "displayName": "Tottenham - Personal 4",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "tottenham-personal-5",
+      "name": "Tottenham Personal 5",
+      "family": "Tottenham 5",
+      "path": "assets/fonts/SPORTING/Tottenham - Personal 5.otf",
+      "displayName": "Tottenham - Personal 5",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "armada-bold",
+      "name": "Armada Bold",
+      "family": "Armada",
+      "path": "assets/fonts/SPORTING/Armada Bold.otf",
+      "displayName": "Armada Bold",
+      "fallback": "sans-serif",
+      "weight": "bold",
+      "folder": "Sporting"
+    },
+    {
+      "id": "armada-regular",
+      "name": "Armada Regular",
+      "family": "Armada",
+      "path": "assets/fonts/SPORTING/Armada Regular.otf",
+      "displayName": "Armada Regular",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "lorenia-display",
+      "name": "Lorenia Display",
+      "family": "LoeniaDisplay",
+      "path": "assets/fonts/SPORTING/LORENIADISPLAY-Regular.ttf",
+      "displayName": "Lorenia Display",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy",
+      "name": "Sporting Strategy",
+      "family": "SportingStrategy",
+      "path": "assets/fonts/SPORTING/Sporting Strategy.ttf",
+      "displayName": "Sporting Strategy",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-bold",
+      "name": "Sporting Strategy Bold",
+      "family": "SportingStrategy Bold",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Bold.ttf",
+      "displayName": "Sporting Strategy Bold",
+      "fallback": "sans-serif",
+      "weight": "bold",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-bold-italic",
+      "name": "Sporting Strategy Bold Italic",
+      "family": "SportingStrategy Bold",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Bold Italic.ttf",
+      "displayName": "Sporting Strategy Bold Italic",
+      "fallback": "sans-serif",
+      "weight": "bold",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-italic",
+      "name": "Sporting Strategy Italic",
+      "family": "SportingStrategy",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Italic.ttf",
+      "displayName": "Sporting Strategy Italic",
+      "fallback": "sans-serif",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-light",
+      "name": "Sporting Strategy Light",
+      "family": "SportingStrategy Light",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Light.ttf",
+      "displayName": "Sporting Strategy Light",
+      "fallback": "sans-serif",
+      "weight": "300",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-light-italic",
+      "name": "Sporting Strategy Light Italic",
+      "family": "SportingStrategy Light",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Light Italic.ttf",
+      "displayName": "Sporting Strategy Light Italic",
+      "fallback": "sans-serif",
+      "weight": "300",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-hollow",
+      "name": "Sporting Strategy Hollow",
+      "family": "SportingStrategy Hollow",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Hollow.ttf",
+      "displayName": "Sporting Strategy Hollow",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "sporting-strategy-hollow-italic",
+      "name": "Sporting Strategy Hollow Italic",
+      "family": "SportingStrategy Hollow",
+      "path": "assets/fonts/SPORTING/Sporting Strategy Hollow Italic.ttf",
+      "displayName": "Sporting Strategy Hollow Italic",
+      "fallback": "sans-serif",
+      "style": "italic",
+      "folder": "Sporting"
+    },
+    {
+      "id": "stander-demo",
+      "name": "Stander DEMO",
+      "family": "Stander",
+      "path": "assets/fonts/SPORTING/Stander DEMO.otf",
+      "displayName": "Stander DEMO",
+      "fallback": "sans-serif",
+      "folder": "Sporting"
+    },
+    {
+      "id": "aquiline-two",
+      "name": "Aquiline Two",
+      "family": "Aquiline-Two",
+      "path": "assets/fonts/PIRATE/aquilinetwo.ttf",
+      "displayName": "Aquiline Two",
+      "fallback": "sans-serif",
+      "folder": "Pirate"
+    },
+    {
+      "id": "treamd",
+      "name": "Treamd",
+      "family": "Treamd",
+      "path": "assets/fonts/PIRATE/Treamd.ttf",
+      "displayName": "Treamd",
+      "fallback": "sans-serif",
+      "folder": "Pirate"
+    },
+    {
+      "id": "american-captain-patrius",
+      "name": "American Captain Patrius",
+      "family": "'American Captain Patrius'",
+      "path": "assets/fonts/SUPERHERO/AmericanCaptainPatrius02Fre-PvPd.ttf",
+      "displayName": "American Captain Patrius",
+      "fallback": "sans-serif",
+      "folder": "Superhero"
+    },
+    {
+      "id": "avengero-regular",
+      "name": "Avengero Regular",
+      "family": "'Avengero Regular'",
+      "path": "assets/fonts/SUPERHERO/AvengeroRegular-zvgl.ttf",
+      "displayName": "Avengero Regular",
+      "fallback": "sans-serif",
+      "folder": "Superhero"
+    },
+    {
+      "id": "black-caps-regular",
+      "name": "Black Caps Regular",
+      "family": "'Black Caps Regular'",
+      "path": "assets/fonts/SUPERHERO/BlackCapsRegular-wgA2.ttf",
+      "displayName": "Black Caps Regular",
+      "fallback": "sans-serif",
+      "folder": "Superhero"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+<div class="recycle-bin-container">
+    <div class="recycle-bin-header">
+        <h1>🗑️ Recycle Bin</h1>
+        <p class="subtitle">Items will be permanently deleted after 14 days</p>
+    </div>
+
+    <div *ngIf="deletedItems.length === 0" class="empty-state">
+        <div class="empty-icon">🗑️</div>
+        <h2>Recycle Bin is Empty</h2>
+        <p>Deleted items will appear here for 14 days before permanent deletion.</p>
+    </div>
+
+    <div *ngIf="deletedItems.length > 0" class="items-container">
+        <div *ngFor="let item of deletedItems" class="deleted-item">
+            <div class="item-header">
+                <div class="item-info">
+                    <h3>{{ item.title }}</h3>
+                    <p class="item-description">{{ item.description }}</p>
+                </div>
+                <div class="item-meta">
+                    <span class="priority-badge" [class]="'priority-' + item.priority">
+                        {{ item.priority }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="item-details">
+                <div class="detail-row">
+                    <span class="label">Target:</span>
+                    <span class="value">{{ item.targetType }} - {{ item.target }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Deleted:</span>
+                    <span class="value">{{ item.deletedAt | date : 'short' }}</span>
+                </div>
+            </div>
+
+            <div class="expiration-section">
+                <div class="expiration-info">
+                    <span class="days-remaining" [style.color]="getStatusColor(item.percentRemaining)">
+                        {{ item.daysRemaining }} days remaining
+                    </span>
+                    <span class="status-label" [style.background]="getStatusColor(item.percentRemaining)">
+                        {{ getStatusLabel(item.percentRemaining) }}
+                    </span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="item.percentRemaining"
+                        [style.background]="getStatusColor(item.percentRemaining)"></div>
+                </div>
+            </div>
+
+            <div class="item-actions">
+                <button class="btn-restore" (click)="openRestoreDialog(item)">
+                    ↩️ Restore
+                </button>
+                <button class="btn-delete" (click)="permanentlyDelete(item)">
+                    🗑️ Delete Permanently
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Dialog -->
+    <div *ngIf="showRestoreDialog" class="modal-overlay" (click)="closeRestoreDialog()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <h2>Restore Item</h2>
+
+            <div class="dialog-body">
+                <div class="item-info">
+                    <p><strong>Item:</strong> {{ selectedItem?.title }}</p>
+                    <p><strong>Original status:</strong> Closed - Deleted</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="restore-status">Restore to status:</label>
+                    <select id="restore-status" [(ngModel)]="selectedRestoreStatus" class="form-control">
+                        <option value="">-- Select Status --</option>
+                        <option *ngFor="let status of getRestoreStatusOptions()" [value]="status">
+                            {{ status }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dialog-actions">
+                <button class="btn-cancel" (click)="closeRestoreDialog()">Cancel</button>
+                <button class="btn-confirm" (click)="restoreItem()" [disabled]="!selectedRestoreStatus">
+                    Restore Item
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

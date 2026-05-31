@@ -1,0 +1,11 @@
+<div class="force-directed-container">
+    <h2>D3 Force-Directed Layout</h2>
+
+    <div class="controls">
+        <label for="nodeCount">Number of Nodes: {{ nodeCount }}</label>
+        <input type="range" id="nodeCount" [(ngModel)]="nodeCount" [min]="minNodes" [max]="maxNodes"
+            (input)="onNodeCountChange()" />
+    </div>
+
+    <div #chartContainer class="chart-container"></div>
+</div>

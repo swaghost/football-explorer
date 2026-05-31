@@ -1,0 +1,143 @@
+// Shared Node Display Component Styles
+.shared-node-display {
+  .node-header {
+    padding: 12px 16px 8px 16px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+
+    .dark-mode & {
+      border-bottom-color: #444;
+      background: #2a2a2a;
+    }
+
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+
+      .dark-mode & {
+        color: #fff;
+      }
+    }
+  }
+
+  .waiting-mode {
+    padding: 24px 16px;
+    text-align: center;
+
+    .waiting-message {
+      margin: 0;
+      color: #666;
+      font-style: italic;
+
+      .dark-mode & {
+        color: #999;
+      }
+    }
+  }
+
+  .node-content {
+    padding: 12px 16px;
+
+    .node-description-section {
+      .node-description-content {
+        margin: 0;
+        line-height: 1.5;
+        color: #333;
+
+        .dark-mode & {
+          color: #ddd;
+        }
+      }
+    }
+  }
+
+  .lesson-info-screen {
+    padding: 16px;
+
+    .lesson-details {
+      h3 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2196f3;
+
+        .dark-mode & {
+          color: #64b5f6;
+        }
+      }
+
+      .lesson-description {
+        margin-bottom: 12px;
+
+        p {
+          margin: 0;
+          line-height: 1.5;
+          color: #333;
+
+          .dark-mode & {
+            color: #ddd;
+          }
+        }
+      }
+
+      .lesson-chips {
+        strong {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 12px;
+          color: #666;
+
+          .dark-mode & {
+            color: #999;
+          }
+        }
+
+        .chips-display {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+
+          .chip {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #007bff;
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+
+            .dark-mode & {
+              background: #0d6efd;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .completion-status {
+    padding: 12px 16px;
+    background: #d4edda;
+    border-left: 3px solid #28a745;
+    margin: 12px 16px;
+    border-radius: 4px;
+
+    .dark-mode & {
+      background: rgba(40, 167, 69, 0.15);
+      border-left-color: #28a745;
+    }
+
+    .completion-message {
+      margin: 0;
+      color: #155724;
+      font-size: 13px;
+      font-weight: 500;
+
+      .dark-mode & {
+        color: #28a745;
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+<!-- Favorites Panel (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="favorites-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <div class="toolbox-content">
+            <div class="toolbox-header">
+                <h4>Favorite Techniques</h4>
+            </div>
+
+            <div class="favorites-list" *ngIf="favoriteNodes.length > 0; else noFavorites">
+                <div class="common-list-item favorite-item"
+                    *ngFor="let favorite of favoriteNodes; trackBy: trackByNodeId"
+                    (click)="onNavigateToNode(favorite.nodeId)" [title]="'Click to navigate to: ' + favorite.nodeTitle"
+                    [class.current-selected]="favorite.nodeId === selectedNode">
+                    <div class="favorite-info">
+                        <div class="common-list-item-title favorite-title">
+                            {{ favorite.nodeTitle || favorite.nodeId }}
+                        </div>
+                        <div class="common-list-item-subtitle favorite-meta">
+                            <span class="category">{{ favorite.category }}</span>
+                            <span class="date">{{ formatDate(favorite.addedAt) }}</span>
+                        </div>
+                    </div>
+                    <button class="remove-favorite" (click)="onRemoveFavorite($event, favorite.nodeId)"
+                        title="Remove from favorites">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+
+            <ng-template #noFavorites>
+                <div class="empty-state">
+                    <div class="empty-icon">⭐</div>
+                    <div class="empty-text">No favorites yet</div>
+                    <div class="empty-hint">Star techniques to add them here</div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <!-- Footer with Count -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="footer-stats">
+            <span class="stat-item">Total: <strong>{{ favoriteNodes.length }}</strong></span>
+            <span class="stat-separator" *ngIf="selectedNode">|</span>
+            <span class="stat-item" *ngIf="selectedNode">Viewing: <strong>{{ getSelectedFavoriteTitle()
+                    }}</strong></span>
+        </div>
+    </div>
+</div>

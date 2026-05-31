@@ -1,0 +1,472 @@
+.recycle-bin-container {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+
+  .recycle-bin-header {
+    margin-bottom: 32px;
+    text-align: center;
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 32px;
+      color: #333;
+
+      .dark-mode & {
+        color: #e0e0e0;
+      }
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: #999;
+
+      .dark-mode & {
+        color: #aaa;
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: #333;
+
+      .dark-mode & {
+        color: #e0e0e0;
+      }
+    }
+
+    p {
+      margin: 0;
+      color: #999;
+      font-size: 14px;
+
+      .dark-mode & {
+        color: #aaa;
+      }
+    }
+  }
+
+  .items-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+  }
+}
+
+.deleted-item {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark-mode & {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .item-info {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+
+        .dark-mode & {
+          color: #e0e0e0;
+        }
+      }
+
+      .item-description {
+        margin: 0;
+        font-size: 12px;
+        color: #666;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+
+        .dark-mode & {
+          color: #aaa;
+        }
+      }
+    }
+
+    .item-meta {
+      flex-shrink: 0;
+
+      .priority-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+        text-transform: uppercase;
+
+        &.priority-critical\ path {
+          background: #ffebee;
+          color: #c62828;
+        }
+
+        &.priority-high {
+          background: #fff3e0;
+          color: #e65100;
+        }
+
+        &.priority-medium {
+          background: #e8f5e9;
+          color: #2e7d32;
+        }
+
+        &.priority-low {
+          background: #f3e5f5;
+          color: #6a1b9a;
+        }
+      }
+    }
+  }
+
+  .item-details {
+    margin-bottom: 16px;
+    padding: 8px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+
+    .dark-mode & {
+      border-color: #555;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 12px;
+
+      .label {
+        font-weight: 600;
+        color: #666;
+
+        .dark-mode & {
+          color: #aaa;
+        }
+      }
+
+      .value {
+        color: #333;
+
+        .dark-mode & {
+          color: #e0e0e0;
+        }
+      }
+    }
+  }
+
+  .expiration-section {
+    margin-bottom: 16px;
+
+    .expiration-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .days-remaining {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .status-label {
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+      }
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+
+      .dark-mode & {
+        background: #555;
+      }
+
+      .progress-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 8px;
+
+    button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-restore {
+      background: #4caf50;
+      color: white;
+
+      &:hover {
+        background: #45a049;
+      }
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+
+      &:hover {
+        background: #da190b;
+      }
+    }
+  }
+}
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+
+  .dark-mode & {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  h2 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+
+    .dark-mode & {
+      color: #e0e0e0;
+    }
+  }
+
+  .dialog-body {
+    margin-bottom: 24px;
+  }
+
+  .item-info {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+
+    .dark-mode & {
+      background: #3a3a3a;
+    }
+
+    p {
+      margin: 8px 0;
+      font-size: 13px;
+
+      strong {
+        color: #666;
+
+        .dark-mode & {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+
+      .dark-mode & {
+        color: #e0e0e0;
+      }
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: white;
+      color: #333;
+      transition: border-color 0.2s ease;
+
+      .dark-mode & {
+        background: #3a3a3a;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.btn-cancel {
+        background: #f0f0f0;
+        color: #333;
+
+        &:hover {
+          background: #e0e0e0;
+        }
+
+        .dark-mode & {
+          background: #3a3a3a;
+          color: #e0e0e0;
+
+          &:hover {
+            background: #4a4a4a;
+          }
+        }
+      }
+
+      &.btn-confirm {
+        background: #4caf50;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #45a049;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Dark mode support
+:host.dark-mode {
+  .recycle-bin-container {
+    background: #1a1a1a;
+  }
+
+  .deleted-item {
+    background: #2d2d2d;
+    color: #e0e0e0;
+  }
+}

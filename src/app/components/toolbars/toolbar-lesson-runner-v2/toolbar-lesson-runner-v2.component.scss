@@ -1,0 +1,1087 @@
+@use "../../../styles/components/toolbar-base";
+
+// Root container - establishes flex column
+.lesson-runner-v2-panel {
+  width: 980px; // Normal width
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: width 0.3s ease, background 0.15s ease; // Smooth width and background transitions
+
+  // Dark mode - set background on root so all children can inherit
+  &.dark-mode {
+    background: transparent !important;
+
+    .right-pane-wrapper .right-panel {
+      border-left-color: #444;
+      background-color: #2a2a2a; // Dark background for right panel
+
+      .right-panel-content {
+        background: inherit !important;
+
+        .right-panel-field {
+          background: #1f1f1f !important; // Dark background where SVG doesn't cover
+        }
+      }
+    }
+
+    .right-pane-wrapper .right-panel .right-panel-content h4 {
+      color: #e0e0e0;
+    }
+
+    .right-pane-wrapper .right-panel .right-panel-content p {
+      color: #b0b0b0;
+    }
+
+    .right-pane-wrapper
+      .right-panel
+      .right-panel-content
+      .right-panel-controls {
+      background: rgba(40, 40, 40, 0.95) !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      border-bottom-color: rgba(0, 0, 0, 0.3);
+
+      .control-section label {
+        color: #e0e0e0;
+      }
+
+      .control-section .form-control {
+        background: #333;
+        color: #e0e0e0;
+        border-color: #555;
+
+        &:hover {
+          border-color: #777;
+        }
+
+        &:focus {
+          border-color: #0d6efd;
+          box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+        }
+      }
+    }
+  }
+
+  // Three-state width modes
+  &:has([data-panel-mode="minimized"]) {
+    width: 660px; // Narrower (980 - 320 = 660)
+  }
+
+  &:has([data-panel-mode="maximized"]) {
+    width: 1300px; // Wider (980 + 320 = 1300)
+  }
+
+  // Right panel expansion
+  &:has(.right-panel-open) {
+    width: 1480px; // Wider when right panel is open (980 + 500 = 1480)
+  }
+
+  // Note: height is set via inline style from getToolbarStyles() (e.g., height: 400px)
+  // This height is controlled by the vertical resize handle
+  // Don't override with height: auto - we need the inline height for resize to work
+  max-height: none !important; // But remove max-height constraint from base
+  min-height: 300px; // Minimum functional height
+
+  // Header - fixed height, doesn't shrink
+  .panel-header {
+    flex: 0 0 auto !important; // Don't grow, don't shrink, auto height
+  }
+
+  // Main content area - grows to fill space between header and footer
+  .panel-content {
+    flex: 1 1 0 !important; // Grow to fill, shrink if needed, zero basis forces proper calculation
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important; // Remove any gap from base styles
+    overflow: hidden !important;
+    min-height: 0 !important; // Critical for nested flex scrolling
+    max-height: none !important; // Override base toolbar max-height constraint
+    height: 100% !important; // Force it to fill the flex space
+    // DO NOT set height: auto - it prevents flex children from filling
+    padding: 10px !important; // Match Technique Explorer padding
+    margin: 0 !important; // Override base negative margins
+    background: #fffae6 !important; // Light yellow background in light mode
+    position: relative; // For positioning the toggle button
+
+    // Left panel toggle button
+    .left-panel-toggle-btn {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      width: 24px;
+      height: 60px;
+      background: var(--primary-color, #007bff);
+      color: white;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background: var(--primary-color-dark, #0056b3);
+        width: 28px;
+      }
+
+      &:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+    }
+
+    .right-panel-toggle-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      width: 24px;
+      height: 60px;
+      background: var(--primary-color, #007bff);
+      color: white;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background: var(--primary-color-dark, #0056b3);
+        width: 28px;
+      }
+
+      &:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+    }
+
+    // Two-pane container - fills the content area
+    .two-pane-container {
+      flex: 1 1 0 !important; // Grow to fill, shrink if needed, zero basis
+      display: flex !important;
+      gap: 8px;
+      overflow: hidden !important;
+      min-height: 0 !important; // Critical for child scrolling
+      height: 100% !important; // Force it to fill the flex space
+      background: inherit !important; // Inherit translucent background from parent
+      transition: all 0.3s ease; // Smooth transitions
+
+      // Three-state modes handled by parent width changes and *ngIf on left-pane
+      // Minimized: list hidden, content normal width (parent width: 660px)
+      // Normal: list shown, content normal width (parent width: 980px)
+      // Maximized: list hidden, content expanded (parent width: 1300px)
+
+      // Legacy collapse support (for header button)
+      &.left-collapsed {
+        .left-pane {
+          width: 0;
+          min-width: 0;
+          overflow: hidden;
+          padding: 0; // Remove padding when collapsed
+        }
+      }
+    }
+  }
+
+  // Footer - fixed height, doesn't shrink
+  .panel-footer {
+    flex: 0 0 auto !important; // Don't grow, don't shrink, auto height
+  }
+
+  // LEFT PANE - Selections with scrollable node list
+  .left-pane {
+    width: 320px;
+    flex: 0 0 320px; // Fixed width, no grow/shrink
+    display: flex;
+    flex-direction: column;
+    gap: 8px; // Space between unsaved-notice and selected-nodes-list
+    overflow: hidden;
+    min-height: 0; // Critical for child scrolling
+    padding: 8px; // Internal padding for left pane
+    background: inherit !important; // Inherit translucent background from parent
+    transition: width 0.3s ease, padding 0.3s ease; // Smooth collapse animation
+
+    // Unsaved changes notice - fixed height
+    .unsaved-changes-notice {
+      flex: 0 0 auto; // Don't grow/shrink
+      padding: 4px 8px;
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 4px;
+      font-size: 12px;
+
+      .unsaved-text {
+        color: #ff6b35;
+        font-weight: 500;
+      }
+
+      // Dark mode
+      .dark-mode & {
+        background: rgba(255, 193, 7, 0.15);
+        border-color: rgba(255, 193, 7, 0.4);
+
+        .unsaved-text {
+          color: #ffa366; // Lighter orange for dark mode
+        }
+      }
+    }
+
+    // SCROLLABLE SELECTED NODES LIST - grows to fill remaining space
+    .selected-nodes-list {
+      flex: 1 1 0; // Grow to fill space, shrink if needed, zero basis
+      min-height: 0; // Critical for scrolling - allow shrinking below content size
+      overflow-y: auto; // Enable vertical scrolling
+      overflow-x: hidden;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: inherit !important;
+      width: 100%;
+      box-sizing: border-box;
+
+      .selected-node-item {
+        display: flex;
+        align-items: center;
+        user-select: none;
+        margin: 2px 4px;
+        padding: 3px 8px;
+        cursor: pointer; // Make it clear the item is clickable
+        transition: background 0.2s ease; // Smooth transition on hover
+
+        &:hover {
+          background: rgba(173, 216, 230, 0.2); // Slight highlight on hover
+        }
+
+        &.current-selected {
+          background: rgba(
+            173,
+            216,
+            230,
+            0.3
+          ) !important; // Light blue background
+          border-left: 4px solid #4169e1 !important; // Royal blue left edge
+          box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+          transform: scale(1.02);
+          font-weight: 600;
+
+          .common-list-item-title {
+            color: #4169e1 !important;
+          }
+        }
+
+        &.visited {
+          opacity: 0.7;
+
+          .node-status-checkbox {
+            color: #4caf50;
+            font-weight: bold;
+          }
+        }
+
+        // Autopilot: Current active node highlighting
+        &.current-active {
+          background: rgba(76, 175, 80, 0.15) !important;
+          border-left: 3px solid #4caf50 !important;
+          font-weight: 600;
+
+          .common-list-item-title {
+            color: #2e7d32;
+          }
+
+          // Dark mode
+          .dark-mode & {
+            background: rgba(102, 187, 106, 0.2) !important;
+            border-left-color: #66bb6a !important;
+
+            .common-list-item-title {
+              color: #81c784;
+            }
+          }
+        }
+
+        // Autopilot: Completed nodes
+        &.completed {
+          opacity: 0.7;
+
+          .common-list-item-title {
+            color: #999;
+          }
+
+          // Dark mode
+          .dark-mode & {
+            .common-list-item-title {
+              color: #666;
+            }
+          }
+        }
+
+        // Autopilot: Completion indicator (green checkmark at RIGHT end)
+        .completion-indicator {
+          flex-shrink: 0;
+          margin-left: auto;
+          padding-left: 8px;
+          font-size: 18px;
+          font-weight: bold;
+          color: #4caf50;
+          animation: fadeIn 0.3s ease;
+
+          // Dark mode
+          .dark-mode & {
+            color: #66bb6a;
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .node-status-checkbox {
+          flex-shrink: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 8px;
+          font-size: 16px;
+          color: #999;
+          border: 2px solid #ddd;
+          border-radius: 4px;
+          background: #fff; // White background for empty
+          transition: all 0.2s ease;
+
+          // Visited only - Blue checkmark
+          &.visited-only {
+            background: #e3f2fd; // Light blue background
+            color: #2196f3; // Blue checkmark
+            border-color: #2196f3;
+          }
+
+          // Completed - Green checkmark
+          &.completed {
+            background: #e8f5e9; // Light green background
+            color: #4caf50; // Green checkmark
+            border-color: #4caf50;
+          }
+
+          // Dark mode
+          .dark-mode & {
+            background: #333;
+            border-color: #555;
+
+            &.visited-only {
+              background: #1a237e;
+              color: #64b5f6;
+              border-color: #42a5f5;
+            }
+
+            &.completed {
+              background: #3a3a2a; // Darker yellow for dark mode
+              color: #66bb6a; // Lighter green for dark mode
+              border-color: #4caf50;
+            }
+          }
+        }
+
+        .common-list-item-title {
+          flex: 1;
+          padding: 1px 6px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .no-nodes-message {
+        padding: 20px;
+        text-align: center;
+        p {
+          color: #666;
+          font-style: italic;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // RIGHT PANE WRAPPER - contains main content and flip-open panel
+  .right-pane-wrapper {
+    flex: 1 1 0;
+    display: flex;
+    gap: 8px;
+    overflow: hidden;
+    min-height: 0;
+    min-width: 0;
+    transition: gap 0.3s ease;
+
+    .right-pane {
+      flex: 1 1 0;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .right-panel {
+      width: 500px;
+      flex: 0 0 500px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+      border-left: 1px solid #ddd;
+      animation: slideInRight 0.3s ease forwards;
+      background-color: #fffae6; // Light yellow in light mode
+
+      .right-panel-content {
+        flex: 1 1 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        background: inherit !important; // Inherit light yellow background
+
+        .right-panel-controls {
+          flex: 0 0 auto;
+          background: inherit !important; // Inherit light yellow in light mode
+          padding: 12px;
+          border-radius: 0;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          display: flex;
+          gap: 12px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+          .control-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 0;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            label {
+              font-size: 12px;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .form-control {
+              padding: 6px 8px;
+              border: 1px solid #ddd;
+              border-radius: 3px;
+              font-size: 12px;
+              background: white;
+              color: #333;
+              cursor: pointer;
+
+              &:hover {
+                border-color: #999;
+              }
+
+              &:focus {
+                outline: none;
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+              }
+            }
+          }
+        }
+
+        .right-panel-field {
+          flex: 1 1 0;
+          overflow: hidden;
+          background: inherit !important; // Inherit light yellow in light mode
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          .field-svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            object-position: center;
+          }
+        }
+
+        h4 {
+          margin: 0 0 8px 0;
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        p {
+          margin: 0 0 12px 0;
+          font-size: 13px;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  // RIGHT PANE - Lesson/Node details with scrollable content
+  .right-pane {
+    flex: 1 1 0; // Grow to fill remaining width, shrink if needed, zero basis
+    display: flex;
+    flex-direction: column;
+    gap: 8px; // Space between title sections and content
+    overflow: hidden;
+    min-height: 0; // Critical for child scrolling
+    min-width: 0; // Allow width shrinking
+    padding: 8px; // Internal padding for right pane
+    background: inherit !important; // Inherit translucent background from parent
+
+    // Lesson title - fixed height
+    .lesson-title-section {
+      flex: 0 0 auto; // Don't grow/shrink
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      background: inherit !important;
+
+      .lesson-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary-color, #007bff);
+
+        &.no-lesson {
+          color: var(--text-muted, #6c757d);
+          font-style: italic;
+        }
+      }
+    }
+
+    // Node title - fixed height
+    .node-title-section {
+      flex: 0 0 auto; // Don't grow/shrink
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+
+      .node-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    // SCROLLABLE NODE CONTENT - grows to fill remaining space
+    .node-content {
+      flex: 1 1 0; // Grow to fill space, shrink if needed, zero basis
+      min-height: 0; // Critical for scrolling - allow shrinking below content size
+      overflow-y: auto; // Enable vertical scrolling
+      overflow-x: hidden;
+      background: inherit !important; // Inherit translucent background from parent
+
+      .waiting-mode {
+        padding: 20px;
+        text-align: center;
+
+        .waiting-icon {
+          font-size: 64px;
+          margin-bottom: 12px;
+        }
+
+        .waiting-message {
+          color: #999;
+          font-size: 14px;
+        }
+      }
+
+      .node-details {
+        padding: 12px;
+
+        .node-description-content {
+          margin-bottom: 16px;
+        }
+
+        .node-video-container {
+          max-width: 100%;
+          min-height: 200px; /* Prevent layout shift during load */
+          background: transparent; /* Prevent white flash */
+          position: relative;
+          video {
+            width: 100%;
+            border-radius: 4px;
+            background: transparent; /* Prevent white flash */
+            opacity: 0; /* Hidden until loaded */
+            transition: opacity 0.15s ease-in; /* Smooth fade in only */
+
+            &[data-loaded="true"] {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // FOOTER - fixed height, always at bottom
+  .panel-footer {
+    flex: 0 0 auto; // Don't grow/shrink
+  }
+
+  .combined-footer {
+    flex: 0 0 auto; // Don't grow/shrink
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 8px;
+    border-top: 1px solid #e8dca0;
+    background: inherit !important; // Inherit translucent background from parent
+    flex-shrink: 0; /* Don't shrink when content grows */
+    position: relative; /* Keep in document flow but don't scroll */
+    z-index: 5; /* Above content */
+
+    .footer-left {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+
+      // Style Play and AutoPilot buttons to match nav buttons
+      .btn {
+        padding: 4px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s ease;
+        background: #fff;
+
+        &.btn-success {
+          background: #28a745;
+          color: #fff;
+          border-color: #28a745;
+
+          &:hover {
+            background: #218838;
+            border-color: #1e7e34;
+          }
+        }
+
+        &.btn-info {
+          background: #17a2b8;
+          color: #fff;
+          border-color: #17a2b8;
+
+          &:hover {
+            background: #138496;
+            border-color: #117a8b;
+          }
+        }
+
+        &.btn-danger {
+          background: #dc3545;
+          color: #fff;
+          border-color: #dc3545;
+
+          &:hover {
+            background: #c82333;
+            border-color: #bd2130;
+          }
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .clear-selection-btn {
+        padding: 4px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+        color: #666; // Dark gray text for visibility
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f44336;
+          color: #fff;
+          border-color: #f44336;
+        }
+      }
+
+      .apply-btn {
+        padding: 4px 8px;
+        border: 1px solid #ff6b35;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #ff6b35, #f7931e);
+        color: white;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: linear-gradient(135deg, #f7931e, #ff6b35);
+          border-color: #ff6b35;
+          transform: translateY(-1px);
+          box-shadow: 0 3px 10px rgba(255, 107, 53, 0.4);
+        }
+      }
+    }
+
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+
+      .nav-buttons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .nav-stats {
+        font-size: 11px;
+        color: #888;
+        font-weight: 400;
+        padding-right: 4px;
+      }
+
+      .nav-btn {
+        padding: 4px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s ease;
+        pointer-events: auto; // Ensure buttons are clickable
+        font-weight: 500;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          pointer-events: auto; // Keep pointer-events even when disabled to show not-allowed cursor
+        }
+
+        // First button - Blue
+        &:nth-child(1) {
+          background: #2196f3;
+          color: #fff;
+          border-color: #1976d2;
+
+          &:hover:not(:disabled) {
+            background: #1976d2;
+            border-color: #0d47a1;
+          }
+        }
+
+        // Prev button - Light Blue
+        &:nth-child(2) {
+          background: #03a9f4;
+          color: #fff;
+          border-color: #0288d1;
+
+          &:hover:not(:disabled) {
+            background: #0288d1;
+            border-color: #01579b;
+          }
+        }
+
+        // Next button - Green
+        &:nth-child(3) {
+          background: #4caf50;
+          color: #fff;
+          border-color: #388e3c;
+
+          &:hover:not(:disabled) {
+            background: #388e3c;
+            border-color: #1b5e20;
+          }
+        }
+
+        // Last button - Teal
+        &:nth-child(4) {
+          background: #009688;
+          color: #fff;
+          border-color: #00796b;
+
+          &:hover:not(:disabled) {
+            background: #00796b;
+            border-color: #004d40;
+          }
+        }
+
+        // Finish button - Purple
+        &:nth-child(5) {
+          background: #9c27b0;
+          color: #fff;
+          border-color: #7b1fa2;
+
+          &:hover:not(:disabled) {
+            background: #7b1fa2;
+            border-color: #4a148c;
+          }
+        }
+
+        // Quit button - Red (already styled)
+        &.quit-btn {
+          background: #ff6b6b;
+          color: #fff;
+          border-color: #ff5252;
+
+          &:hover:not(:disabled) {
+            background: #ff5252;
+            border-color: #e53935;
+          }
+        }
+      }
+    }
+  }
+
+  .left-pane-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    margin: 0 2px;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  // Dark mode adjustments
+  &.dark-mode {
+    // Dark gray gradient header (like footer)
+    .panel-header {
+      background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%) !important;
+      border-bottom-color: #646464;
+
+      h3 {
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    // Override all light backgrounds - inherit from base toolbar
+    .panel-content {
+      background: inherit !important;
+      color: #ffffff;
+
+      .two-pane-container {
+        background: inherit !important;
+        color: #ffffff;
+
+        .left-pane {
+          background: inherit !important;
+        }
+
+        .right-pane {
+          background: inherit !important;
+
+          .lesson-title-section {
+            background: inherit !important;
+          }
+
+          .node-title-section {
+            background: inherit !important;
+          }
+
+          .node-content {
+            background: inherit !important;
+          }
+        }
+
+        .selected-nodes-list {
+          background: inherit !important;
+        }
+      }
+    }
+
+    .left-pane {
+      background: inherit !important;
+      color: #ffffff;
+
+      .header-buttons {
+        button {
+          background: #444;
+          border-color: #666;
+          color: #fff;
+
+          &:hover {
+            background: #0d6efd;
+            border-color: #0d6efd;
+          }
+        }
+
+        .apply-btn {
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          border-color: #ff6b35;
+
+          &:hover {
+            background: linear-gradient(135deg, #f7931e, #ff6b35);
+          }
+        }
+
+        .clear-selection-btn {
+          background: #444;
+          color: #ccc;
+
+          &:hover {
+            background: #d32f2f;
+            color: #fff;
+            border-color: #d32f2f;
+          }
+        }
+      }
+
+      .selected-nodes-list {
+        background: inherit !important;
+        border-color: #555;
+
+        .selected-node-item.current-selected {
+          background: rgba(59, 130, 246, 0.3) !important;
+          border-left: 4px solid #3b82f6 !important;
+          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
+
+          .node-link {
+            color: #ffffff !important;
+          }
+        }
+      }
+
+      .unsaved-changes-notice {
+        background: rgba(255, 193, 7, 0.15);
+        border-color: rgba(255, 193, 7, 0.4);
+      }
+    }
+
+    .right-pane {
+      background: inherit !important;
+      color: #ffffff;
+
+      .lesson-title-section {
+        background: inherit !important;
+        color: #ffffff;
+        border-bottom-color: #555;
+
+        .lesson-title {
+          color: #66b3ff; // Lighter blue for dark mode
+
+          &.no-lesson {
+            color: #aaa;
+          }
+        }
+      }
+
+      .node-content {
+        background: inherit !important;
+        color: #ffffff;
+      }
+
+      .node-title-section {
+        border-bottom-color: #555;
+      }
+    }
+
+    .combined-footer {
+      background: inherit !important;
+      border-top-color: #555;
+
+      .footer-left {
+        // Style Play and AutoPilot buttons for dark mode
+        .btn {
+          background: #444;
+          border-color: #666;
+          color: #fff;
+
+          &.btn-success {
+            background: #28a745;
+            border-color: #28a745;
+
+            &:hover {
+              background: #218838;
+              border-color: #1e7e34;
+            }
+          }
+
+          &.btn-info {
+            background: #17a2b8;
+            border-color: #17a2b8;
+
+            &:hover {
+              background: #138496;
+              border-color: #117a8b;
+            }
+          }
+        }
+
+        .clear-selection-btn {
+          background: #444;
+          border-color: #666;
+          color: #fff;
+
+          &:hover {
+            background: #d32f2f;
+            border-color: #d32f2f;
+          }
+        }
+      }
+
+      .nav-btn {
+        background: #444;
+        border-color: #666;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+          background: #555;
+        }
+
+        &.quit-btn {
+          background: #d32f2f;
+        }
+      }
+    }
+  }
+}
+
+// Slide-in animation for right panel
+@keyframes slideInRight {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 500px;
+    opacity: 1;
+  }
+}

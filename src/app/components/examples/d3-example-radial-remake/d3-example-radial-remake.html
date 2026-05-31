@@ -1,0 +1,11 @@
+<div class="radial-tree-container">
+    <app-tree-variable-control [config]="treeConfig()" (colorModeChange)="onColorModeChange($event)"
+        (nodeCountChange)="onNodeCountChange($event)" (maxNameLengthChange)="onMaxNameLengthChange($event)"
+        (regenerate)="onRegenerateTree()" (svgDarkModeToggle)="onToggleSvgDarkMode()"
+        (linkStyleChange)="onLinkStyleChange($event)" (colorTargetChange)="onColorTargetChange($event)"
+        (showLabelsChange)="onShowLabelsChange($event)" (radiusChange)="onRadiusChange($event)"
+        (rotationChange)="onRotationChange($event)" (layoutTypeChange)="onLayoutTypeChange($event)">
+    </app-tree-variable-control>
+
+    <div class="svg-wrapper svg-bordered" [class.dark-mode]="svgDarkMode()" #svgContainer></div>
+</div>

@@ -1,0 +1,11 @@
+<div class="common-list-item node-list-item" [class.selected]="isSelected" [class.current-selected]="isCurrentSelected"
+    (click)="onClick($event)">
+    <div class="node-table-row">
+        <div class="node-id-col">{{ node.id }}</div>
+        <div class="node-separator-col">-</div>
+        <div class="node-name-col">{{ node.name }}</div>
+        <div class="node-match-type" *ngIf="showMatchType && node.matchType">By
+            {{ node.matchType }}
+        </div>
+    </div>
+</div>

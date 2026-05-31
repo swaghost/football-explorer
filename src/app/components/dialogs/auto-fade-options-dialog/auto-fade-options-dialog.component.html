@@ -1,0 +1,86 @@
+<!-- Auto-Fade Options Dialog -->
+<app-base-dialog [visible]="visible" [title]="'Auto-Fade Options'" [icon]="'⏱️'" [maxWidth]="'600px'"
+    [dialogId]="'auto-fade-options-dialog'" (close)="onClose()">
+    <div class="dialog-body">
+        <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" [(ngModel)]="options.showLogo">
+                Show Logo
+            </label>
+        </div>
+
+        <div class="form-group" *ngIf="options.showLogo">
+            <label class="checkbox-container">
+                <input type="checkbox" [(ngModel)]="options.logoZoomEffect">
+                Logo Zoom Effect
+            </label>
+        </div>
+
+        <div class="form-group colors-row">
+            <div class="color-field">
+                <label for="backgroundColor">Background Color:</label>
+                <input type="color" id="backgroundColor" [(ngModel)]="options.backgroundColor" class="color-picker">
+            </div>
+            <div class="color-field">
+                <label for="foregroundColor">Foreground Color:</label>
+                <input type="color" id="foregroundColor" [(ngModel)]="options.foregroundColor" class="color-picker">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="displayStageSeconds">Display Stage Seconds:</label>
+                    <input type="number" id="displayStageSeconds" [(ngModel)]="options.displayStageSeconds"
+                        class="number-input" min="1" max="20" step="1">
+                </div>
+            </div>
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="waitDelaySeconds">Wait Delay Seconds:</label>
+                    <input type="number" id="waitDelaySeconds" [(ngModel)]="options.waitDelaySeconds"
+                        class="number-input" min="1" max="10" step="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="text-message-header">
+                <label for="textMessage">Text Message:</label>
+                <button type="button" class="clear-btn" *ngIf="options.textMessage" (click)="clearTextMessage()"
+                    title="Clear text message">Clear</button>
+            </div>
+            <textarea id="textMessage" [(ngModel)]="options.textMessage" class="text-area"
+                placeholder="Enter text to display (optional)" rows="3"
+                [style.font-family]="options.fontFamily"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="fontFamily">Font:</label>
+            <select id="fontFamily" [(ngModel)]="options.fontFamily" class="font-dropdown">
+                <option *ngFor="let font of availableFonts" [value]="font.value" [style.font-family]="font.value">
+                    {{ font.name }}
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" [(ngModel)]="options.textZoomEffect">
+                Text Zoom Effect
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-container">
+                <input type="checkbox" [(ngModel)]="options.closeToolbarAfterStart">
+                Close Toolbar After Sequence Start
+            </label>
+        </div>
+    </div>
+
+    <div slot="footer" class="dialog-footer">
+        <button class="ok-btn" (click)="onConfirm()">OK</button>
+        <button class="cancel-btn" (click)="onClose()">Cancel</button>
+    </div>
+</app-base-dialog>

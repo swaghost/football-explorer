@@ -1,0 +1,46 @@
+<app-base-dialog [visible]="visible" [title]="'Edit Dataset'" [icon]="'📝'" (close)="onCancel()">
+    <!-- Dataset Name -->
+    <div class="form-group">
+        <label for="datasetName">Dataset Name:</label>
+        <input #nameInput type="text" id="datasetName" [(ngModel)]="datasetName" (ngModelChange)="onNameChange()"
+            placeholder="Enter dataset name" class="text-input" maxlength="100" [class.error]="hasNameError()" />
+        <div class="validation-message" *ngIf="hasNameError()">
+            {{ getNameErrorMessage() }}
+        </div>
+    </div>
+
+    <!-- Dataset Description -->
+    <div class="form-group">
+        <label for="datasetDescription">Description (Optional):</label>
+        <textarea id="datasetDescription" [(ngModel)]="datasetDescription" (ngModelChange)="onDescriptionChange()"
+            placeholder="Enter dataset description" class="text-input textarea-input" maxlength="500"
+            rows="3"></textarea>
+        <div class="character-count">
+            {{ datasetDescription?.length || 0 }}/500 characters
+        </div>
+    </div>
+
+    <!-- Ownership Context Info (Read-only) -->
+    <div class="form-group">
+        <label>Ownership Context:</label>
+        <div class="ownership-info">
+            <span class="ownership-badge" [class.system]="getOwnershipLabel() === 'System'"
+                [class.organization]="getOwnershipLabel() === 'Organization'"
+                [class.team]="getOwnershipLabel() === 'Team'" [class.personal]="getOwnershipLabel() === 'Personal'">
+                {{ getOwnershipLabel() }}
+            </span>
+            <span class="ownership-details" *ngIf="dataset">
+                ID: {{ dataset.FlowID }}
+            </span>
+        </div>
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="!isValid()">
+            Save Changes
+        </button>
+    </div>
+</app-base-dialog>

@@ -1,0 +1,80 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Player {
+  PlayerID: number;
+  FirstName: string;
+  LastName: string;
+}
+
+interface Team {
+  TeamID: number;
+  TeamName: string;
+  Players: Player[];
+}
+
+interface PlayerSortOption {
+  value: string;
+  label: string;
+}
+
+@Component({
+  selector: 'app-dialog-create-team-group',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './dialog-create-team-group.component.html',
+  styleUrls: ['../../main/dr-ui-vers6/d3-ui-vers6.scss'],
+})
+export class DialogCreateTeamGroupComponent {
+  @Input() visible: boolean = false;
+  @Input() newTeamGroupName: string = '';
+  @Input() selectedTeam: Team | null = null;
+  @Input() playerSortBy: string = '';
+  @Input() playerSortOptions: PlayerSortOption[] = [];
+  @Input() newTeamGroupPlayerIds: number[] = [];
+
+  @Output() close = new EventEmitter<void>();
+  @Output() save = new EventEmitter<void>();
+  @Output() playerSortChange = new EventEmitter<Event>();
+  @Output() playerCheckboxChange = new EventEmitter<{
+    playerId: number;
+    checked: boolean;
+  }>();
+
+  onOverlayClick(): void {
+    this.close.emit();
+  }
+
+  onCancel(): void {
+    this.close.emit();
+  }
+
+  onSave(): void {
+    this.save.emit();
+  }
+
+  onPlayerSortChange(event: Event): void {
+    this.playerSortChange.emit(event);
+  }
+
+  onPlayerCheckboxChange(playerId: number, checked: boolean): void {
+    this.playerCheckboxChange.emit({ playerId, checked });
+  }
+
+  getSelectedTeamPlayers(): Player[] {
+    return this.selectedTeam?.Players || [];
+  }
+
+  getPlayerFullName(player: Player): string {
+    return `${player.FirstName} ${player.LastName}`;
+  }
+
+  isPlayerSelected(playerId: number): boolean {
+    return this.newTeamGroupPlayerIds.includes(playerId);
+  }
+
+  trackByPlayerId(index: number, player: Player): number {
+    return player.PlayerID;
+  }
+}

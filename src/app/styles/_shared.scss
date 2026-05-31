@@ -1,0 +1,14 @@
+/**
+ * Main Shared Styles Index
+ * Import this file to get all shared styles
+ */
+
+// Base styles (variables and typography must come first) - @use rules must be before any other rules
+@use "base/variables";
+@use "base/typography";
+@use "base/utilities";
+@use "base/fonts";
+
+// Component styles
+@use "components/toolbar-base";
+@use "components/buttons";

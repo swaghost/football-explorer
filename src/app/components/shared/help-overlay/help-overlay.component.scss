@@ -1,0 +1,8 @@
+@use "../../../styles/components/toolbar-base";
+
+// Help Overlay Component Styles
+// Note: Most styles are inherited from _toolbar-base.scss
+// This file is kept minimal to allow override if needed
+
+// Re-export help overlay styles from base (already defined globally)
+// The component will use the styles defined in _toolbar-base.scss

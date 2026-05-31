@@ -1,0 +1,256 @@
+<!-- View / Effects Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="zoom-controls-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Two-column layout for radio toggles -->
+        <div class="two-column-toggles">
+            <div class="toggle-column">
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Snap toolbars on resize:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="snapToolbarsOn" name="snapToolbars" [checked]="snapToolbarsOnResize"
+                            (change)="
+              snapToolbarsOnResize ? null : onToggleSnapToolbarsOnResize()
+            " />
+                        <label for="snapToolbarsOn" class="radio-option">On</label>
+
+                        <input type="radio" id="snapToolbarsOff" name="snapToolbars" [checked]="!snapToolbarsOnResize"
+                            (change)="
+              !snapToolbarsOnResize ? null : onToggleSnapToolbarsOnResize()
+            " />
+                        <label for="snapToolbarsOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Tree Visibility:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="treeVisibilityOn" name="treeVisibility" [checked]="treeVisible"
+                            (change)="treeVisible ? null : onToggleTreeVisibility()" />
+                        <label for="treeVisibilityOn" class="radio-option">On</label>
+
+                        <input type="radio" id="treeVisibilityOff" name="treeVisibility" [checked]="!treeVisible"
+                            (change)="!treeVisible ? null : onToggleTreeVisibility()" />
+                        <label for="treeVisibilityOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Black Background:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="blackBgOn" name="blackBackground" [checked]="blackBackgroundVisible"
+                            (change)="
+              blackBackgroundVisible ? null : onToggleBlackBackground()
+            " />
+                        <label for="blackBgOn" class="radio-option">On</label>
+
+                        <input type="radio" id="blackBgOff" name="blackBackground" [checked]="!blackBackgroundVisible"
+                            (change)="
+              !blackBackgroundVisible ? null : onToggleBlackBackground()
+            " />
+                        <label for="blackBgOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Scroll to Node:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="scrollToNodeOn" name="scrollToNode" [checked]="scrollToNodeEnabled"
+                            (change)="scrollToNodeEnabled ? null : onToggleScrollToNode()" />
+                        <label for="scrollToNodeOn" class="radio-option">On</label>
+
+                        <input type="radio" id="scrollToNodeOff" name="scrollToNode" [checked]="!scrollToNodeEnabled"
+                            (change)="!scrollToNodeEnabled ? null : onToggleScrollToNode()" />
+                        <label for="scrollToNodeOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Logo Fade:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="logoFadeOn" name="logoFade" [checked]="logoFadeVisible"
+                            (change)="logoFadeVisible ? null : onToggleLogoFade()" />
+                        <label for="logoFadeOn" class="radio-option">On</label>
+
+                        <input type="radio" id="logoFadeOff" name="logoFade" [checked]="!logoFadeVisible"
+                            (change)="!logoFadeVisible ? null : onToggleLogoFade()" />
+                        <label for="logoFadeOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-column">
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Auto Fade IN (5s):</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="autoFadeOn" name="autoFade" [checked]="autoFadeActive"
+                            (change)="autoFadeActive ? null : onToggleAutoFade()" />
+                        <label for="autoFadeOn" class="radio-option">On</label>
+
+                        <input type="radio" id="autoFadeOff" name="autoFade" [checked]="!autoFadeActive"
+                            (change)="!autoFadeActive ? null : onToggleAutoFade()" />
+                        <label for="autoFadeOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Auto Fade OUT (5s):</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="autoFadeOutOn" name="autoFadeOut" [checked]="autoFadeOutActive"
+                            (change)="autoFadeOutActive ? null : onToggleAutoFadeOut()" />
+                        <label for="autoFadeOutOn" class="radio-option">On</label>
+
+                        <input type="radio" id="autoFadeOutOff" name="autoFadeOut" [checked]="!autoFadeOutActive"
+                            (change)="!autoFadeOutActive ? null : onToggleAutoFadeOut()" />
+                        <label for="autoFadeOutOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Auto Fade Diagram:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="autoFadeDiagramOn" name="autoFadeDiagram"
+                            [checked]="autoFadeDiagramActive"
+                            (change)="autoFadeDiagramActive ? null : onToggleAutoFadeDiagram()" />
+                        <label for="autoFadeDiagramOn" class="radio-option">On</label>
+
+                        <input type="radio" id="autoFadeDiagramOff" name="autoFadeDiagram"
+                            [checked]="!autoFadeDiagramActive"
+                            (change)="!autoFadeDiagramActive ? null : onToggleAutoFadeDiagram()" />
+                        <label for="autoFadeDiagramOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Auto-Fade Options:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="autoFadeOptionsOn" name="autoFadeOptions"
+                            [checked]="autoFadeOptionsActive"
+                            (change)="autoFadeOptionsActive ? null : onToggleAutoFadeOptions()" />
+                        <label for="autoFadeOptionsOn" class="radio-option">On</label>
+
+                        <input type="radio" id="autoFadeOptionsOff" name="autoFadeOptions"
+                            [checked]="!autoFadeOptionsActive"
+                            (change)="!autoFadeOptionsActive ? null : onToggleAutoFadeOptions()" />
+                        <label for="autoFadeOptionsOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Quick-Nav Follow:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="quickNavFollowOn" name="quickNavFollow"
+                            [checked]="quickNavFollowEnabled"
+                            (change)="quickNavFollowEnabled ? null : onToggleQuickNavFollow()" />
+                        <label for="quickNavFollowOn" class="radio-option">On</label>
+
+                        <input type="radio" id="quickNavFollowOff" name="quickNavFollow"
+                            [checked]="!quickNavFollowEnabled"
+                            (change)="!quickNavFollowEnabled ? null : onToggleQuickNavFollow()" />
+                        <label for="quickNavFollowOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Third row for remaining toggles -->
+        <div class="two-column-toggles">
+            <div class="toggle-column">
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Node List Follow:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="nodeListFollowOn" name="nodeListFollow"
+                            [checked]="nodeListFollowEnabled"
+                            (change)="nodeListFollowEnabled ? null : onToggleNodeListFollow()" />
+                        <label for="nodeListFollowOn" class="radio-option">On</label>
+
+                        <input type="radio" id="nodeListFollowOff" name="nodeListFollow"
+                            [checked]="!nodeListFollowEnabled"
+                            (change)="!nodeListFollowEnabled ? null : onToggleNodeListFollow()" />
+                        <label for="nodeListFollowOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Lesson Survey:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="lessonSurveyOn" name="lessonSurvey"
+                            [checked]="lessonContentQualitySurveyEnabled"
+                            (change)="lessonContentQualitySurveyEnabled ? null : onToggleLessonSurvey()" />
+                        <label for="lessonSurveyOn" class="radio-option">On</label>
+
+                        <input type="radio" id="lessonSurveyOff" name="lessonSurvey"
+                            [checked]="!lessonContentQualitySurveyEnabled"
+                            (change)="!lessonContentQualitySurveyEnabled ? null : onToggleLessonSurvey()" />
+                        <label for="lessonSurveyOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-column">
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Exploratory Survey:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="exploratorySurveyOn" name="exploratorySurvey"
+                            [checked]="exploratoryContentQualitySurveyEnabled"
+                            (change)="exploratoryContentQualitySurveyEnabled ? null : onToggleExploratorySurvey()" />
+                        <label for="exploratorySurveyOn" class="radio-option">On</label>
+
+                        <input type="radio" id="exploratorySurveyOff" name="exploratorySurvey"
+                            [checked]="!exploratoryContentQualitySurveyEnabled"
+                            (change)="!exploratoryContentQualitySurveyEnabled ? null : onToggleExploratorySurvey()" />
+                        <label for="exploratorySurveyOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+                <div class="control-group radio-group compact">
+                    <label class="radio-toggle-label">Auto-show Explorer:</label>
+                    <div class="radio-toggle-container">
+                        <input type="radio" id="explorerAutoShowOn" name="explorerAutoShow"
+                            [checked]="explorerAutoShowEnabled"
+                            (change)="explorerAutoShowEnabled ? null : onToggleExplorerAutoShow()" />
+                        <label for="explorerAutoShowOn" class="radio-option">On</label>
+
+                        <input type="radio" id="explorerAutoShowOff" name="explorerAutoShow"
+                            [checked]="!explorerAutoShowEnabled"
+                            (change)="!explorerAutoShowEnabled ? null : onToggleExplorerAutoShow()" />
+                        <label for="explorerAutoShowOff" class="radio-option">Off</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>
+
+<!-- Auto-Fade Options Dialog Component -->
+<app-auto-fade-options-dialog [visible]="showAutoFadeOptionsDialog" [options]="autoFadeOptions"
+    (close)="onCloseAutoFadeOptions()" (confirm)="onStartCustomAutoFade($event)">
+</app-auto-fade-options-dialog>

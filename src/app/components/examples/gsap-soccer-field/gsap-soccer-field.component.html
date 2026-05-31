@@ -1,0 +1,1957 @@
+<div class="gsap-soccer-container">
+    <!-- Top Settings Panel -->
+    <div class="settings-panel">
+        <h2>⚽ SOCC.ORG Mini-Match Tactical Studio</h2>
+
+        <div class="control-panel">
+            <!-- Sequence Controls -->
+            <div class="control-group">
+                <h3>Sequence</h3>
+                <button (click)="newSequence()" class="btn-secondary">
+                    🆕 New
+                </button>
+                <button (click)="saveCurrentSequence()" [disabled]="currentSequence.keyframes.length === 0"
+                    class="btn-primary">
+                    💾 Save
+                </button>
+                <button (click)="saveSequence()" [disabled]="currentSequence.keyframes.length === 0"
+                    class="btn-secondary">
+                    💾 Save As New
+                </button>
+                <button (click)="resetSequence()" [disabled]="currentSequence.keyframes.length === 0"
+                    class="btn-secondary">
+                    🔄 Reset Sequence
+                </button>
+                <button (click)="exportSequence()" [disabled]="currentSequence.keyframes.length === 0"
+                    class="btn-secondary">
+                    📤 Export Sequence
+                </button>
+                <label class="btn-secondary file-label">
+                    📥 Import Sequence
+                    <input type="file" accept=".json" (change)="importSequence($event)" style="display: none;">
+                </label>
+            </div>
+
+            <!-- View Options & Presets -->
+            <div class="control-group">
+                <h3>View Options & Presets</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label class="select-label" style="margin-bottom: 0;">
+                        Field Grid:
+                        <select [(ngModel)]="selectedFieldGrid" class="field-select">
+                            <option *ngFor="let option of fieldGridOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </label>
+                    <div style="display: flex; gap: 15px; padding: 0 0 8px 0;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="showGrid">
+                            Show Grid
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" [(ngModel)]="snapToGrid">
+                            Snap to Grid
+                        </label>
+                    </div>
+                    <button (click)="resetPositions()" class="btn-secondary">
+                        🔄 Reset Positions
+                    </button>
+                    <label class="select-label" style="margin-bottom: 0; margin-top: 8px;">
+                        Select Preset:
+                        <select [(ngModel)]="selectedFormationPreset" class="field-select">
+                            <option [value]="null">-- Select a preset --</option>
+
+                            <!-- System Presets -->
+                            <optgroup label="[SYSTEM] Base Formations">
+                                <option *ngFor="let formation of baseFormations"
+                                    [ngValue]="{ type: 'system', value: formation }">
+                                    {{ formation.baseFormatName }}
+                                </option>
+                            </optgroup>
+
+                            <!-- Custom Presets -->
+                            <optgroup label="[CUSTOM] Saved Presets" *ngIf="customFormationPresets.length > 0">
+                                <option *ngFor="let preset of customFormationPresets"
+                                    [ngValue]="{ type: 'custom', value: preset }">
+                                    {{ preset.name }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </label>
+
+                    <!-- Save Buttons Row -->
+                    <div class="button-group">
+                        <button (click)="openSaveFormationPresetDialog()" class="btn-secondary">
+                            💾 Save
+                        </button>
+                        <button (click)="openSaveHomePresetDialog()" class="btn-secondary">
+                            💾 Save as Home
+                        </button>
+                        <button (click)="openSaveAwayPresetDialog()" class="btn-secondary">
+                            💾 Save as Away
+                        </button>
+                    </div>
+
+                    <!-- Apply & Modify Buttons Row -->
+                    <div class="button-group">
+                        <button (click)="applySelectedFormationPreset()" [disabled]="!selectedFormationPreset"
+                            class="btn-primary">
+                            📍 Apply
+                        </button>
+                        <button (click)="openOverwritePresetDialog()"
+                            [disabled]="!selectedFormationPreset || selectedFormationPreset.type === 'system'"
+                            class="btn-secondary" title="Overwrite selected custom preset">
+                            💾 Overwrite
+                        </button>
+                        <button (click)="openRenamePresetDialog()" [disabled]="!selectedCustomPreset"
+                            class="btn-secondary" title="Rename selected custom preset">
+                            ✏️ Rename
+                        </button>
+                        <button (click)="deleteSelectedFormationPreset()"
+                            [disabled]="!selectedFormationPreset || selectedFormationPreset.type === 'system'"
+                            class="btn-danger">
+                            🗑️ Delete
+                        </button>
+                    </div>
+
+                    <!-- Import/Export Buttons -->
+                    <div class="button-group">
+                        <button (click)="exportFormationPresets()" [disabled]="customFormationPresets.length === 0"
+                            class="btn-secondary">
+                            📤 Export Preset
+                        </button>
+                        <label class="btn-secondary file-label">
+                            📥 Import Preset
+                            <input type="file" accept=".json" (change)="importFormationPresets($event)"
+                                style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawing Tools -->
+            <div class="control-group drawing-tools-container">
+                <h3>Drawing Tools</h3>
+
+                <!-- Tools Buttons Section (Left) -->
+                <div class="tools-buttons-section">
+                    <!-- Select Tool -->
+                    <button (click)="activateMainTool('select')" [class.active]="activeTool === 'select'"
+                        class="btn-primary">
+                        ➜ Select
+                    </button>
+
+                    <!-- Text Tool -->
+                    <button (click)="activateMainTool('text')" [class.active]="activeTool === 'text'"
+                        class="btn-primary">
+                        📝 Text
+                    </button>
+
+                    <!-- Line Tool -->
+                    <button (click)="activateMainTool('line')" [class.active]="activeTool === 'line'"
+                        class="btn-primary">
+                        ➖ Line
+                    </button>
+
+                    <!-- Shape Tool -->
+                    <button (click)="activateMainTool('shape')" [class.active]="activeTool === 'shape'"
+                        class="btn-primary">
+                        ⬜ Shape
+                    </button>
+
+                    <!-- Path Tool -->
+                    <button (click)="activateMainTool('path')" [class.active]="activeTool === 'path'"
+                        [disabled]="selectedPlayers.size === 0" class="btn-primary"
+                        [title]="selectedPlayers.size === 0 ? 'Select a player or ball to use Path tool' : ''">
+                        🛤️ Path
+                    </button>
+
+                    <!-- Connect Tool -->
+                    <button (click)="activateMainTool('connect')" [class.active]="activeTool === 'connect'"
+                        [disabled]="selectedPlayers.size === 0" class="btn-primary"
+                        [title]="selectedPlayers.size === 0 ? 'Select players or ball to use Connect tool' : ''">
+                        🔗 Connect
+                    </button>
+
+                    <!-- Training Tool (Placeholder) -->
+                    <button disabled class="btn-primary" title="Coming Soon">
+                        📊 Training
+                    </button>
+
+                    <!-- Undo/Redo Buttons -->
+                    <button (click)="undo()" [disabled]="undoStack && undoStack.length === 0" class="btn-secondary"
+                        title="Undo last action (Ctrl+Z)">
+                        ↶ Undo
+                    </button>
+                    <button (click)="redo()" [disabled]="redoStack && redoStack.length === 0" class="btn-secondary"
+                        title="Redo last undone action (Ctrl+Y)">
+                        ↷ Redo
+                    </button>
+
+                    <!-- Delete Buttons -->
+                    <button (click)="deleteSelectedShape()" [disabled]="!selectedShape" class="btn-danger"
+                        title="Delete selected shape (Delete key)">
+                        🗑️ Delete Shape
+                    </button>
+                    <button (click)="deleteSelectedPath()" [disabled]="!selectedPath" class="btn-danger"
+                        title="Delete selected path (Delete key)">
+                        🗑️ Delete Path
+                    </button>
+                </div>
+
+                <!-- Tools Modifiers Section (Right) -->
+                <div class="tools-modifiers-section">
+                    <!-- Text Tool Modifiers -->
+                    <div *ngIf="activeTool === 'text'">
+                        <div>
+                            <label class="input-label">
+                                Font Family:
+                                <select [(ngModel)]="textFontFamily" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="Arial">Arial</option>
+                                    <option value="Courier New">Courier New</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Verdana">Verdana</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Font Size:
+                                <input type="number" [(ngModel)]="textFontSize" (change)="updateSelectedShape()" min="8"
+                                    max="72" class="number-input">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Font Weight:
+                                <select [(ngModel)]="textFontWeight" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="normal">Normal</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="lighter">Lighter</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Font Style:
+                                <select [(ngModel)]="textFontStyle" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="normal">Normal</option>
+                                    <option value="italic">Italic</option>
+                                    <option value="oblique">Oblique</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Text Decoration:
+                                <select [(ngModel)]="textDecoration" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="none">None</option>
+                                    <option value="underline">Underline</option>
+                                    <option value="overline">Overline</option>
+                                    <option value="line-through">Line Through</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Text Color:
+                                <input type="color" [(ngModel)]="textColor" (change)="updateSelectedShape()"
+                                    class="color-input">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Line Tool Modifiers -->
+                    <div *ngIf="activeTool === 'line'">
+                        <div>
+                            <label class="input-label">
+                                Line Thickness:
+                                <input type="number" [(ngModel)]="lineThickness" (change)="updateSelectedShape()"
+                                    min="1" max="10" class="number-input">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Line Style:
+                                <select [(ngModel)]="lineStyle" (change)="updateSelectedShape()" class="select-input">
+                                    <option value="solid">Solid</option>
+                                    <option value="dashed">Dashed</option>
+                                    <option value="dotted">Dotted</option>
+                                    <option value="tiny-dashed">Tiny Dashed</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <label class="input-label">
+                                Line Color:
+                                <input type="color" [(ngModel)]="lineColor" (change)="updateSelectedShape()"
+                                    class="color-input">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Head Style:
+                                <select [(ngModel)]="lineHeadStyle" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="none">None</option>
+                                    <option value="arrow">Arrow</option>
+                                    <option value="dot">Dot</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="input-label">
+                                Tail Style:
+                                <select [(ngModel)]="lineTailStyle" (change)="updateSelectedShape()"
+                                    class="select-input">
+                                    <option value="none">None</option>
+                                    <option value="arrow">Arrow</option>
+                                    <option value="dot">Dot</option>
+                                    <option value="fletching">Fletching</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Shape Tool Modifiers -->
+                    <div *ngIf="activeTool === 'shape'">
+                        <fieldset style="grid-column: 1 / -1;">
+                            <legend>Shape Type:</legend>
+                            <label class="radio-label">
+                                <input type="radio" name="shapeType" value="rectangle" [(ngModel)]="selectedShapeType"
+                                    (change)="setShapeType('rectangle')">
+                                Rectangle
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="shapeType" value="triangle" [(ngModel)]="selectedShapeType"
+                                    (change)="setShapeType('triangle')">
+                                Triangle
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="shapeType" value="oval" [(ngModel)]="selectedShapeType"
+                                    (change)="setShapeType('oval')">
+                                Oval
+                            </label>
+                        </fieldset>
+
+                        <!-- Rectangle/Triangle/Oval Properties -->
+                        <div *ngIf="selectedShapeType !== 'circle'" class="shape-props">
+                            <div>
+                                <label class="input-label">
+                                    Width:
+                                    <input type="number" [(ngModel)]="shapeWidth" (change)="updateSelectedShape()"
+                                        min="10" class="number-input">
+                                </label>
+                            </div>
+                            <div>
+                                <label class="input-label">
+                                    Height:
+                                    <input type="number" [(ngModel)]="shapeHeight" (change)="updateSelectedShape()"
+                                        min="10" class="number-input">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Circle Properties -->
+                        <div *ngIf="selectedShapeType === 'circle'" class="shape-props" style="grid-column: 1 / -1;">
+                            <div>
+                                <label class="input-label">
+                                    Radius:
+                                    <input type="number" [(ngModel)]="shapeRadius" (change)="updateSelectedShape()"
+                                        min="5" class="number-input">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Common Shape Properties -->
+                        <div class="shape-props">
+                            <div>
+                                <label class="input-label">
+                                    Stroke Width:
+                                    <input type="number" [(ngModel)]="shapeStrokeWidth" (change)="updateSelectedShape()"
+                                        min="1" max="10" class="number-input">
+                                </label>
+                            </div>
+                            <div>
+                                <label class="input-label">
+                                    Stroke Color:
+                                    <input type="color" [(ngModel)]="shapeStrokeColor" (change)="updateSelectedShape()"
+                                        class="color-input">
+                                </label>
+                            </div>
+                            <div>
+                                <label class="input-label">
+                                    Line Style:
+                                    <select [(ngModel)]="shapeStrokeDasharray" (change)="updateSelectedShape()"
+                                        class="select-input">
+                                        <option value="solid">Solid</option>
+                                        <option value="dashed">Dashed</option>
+                                        <option value="dotted">Dotted</option>
+                                        <option value="tiny-dashed">Tiny Dashed</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="input-label">
+                                    Fill Color:
+                                    <input type="color" [(ngModel)]="shapeFillColor" (change)="updateSelectedShape()"
+                                        class="color-input">
+                                </label>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label class="input-label">
+                                    Opacity:
+                                    <input type="range" [(ngModel)]="shapeOpacity" (change)="updateSelectedShape()"
+                                        min="0" max="1" step="0.1" class="range-input">
+                                </label>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label class="input-label">
+                                    Rotation:
+                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                        <input type="number" [(ngModel)]="shapeRotation"
+                                            (change)="updateSelectedShape()" min="0" max="360" class="number-input"
+                                            style="flex: 1;">
+                                        <span class="input-unit" style="min-width: 20px; text-align: center;">°</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Path Tool Modifiers - Minimal for space -->
+                    <div *ngIf="activeTool === 'path'">
+                        <div
+                            style="font-size: 12px; margin-bottom: 12px; padding: 8px; background: rgba(76,175,80,0.2); border-radius: 4px; border-left: 3px solid #4CAF50;">
+                            Selected: {{ selectedPlayers.size }} player(s)/ball
+                        </div>
+
+                        <fieldset>
+                            <legend>Drawing Mode:</legend>
+                            <label class="radio-label">
+                                <input type="radio" name="pathMode" value="single" [(ngModel)]="pathDrawingMode">
+                                ▬ Single Path
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="pathMode" value="connected" [(ngModel)]="pathDrawingMode">
+                                ⟿ Connected Paths
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Path Type:</legend>
+                            <label class="radio-label"
+                                *ngIf="selectedPlayers.size === 1 && !selectedPlayers.has('soccer-ball')">
+                                <input type="radio" name="pathType" value="run" [(ngModel)]="pathType"
+                                    (change)="updateSelectedPath()">
+                                ▶ Run
+                            </label>
+                            <label class="radio-label"
+                                *ngIf="selectedPlayers.size > 1 && !selectedPlayers.has('soccer-ball')">
+                                <input type="radio" name="pathType" value="crash" [(ngModel)]="pathType"
+                                    (change)="updateSelectedPath()">
+                                ▶ Crash
+                            </label>
+                            <label class="radio-label"
+                                *ngIf="selectedPlayers.size >= 1 && selectedPlayers.has('soccer-ball') && selectedPlayers.size > 1">
+                                <input type="radio" name="pathType" value="speed-dribble" [(ngModel)]="pathType"
+                                    (change)="updateSelectedPath()">
+                                ≈ Dribble
+                            </label>
+                            <label class="radio-label"
+                                *ngIf="selectedPlayers.size === 1 && selectedPlayers.has('soccer-ball')">
+                                <input type="radio" name="pathType" value="normal-pass" [(ngModel)]="pathType"
+                                    (change)="updateSelectedPath()">
+                                ╌ Pass
+                            </label>
+                            <label class="radio-label"
+                                *ngIf="selectedPlayers.size === 1 && selectedPlayers.has('soccer-ball')">
+                                <input type="radio" name="pathType" value="drive" [(ngModel)]="pathType"
+                                    (change)="updateSelectedPath()">
+                                → Shot
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Style:</legend>
+                            <label class="radio-label">
+                                <input type="radio" name="pathStyle" value="straight" [(ngModel)]="pathDrawingStyle"
+                                    (change)="updateSelectedPath()">
+                                Straight
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="pathStyle" value="curved" [(ngModel)]="pathDrawingStyle"
+                                    (change)="updateSelectedPath()">
+                                Curved
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="pathStyle" value="hand-drawn" [(ngModel)]="pathDrawingStyle"
+                                    (change)="updateSelectedPath()">
+                                Hand-drawn
+                            </label>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Duration (seconds):</legend>
+                            <input type="number" [(ngModel)]="pathDuration" min="0.5" max="30" step="0.5"
+                                (change)="updateSelectedPath()"
+                                style="width: 100%; padding: 4px; box-sizing: border-box;">
+                        </fieldset>
+                    </div>
+
+                    <!-- Connect Tool Modifiers -->
+                    <div *ngIf="activeTool === 'connect' && selectedPlayers.size > 1" style="grid-column: 1 / -1;">
+                        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                            <button (click)="connectSelectedPlayers()" class="btn-primary" style="flex: 1;">
+                                🔗 Closed
+                            </button>
+                            <button (click)="connectSelectedPlayersOpen()" class="btn-primary" style="flex: 1;">
+                                🔗 Open
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button (click)="disconnectPlayers(selectedConnection?.id || '')"
+                                [disabled]="!selectedConnection" class="btn-secondary" style="flex: 1;">
+                                🔌 Disconnect
+                            </button>
+                            <button (click)="clearAllConnections()" [disabled]="playerConnections.length === 0"
+                                class="btn-danger" style="flex: 1;">
+                                🗑️ Clear All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div *ngIf="activeTool === 'none' || activeTool === 'training'"
+                        style="font-size: 12px; opacity: 0.6; text-align: center; padding: 20px 10px;">
+                        Select a drawing tool
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area - Three Panel Layout -->
+    <div class="main-content">
+
+        <!-- Player Selection Dialog -->
+        <div *ngIf="showPlayerSelectionDialog" class="dialog-overlay" (click)="closePlayerSelectionDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Select Players - {{ playerSelectionTeam === 'home' ? '🏠 HOME' : '👤 AWAY' }}</h2>
+                    <button class="btn-close" (click)="closePlayerSelectionDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <div class="player-selection-grid">
+                        <!-- Home Team Players -->
+                        <div class="team-column" *ngIf="playerSelectionTeam === 'home' || playerSelectionTeam === null">
+                            <h3>Home Team</h3>
+                            <div class="button-group">
+                                <button (click)="selectAllHomePlayers()" class="btn-small btn-primary">
+                                    Select All
+                                </button>
+                                <button (click)="deselectAllHomePlayers()" class="btn-small btn-secondary">
+                                    Deselect All
+                                </button>
+                            </div>
+                            <div class="player-checkboxes">
+                                <label *ngFor="let playerNumber of allPlayerNumbers" class="player-checkbox">
+                                    <input type="checkbox" [checked]="selectedHomePlayerNumbers.includes(playerNumber)"
+                                        (change)="toggleHomePlayer(playerNumber)">
+                                    <span class="player-info">
+                                        #{{ playerNumber }} - {{ getPositionAbbrev(playerNumber) }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Away Team Players -->
+                        <div class="team-column" *ngIf="playerSelectionTeam === 'away' || playerSelectionTeam === null">
+                            <h3>Away Team</h3>
+                            <div class="button-group">
+                                <button (click)="selectAllAwayPlayers()" class="btn-small btn-primary">
+                                    Select All
+                                </button>
+                                <button (click)="deselectAllAwayPlayers()" class="btn-small btn-secondary">
+                                    Deselect All
+                                </button>
+                            </div>
+                            <div class="player-checkboxes">
+                                <label *ngFor="let playerNumber of allPlayerNumbers" class="player-checkbox">
+                                    <input type="checkbox" [checked]="selectedAwayPlayerNumbers.includes(playerNumber)"
+                                        (change)="toggleAwayPlayer(playerNumber)">
+                                    <span class="player-info">
+                                        #{{ playerNumber }} - {{ getPositionAbbrev(playerNumber) }}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="applyPlayerSelection()" class="btn-primary">
+                        ✓ Apply
+                    </button>
+                    <button (click)="closePlayerSelectionDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Formation Preset Dialog -->
+        <div *ngIf="showSaveFormationPresetDialog" class="dialog-overlay" (click)="closeSaveFormationPresetDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Save as Formation Preset</h2>
+                    <button class="btn-close" (click)="closeSaveFormationPresetDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <label class="input-label">
+                        Preset Name:
+                        <input type="text" [(ngModel)]="formationPresetName"
+                            placeholder="e.g., Counter Attack Formation" class="text-input">
+                    </label>
+                    <label class="input-label">
+                        Description (optional):
+                        <textarea [(ngModel)]="formationPresetDescription"
+                            placeholder="Add notes about this formation..." class="textarea-input"></textarea>
+                    </label>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="saveCurrentAsFormationPreset()" [disabled]="!formationPresetName.trim()"
+                        class="btn-primary">
+                        💾 Save Preset
+                    </button>
+                    <button (click)="closeSaveFormationPresetDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overwrite Formation Preset Confirmation Dialog -->
+        <div *ngIf="showOverwritePresetDialog" class="dialog-overlay" (click)="closeOverwritePresetDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Overwrite Formation Preset</h2>
+                    <button class="btn-close" (click)="closeOverwritePresetDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <p class="confirmation-text">
+                        Are you sure you want to overwrite the preset <strong>"{{ selectedCustomPreset?.name
+                            }}"</strong>?
+                    </p>
+                    <p class="confirmation-text-secondary">
+                        This will replace its saved positions, colors, and player selections with the current state.
+                    </p>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="overwriteCustomFormationPreset()" class="btn-danger">
+                        ⚠️ Yes, Overwrite
+                    </button>
+                    <button (click)="closeOverwritePresetDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rename Preset Dialog -->
+        <div *ngIf="showRenamePresetDialog" class="dialog-overlay" (click)="closeRenamePresetDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Rename Formation Preset</h2>
+                    <button class="btn-close" (click)="closeRenamePresetDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <label class="input-label">
+                        Preset Name:
+                        <input type="text" [(ngModel)]="renamePresetName" placeholder="e.g., Counter Attack Formation"
+                            class="text-input">
+                    </label>
+                    <label class="input-label">
+                        Description (optional):
+                        <textarea [(ngModel)]="renamePresetDescription" placeholder="Add notes about this formation..."
+                            class="textarea-input"></textarea>
+                    </label>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="renamePreset()" [disabled]="!renamePresetName.trim()" class="btn-primary">
+                        ✏️ Rename Preset
+                    </button>
+                    <button (click)="closeRenamePresetDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rename Sequence Dialog -->
+        <div *ngIf="showRenameSequenceDialog" class="dialog-overlay" (click)="closeRenameSequenceDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Rename Sequence</h2>
+                    <button class="btn-close" (click)="closeRenameSequenceDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <label class="input-label">
+                        Sequence Name:
+                        <input type="text" [(ngModel)]="renameSequenceName" placeholder="e.g., Counter Attack Move"
+                            class="text-input">
+                    </label>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="renameSequence()" [disabled]="!renameSequenceName.trim()" class="btn-primary">
+                        ✏️ Rename Sequence
+                    </button>
+                    <button (click)="closeRenameSequenceDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Text Dialog -->
+        <div *ngIf="showTextPropertiesDialog" class="dialog-overlay" (click)="closeTextPropertiesDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Add Text</h2>
+                    <button class="btn-close" (click)="closeTextPropertiesDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    <label class="input-label" style="grid-column: 1 / -1;">
+                        Text:
+                        <textarea [(ngModel)]="textContent" placeholder="Enter text..."
+                            class="textarea-input"></textarea>
+                    </label>
+                    <div>
+                        <label class="input-label">
+                            Font Family:
+                            <select [(ngModel)]="textFontFamily" class="select-input">
+                                <option value="Arial">Arial</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Eurostile">Eurostile</option>
+                                <option value="Eurostile Demi">Eurostile Demi</option>
+                                <option value="Eurostile Oblique">Eurostile Oblique</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Font Size:
+                            <input type="number" [(ngModel)]="textFontSize" min="8" max="72" class="number-input">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Font Weight:
+                            <select [(ngModel)]="textFontWeight" class="select-input">
+                                <option value="normal">Normal</option>
+                                <option value="bold">Bold</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Font Style:
+                            <select [(ngModel)]="textFontStyle" class="select-input">
+                                <option value="normal">Normal</option>
+                                <option value="italic">Italic</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Text Decoration:
+                            <select [(ngModel)]="textDecoration" class="select-input">
+                                <option value="none">None</option>
+                                <option value="underline">Underline</option>
+                                <option value="overline">Overline</option>
+                                <option value="line-through">Strikethrough</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="input-label">
+                            Color:
+                            <input type="color" [(ngModel)]="textColor" class="color-input">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="addTextShape()" [disabled]="!textContent.trim()" class="btn-primary">
+                        ✓ Add Text
+                    </button>
+                    <button (click)="closeTextPropertiesDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Keyframe Dialog -->
+        <div *ngIf="showExportKeyframeDialog" class="dialog-overlay" (click)="closeExportKeyframeDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Export Keyframe</h2>
+                    <button class="btn-close" (click)="closeExportKeyframeDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <label class="input-label">
+                        Keyframe Name:
+                        <input type="text" [(ngModel)]="exportKeyframeName" placeholder="e.g., Attacking Position"
+                            class="text-input">
+                    </label>
+                    <label class="input-label">
+                        Description (optional):
+                        <textarea [(ngModel)]="exportKeyframeDescription" placeholder="Add notes about this keyframe..."
+                            class="textarea-input"></textarea>
+                    </label>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="exportKeyframe()" [disabled]="!exportKeyframeName.trim()" class="btn-primary">
+                        📤 Export Keyframe
+                    </button>
+                    <button (click)="closeExportKeyframeDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Formation Presets Dialog -->
+        <div *ngIf="showExportPresetsDialog" class="dialog-overlay" (click)="closeExportPresetsDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>Export Formation Presets</h2>
+                    <button class="btn-close" (click)="closeExportPresetsDialog()">✕</button>
+                </div>
+
+                <div class="dialog-body">
+                    <label class="input-label">
+                        Filename:
+                        <input type="text" [(ngModel)]="exportPresetsFileName" placeholder="e.g., my-formations"
+                            class="text-input" (keyup.enter)="confirmExportPresets()">
+                    </label>
+                    <p style="font-size: 12px; color: rgba(255, 255, 255, 0.6); margin-top: 8px;">
+                        The file will be saved as: <strong>{{ sanitizeFilename(exportPresetsFileName) }}.json</strong>
+                    </p>
+                </div>
+
+                <div class="dialog-footer">
+                    <button (click)="confirmExportPresets()" [disabled]="!exportPresetsFileName.trim()"
+                        class="btn-primary">
+                        💾 Export
+                    </button>
+                    <button (click)="closeExportPresetsDialog()" class="btn-secondary">
+                        ✕ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Panel - Home Team Toolbar -->
+        <div class="left-panel home-toolbar">
+            <div class="toolbar-header">🏠 HOME</div>
+
+            <!-- Home Team & Number Colors -->
+            <div class="toolbar-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <!-- Home Jersey Color -->
+                <div>
+                    <div class="section-title">Jersey</div>
+                    <label class="color-label small" style="display: block;">
+                        <input type="color" [(ngModel)]="homeTeamColor" (change)="updateTeamColors()"
+                            class="color-input small">
+                    </label>
+                </div>
+
+                <!-- Home Number Color -->
+                <div>
+                    <div class="section-title">Numbering</div>
+                    <label class="color-label small" style="display: block;">
+                        <input type="color" [(ngModel)]="homeNumberColor" (change)="updateTeamColors()"
+                            class="color-input small">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Home Player Selection -->
+            <div class="toolbar-section">
+                <button (click)="openPlayerSelectionDialog('home')" class="btn-primary small btn-block">
+                    👥 Select Players
+                </button>
+            </div>
+
+            <!-- Home Compactness -->
+            <div class="toolbar-section">
+                <div class="section-title">Compactness</div>
+                <div class="button-group">
+                    <button (click)="homeBlockDensityDimension = 'vertical'; applyBlockDensity('home')"
+                        [class.active]="homeBlockDensityDimension === 'vertical'" class="btn-secondary small"
+                        title="Vertical">
+                        V
+                    </button>
+                    <button (click)="homeBlockDensityDimension = 'horizontal'; applyBlockDensity('home')"
+                        [class.active]="homeBlockDensityDimension === 'horizontal'" class="btn-secondary small"
+                        title="Horizontal">
+                        H
+                    </button>
+                    <button (click)="homeBlockDensityDimension = 'both'; applyBlockDensity('home')"
+                        [class.active]="homeBlockDensityDimension === 'both'" class="btn-secondary small"
+                        title="Both Dimensions">
+                        B
+                    </button>
+                </div>
+                <label class="input-label small">
+                    Level: {{ homeBlockDensityValue }}%
+                    <input type="range" [(ngModel)]="homeBlockDensityValue" (input)="applyBlockDensity('home')" min="0"
+                        max="100" step="5" class="range-input small">
+                </label>
+            </div>
+
+            <!-- Home Block Movement -->
+            <div class="toolbar-section">
+                <div class="section-title">Block Movement</div>
+                <button (click)="blockMovementActive = 'home'; toggleBlockMovement()"
+                    [class.active]="blockMovementEnabled && blockMovementActive === 'home'"
+                    class="btn-secondary small btn-block">
+                    {{ (blockMovementEnabled && blockMovementActive === 'home') ? '🔒 Active' : '🔓 Inactive' }}
+                </button>
+            </div>
+
+            <!-- Home Block Height -->
+            <div class="toolbar-section">
+                <div class="section-title">Block Height</div>
+                <div class="button-group">
+                    <button (click)="blockHeightActive = 'home'; blockHeightType = 'high'; setBlockHeight()"
+                        class="btn-secondary small" title="High Block">
+                        H
+                    </button>
+                    <button (click)="blockHeightActive = 'home'; blockHeightType = 'mid'; setBlockHeight()"
+                        class="btn-secondary small" title="Medium Block">
+                        M
+                    </button>
+                    <button (click)="blockHeightActive = 'home'; blockHeightType = 'low'; setBlockHeight()"
+                        class="btn-secondary small" title="Low Block">
+                        L
+                    </button>
+                    <button (click)="blockHeightActive = 'home'; blockHeightType = 'bus'; setBlockHeight()"
+                        class="btn-secondary small" title="Parking the Bus">
+                        PB
+                    </button>
+                </div>
+                <label class="checkbox-label small">
+                    <input type="checkbox" [(ngModel)]="enforceBlockStrictness" (change)="setBlockHeight()">
+                    Strictness
+                </label>
+            </div>
+
+            <!-- Home Team Position Label -->
+            <div class="position-label-display">
+                {{ homePositionLabel }}
+            </div>
+
+            <!-- Home Formation Presets -->
+            <div class="toolbar-section">
+                <div class="section-title">Formation Presets</div>
+                <select [(ngModel)]="selectedHomePreset" class="field-select small">
+                    <option [value]="null">-- Select preset --</option>
+
+                    <optgroup label="System">
+                        <option *ngFor="let formation of baseFormations"
+                            [ngValue]="{ type: 'system', value: formation }">
+                            {{ formation.baseFormatName }}
+                        </option>
+                    </optgroup>
+
+                    <optgroup label="Custom" *ngIf="customFormationPresets.length > 0">
+                        <option *ngFor="let preset of customFormationPresets"
+                            [ngValue]="{ type: 'custom', value: preset }">
+                            {{ preset.name }}
+                        </option>
+                    </optgroup>
+                </select>
+                <button (click)="applyHomePreset()" [disabled]="!selectedHomePreset" class="btn-primary small btn-block"
+                    style="margin-top: 5px;">
+                    📍 Apply Home
+                </button>
+                <button (click)="openSaveHomePresetDialog()" class="btn-secondary small btn-block"
+                    style="margin-top: 5px;">
+                    💾 Save as Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Center Panel - Field + Controls + Navigator -->
+        <div class="field-panel">
+            <!-- Soccer Field SVG -->
+            <div class="field-container"
+                (mousedown)="blockMovementEnabled ? onBlockMovementMouseDown($event) : onFieldMouseDown($event)"
+                (mousemove)="blockMovementEnabled ? onBlockMovementMouseMove($event) : onFieldMouseMove($event)"
+                (mouseup)="blockMovementEnabled ? onBlockMovementMouseUp($event) : onFieldMouseUp($event)"
+                [style.cursor]="blockMovementEnabled ? 'grab' : (drawingMode !== 'none' ? 'crosshair' : 'default')">
+                <svg #svgContainer [attr.width]="fieldWidth + fieldPadding * 2"
+                    [attr.height]="fieldHeight + fieldPadding * 2"
+                    [attr.viewBox]="'0 0 ' + (fieldWidth + fieldPadding * 2) + ' ' + (fieldHeight + fieldPadding * 2)"
+                    [class.pen-cursor]="activeTool === 'path' && pathDrawingStyle === 'hand-drawn' && isDrawingPath"
+                    (click)="onSvgClick($event)">
+
+                    <defs>
+                        <!-- Field Pattern -->
+                        <pattern id="grass-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <rect width="100" height="100" fill="#2ECC71" />
+                            <rect width="100" height="100" fill="#27AE60" opacity="0.3" />
+                        </pattern>
+
+                        <!-- Grid Pattern -->
+                        <pattern id="grid-pattern" x="0" y="0" [attr.width]="gridSize" [attr.height]="gridSize"
+                            patternUnits="userSpaceOnUse">
+                            <path [attr.d]="'M ' + gridSize + ' 0 L 0 0 0 ' + gridSize" fill="none"
+                                stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                        </pattern>
+
+                        <!-- Dynamic Striped Patterns for Connections -->
+                        <ng-container *ngFor="let connection of playerConnections">
+                            <pattern *ngIf="connection.fillType === 'striped'" [attr.id]="'striped-' + connection.id"
+                                x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse"
+                                patternTransform="rotate(45)">
+                                <!-- Alternating stripes -->
+                                <rect width="6" height="12" [attr.fill]="connection.fillColor || 'rgba(0, 0, 0, 0.3)'"
+                                    [attr.opacity]="connection.fillOpacity || 0.3" />
+                                <rect x="6" width="6" height="12" [attr.fill]="connection.stripeColor || '#ffffff'"
+                                    [attr.opacity]="connection.fillOpacity || 0.3" />
+                            </pattern>
+                        </ng-container>
+                    </defs>
+
+                    <g [attr.transform]="'translate(' + fieldPadding + ',' + fieldPadding + ')'">
+                        <!-- Field Background Image from SVG -->
+                        <image [attr.href]="getFieldGridPath()" x="0" y="0" [attr.width]="fieldWidth"
+                            [attr.height]="fieldHeight" preserveAspectRatio="none" />
+
+                        <!-- Grid Overlay -->
+                        <rect *ngIf="showGrid" x="0" y="0" [attr.width]="fieldWidth" [attr.height]="fieldHeight"
+                            fill="url(#grid-pattern)" />
+
+                        <!-- Player Connections (drawn underneath all objects) -->
+                        <g class="player-connections">
+                            <!-- Connection Fills (for 3+ nodes) -->
+                            <ng-container *ngFor="let connection of playerConnections">
+                                <polygon *ngIf="shouldFillConnection(connection) && connection.fillEnabled !== false"
+                                    [attr.points]="getConnectionPolygonPoints(connection.playerIds)"
+                                    [attr.fill]="connection.fillType === 'striped' ? 'url(#striped-' + connection.id + ')' : (connection.fillColor || 'rgba(0, 0, 0, 0.3)')"
+                                    [attr.opacity]="connection.fillType === 'striped' ? 1 : (connection.fillOpacity || 0.3)"
+                                    stroke="none" (click)="onConnectionFillClick($event, connection)"
+                                    (mousedown)="onConnectionFillClick($event, connection)"
+                                    style="cursor: pointer; pointer-events: auto;" />
+                            </ng-container>
+
+                            <!-- Connection Lines -->
+                            <ng-container *ngFor="let connection of playerConnections">
+                                <ng-container *ngFor="let lineCoords of getConnectionLineCoordinates(connection)">
+                                    <!-- Invisible overlay for better hit detection (wider stroke) -->
+                                    <line [attr.x1]="lineCoords.x1" [attr.y1]="lineCoords.y1" [attr.x2]="lineCoords.x2"
+                                        [attr.y2]="lineCoords.y2" stroke="transparent" stroke-width="12"
+                                        (mousedown)="onConnectionLineClick($event, connection)"
+                                        (click)="onConnectionLineClick($event, connection)"
+                                        (contextmenu)="$event.preventDefault()"
+                                        style="cursor: pointer; pointer-events: auto;" />
+                                    <!-- Visible line with yellow glow on selected -->
+                                    <line [attr.x1]="lineCoords.x1" [attr.y1]="lineCoords.y1" [attr.x2]="lineCoords.x2"
+                                        [attr.y2]="lineCoords.y2"
+                                        [attr.stroke]="connection.highlightColor || connection.color"
+                                        [attr.stroke-width]="connection.strokeWidth"
+                                        [attr.stroke-dasharray]="connection.strokeDasharray || 'none'"
+                                        [attr.opacity]="connection.opacity || 1" stroke-linecap="round"
+                                        [class.selected]="selectedConnection?.id === connection.id"
+                                        [class.glow]="connection.glowEnabled"
+                                        [style.filter]="connection.glowEnabled ? 'drop-shadow(0 0 20px ' + (connection.glowColor || 'rgba(255, 255, 255, 0.8)') + ') drop-shadow(0 0 12px ' + (connection.glowColor || 'rgba(255, 255, 255, 0.6)') + ') drop-shadow(0 0 6px ' + (connection.glowColor || 'rgba(255, 255, 255, 0.4)') + ')' : 'none'"
+                                        class="connection-line" style="pointer-events: none;" />
+                                </ng-container>
+                            </ng-container>
+                        </g>
+
+                        <!-- Paths Layer -->
+                        <g class="paths-layer">
+                            <ng-container *ngFor="let path of paths">
+                                <!-- Render different path types -->
+                                <!-- Straight paths: only runs and passes without special curves -->
+                                <path
+                                    *ngIf="path.drawingStyle === 'straight' && path.pathType !== 'chip' && path.pathType !== 'clear' && path.pathType !== 'outside-hook' && path.pathType !== 'inside-hook' && path.pathType !== 'dip' && path.pathType !== 'knuckleball' && path.pathType !== 'gliding' && path.pathType !== 'contact-dribble'"
+                                    [attr.d]="'M ' + path.startPoint.x + ' ' + path.startPoint.y + ' L ' + path.endPoint.x + ' ' + path.endPoint.y"
+                                    [attr.stroke]="getPathStrokeAttribute(path)"
+                                    [attr.stroke-width]="getPathStrokeWidth(path)"
+                                    [attr.stroke-dasharray]="getPathDasharray(path)" fill="none"
+                                    [attr.opacity]="path.visibility === 'visible' ? 1 : 0.3"
+                                    (click)="togglePathSelection(path, $event)"
+                                    [class.selected]="selectedPath?.id === path.id" class="path-element"
+                                    style="cursor: pointer;" />
+
+                                <!-- Curved path rendering (both curved drawing style and shots/dribbles that need curves) -->
+                                <path
+                                    *ngIf="path.drawingStyle === 'curved' || (path.drawingStyle === 'straight' && (path.pathType === 'outside-hook' || path.pathType === 'inside-hook' || path.pathType === 'dip' || path.pathType === 'knuckleball' || path.pathType === 'gliding' || path.pathType === 'contact-dribble'))"
+                                    [attr.d]="generateCurvedPath(path)" [attr.stroke]="getPathStrokeAttribute(path)"
+                                    [attr.stroke-width]="getPathStrokeWidth(path)"
+                                    [attr.stroke-dasharray]="getPathDasharray(path)" fill="none"
+                                    [attr.opacity]="path.visibility === 'visible' ? 1 : 0.3"
+                                    (click)="togglePathSelection(path, $event)"
+                                    [class.selected]="selectedPath?.id === path.id" class="path-element"
+                                    style="cursor: pointer;" />
+
+                                <!-- Arc path for chip/clear passes -->
+                                <path *ngIf="path.pathType === 'chip' || path.pathType === 'clear'"
+                                    [attr.d]="generateArcPath(path)" [attr.stroke]="getPathStrokeAttribute(path)"
+                                    [attr.stroke-width]="getPathStrokeWidth(path) * 1.2" fill="none"
+                                    [attr.opacity]="path.visibility === 'visible' ? 1 : 0.3"
+                                    (click)="togglePathSelection(path, $event)"
+                                    [class.selected]="selectedPath?.id === path.id" class="path-element"
+                                    style="cursor: pointer;" />
+
+                                <!-- Hand-drawn path rendering (using stroke-linecap for rougher appearance) -->
+                                <path *ngIf="path.drawingStyle === 'hand-drawn'"
+                                    [attr.d]="generateHandDrawnPathFromControlPoints(path)"
+                                    [attr.stroke]="getPathStrokeAttribute(path)"
+                                    [attr.stroke-width]="getPathStrokeWidth(path) * 0.7"
+                                    [attr.stroke-dasharray]="getPathDasharray(path)" fill="none"
+                                    [attr.opacity]="path.visibility === 'visible' ? 0.85 : 0.25"
+                                    (click)="selectPath(path); $event.stopPropagation()"
+                                    [class.selected]="selectedPath?.id === path.id" class="path-element"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    style="cursor: pointer; filter: url(#roughen);" />
+
+                                <!-- Path start point indicator (not for hand-drawn) -->
+                                <circle *ngIf="path.drawingStyle !== 'hand-drawn'" [attr.cx]="path.startPoint.x"
+                                    [attr.cy]="path.startPoint.y" r="4" [attr.fill]="path.color"
+                                    (click)="selectPath(path); $event.stopPropagation()"
+                                    [class.selected]="selectedPath?.id === path.id" style="cursor: pointer;" />
+
+                                <!-- Path end point indicator with arrow (not for hand-drawn) -->
+                                <circle *ngIf="path.drawingStyle !== 'hand-drawn'" [attr.cx]="path.endPoint.x"
+                                    [attr.cy]="path.endPoint.y" r="4" [attr.fill]="path.color"
+                                    (click)="selectPath(path); $event.stopPropagation()"
+                                    [class.selected]="selectedPath?.id === path.id" style="cursor: pointer;" />
+
+                                <!-- Path editing handles (only show for selected path) -->
+                                <ng-container
+                                    *ngIf="selectedPath?.id === path.id && path.drawingStyle === 'curved' && path.controlPoints && path.controlPoints.length > 0">
+                                    <!-- Control point handles -->
+                                    <ng-container *ngFor="let cp of path.controlPoints; let i = index">
+                                        <circle [attr.cx]="cp.x" [attr.cy]="cp.y" r="5" fill="#FFD700" stroke="#FF6B00"
+                                            stroke-width="2" (mousedown)="startEditingControlPoint($event, path, i)"
+                                            style="cursor: grab;" />
+                                        <!-- Lines from control points to path endpoints -->
+                                        <line [attr.x1]="path.startPoint.x" [attr.y1]="path.startPoint.y"
+                                            [attr.x2]="cp.x" [attr.y2]="cp.y" stroke="#FF6B00" stroke-width="1"
+                                            stroke-dasharray="3,3" opacity="0.5" />
+                                    </ng-container>
+                                </ng-container>
+
+                                <!-- Endpoint editing handles (only show for selected path) -->
+                                <ng-container *ngIf="selectedPath?.id === path.id">
+                                    <circle [attr.cx]="path.startPoint.x" [attr.cy]="path.startPoint.y" r="6"
+                                        fill="none" stroke="#00FF00" stroke-width="2"
+                                        (mousedown)="startEditingEndpoint($event, path, 'start')"
+                                        style="cursor: move;" />
+                                    <circle [attr.cx]="path.endPoint.x" [attr.cy]="path.endPoint.y" r="6" fill="none"
+                                        stroke="#00FF00" stroke-width="2"
+                                        (mousedown)="startEditingEndpoint($event, path, 'end')" style="cursor: move;" />
+                                </ng-container>
+
+                                <!-- Arrow head for runs and passes -->
+                                <defs>
+                                    <marker [attr.id]="'arrow-' + path.id" markerWidth="10" markerHeight="10" refX="9"
+                                        refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" [attr.fill]="path.color" />
+                                    </marker>
+
+                                    <!-- Gradient for attenuated runs (color to gray fade) -->
+                                    <linearGradient *ngIf="path.pathType === 'attenuated-run'"
+                                        [attr.id]="getGradientId(path)" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" [attr.stop-color]="getPathStrokeColor(path)"
+                                            stop-opacity="1" />
+                                        <stop offset="100%" stop-color="#999999" stop-opacity="1" />
+                                    </linearGradient>
+
+                                    <!-- Gradient for late-arriving runs (gray to color) -->
+                                    <linearGradient *ngIf="path.pathType === 'late-arriving'"
+                                        [attr.id]="getGradientId(path)" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#999999" stop-opacity="1" />
+                                        <stop offset="100%" [attr.stop-color]="getPathStrokeColor(path)"
+                                            stop-opacity="1" />
+                                    </linearGradient>
+
+                                    <!-- Gradient for crash paths (black to color) -->
+                                    <linearGradient *ngIf="path.pathType === 'crash'" [attr.id]="getGradientId(path)"
+                                        x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#000000" stop-opacity="1" />
+                                        <stop offset="100%" [attr.stop-color]="getPathStrokeColor(path)"
+                                            stop-opacity="1" />
+                                    </linearGradient>
+
+                                    <!-- Roughen filter for hand-drawn effect -->
+                                    <filter id="roughen">
+                                        <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise"
+                                            type="fractalNoise" />
+                                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
+                                    </filter>
+                                </defs>
+                                <path
+                                    *ngIf="(path.drawingStyle === 'straight' || path.drawingStyle === 'curved') && (path.pathType.includes('run') || path.pathType.includes('pass') || path.pathType.includes('shot') || path.pathType.includes('dribble'))"
+                                    [attr.d]="path.drawingStyle === 'curved' ? generateCurvedPath(path) : 'M ' + path.startPoint.x + ' ' + path.startPoint.y + ' L ' + path.endPoint.x + ' ' + path.endPoint.y"
+                                    [attr.stroke]="getPathStrokeAttribute(path)"
+                                    [attr.stroke-width]="getPathStrokeWidth(path)"
+                                    [attr.marker-end]="'url(#arrow-' + path.id + ')'" fill="none"
+                                    [attr.opacity]="path.visibility === 'visible' ? 1 : 0.3" class="path-arrow" />
+                            </ng-container>
+
+                            <!-- Path preview while drawing (straight/curved) -->
+                            <ng-container *ngIf="isDrawingPath && pathStartPoint && handDrawnPoints.length === 0">
+                                <line [attr.x1]="pathStartPoint.x" [attr.y1]="pathStartPoint.y" [attr.x2]="currentX"
+                                    [attr.y2]="currentY" stroke="#FFD700" stroke-width="2" stroke-dasharray="5,5"
+                                    opacity="0.7" />
+                                <circle [attr.cx]="pathStartPoint.x" [attr.cy]="pathStartPoint.y" r="5" fill="#FFD700"
+                                    opacity="0.7" />
+                                <circle [attr.cx]="currentX" [attr.cy]="currentY" r="5" fill="#FFD700" opacity="0.7" />
+                            </ng-container>
+
+                            <!-- Hand-drawn path preview while drawing -->
+                            <ng-container *ngIf="isDrawingPath && handDrawnPoints.length > 1">
+                                <path [attr.d]="generateHandDrawnPathPreview()" stroke="#FFD700" stroke-width="2"
+                                    fill="none" opacity="0.7" stroke-linecap="round" stroke-linejoin="round" />
+                                <ng-container *ngFor="let point of handDrawnPoints">
+                                    <circle [attr.cx]="point.x" [attr.cy]="point.y" r="3" fill="#FFD700"
+                                        opacity="0.5" />
+                                </ng-container>
+                            </ng-container>
+                        </g>
+
+                        <!-- Players -->
+                        <g *ngFor="let player of players" [attr.id]="player.id"
+                            [attr.transform]="getPlayerTransform(player)" class="player-group"
+                            [class.selected]="selectedPlayer?.id === player.id"
+                            [class.multi-selected]="isPlayerSelected(player)"
+                            (click)="togglePlayerSelection(player, $event)">
+                            <!-- Player Circle -->
+                            <circle r="15" [attr.fill]="player.color" stroke="#fff" stroke-width="2"
+                                class="player-circle" />
+                            <!-- Player Number -->
+                            <text text-anchor="middle" dy="5" class="player-number" fill="#fff" font-size="14"
+                                font-weight="bold">
+                                {{ player.number }}
+                            </text>
+                            <!-- Multi-selection indicator -->
+                            <circle *ngIf="isPlayerSelected(player)" r="20" fill="none" stroke="#FFD700"
+                                stroke-width="3" class="selection-indicator" />
+                        </g>
+
+                        <!-- Drawing Shapes Layer -->
+                        <g class="drawing-shapes">
+                            <!-- Lines -->
+                            <ng-container *ngFor="let shape of drawingShapes">
+                                <line *ngIf="shape.type === 'line'" [attr.x1]="shape.x" [attr.y1]="shape.y"
+                                    [attr.x2]="shape.x + (shape.width || 0)" [attr.y2]="shape.y + (shape.height || 0)"
+                                    [attr.stroke]="shape.stroke" [attr.stroke-width]="shape.strokeWidth"
+                                    [attr.stroke-dasharray]="shape.strokeDasharray" [attr.opacity]="shape.opacity"
+                                    (click)="selectShape(shape); $event.stopPropagation()"
+                                    (mousedown)="startMoveShape($event)"
+                                    [class.selected]="selectedShape?.id === shape.id" class="drawing-shape"
+                                    style="cursor: move;" />
+                            </ng-container>
+
+                            <!-- Ovals (ellipses) -->
+                            <ng-container *ngFor="let shape of drawingShapes">
+                                <g *ngIf="shape.type === 'oval'" [attr.transform]="getShapeTransform(shape)"
+                                    (mousedown)="startMoveShape($event)" style="cursor: move;">
+                                    <ellipse [attr.cx]="shape.width / 2" [attr.cy]="shape.height / 2"
+                                        [attr.rx]="shape.width / 2" [attr.ry]="shape.height / 2"
+                                        [attr.stroke]="shape.stroke" [attr.stroke-width]="shape.strokeWidth"
+                                        [attr.stroke-dasharray]="shape.strokeDasharray" [attr.fill]="shape.fill"
+                                        [attr.opacity]="shape.opacity"
+                                        (click)="selectShape(shape); $event.stopPropagation()"
+                                        [class.selected]="selectedShape?.id === shape.id" class="drawing-shape" />
+                                </g>
+                            </ng-container>
+
+                            <!-- Rectangles -->
+                            <ng-container *ngFor="let shape of drawingShapes">
+                                <g *ngIf="shape.type === 'rectangle'" [attr.transform]="getShapeTransform(shape)"
+                                    (mousedown)="startMoveShape($event)" style="cursor: move;">
+                                    <rect [attr.x]="0" [attr.y]="0" [attr.width]="shape.width"
+                                        [attr.height]="shape.height" [attr.stroke]="shape.stroke"
+                                        [attr.stroke-width]="shape.strokeWidth"
+                                        [attr.stroke-dasharray]="shape.strokeDasharray" [attr.fill]="shape.fill"
+                                        [attr.opacity]="shape.opacity"
+                                        (click)="selectShape(shape); $event.stopPropagation()"
+                                        [class.selected]="selectedShape?.id === shape.id" class="drawing-shape" />
+                                </g>
+                            </ng-container>
+
+                            <!-- Triangles -->
+                            <ng-container *ngFor="let shape of drawingShapes">
+                                <g *ngIf="shape.type === 'triangle'" [attr.transform]="getShapeTransform(shape)"
+                                    (mousedown)="startMoveShape($event)" style="cursor: move;">
+                                    <polygon [attr.points]="((shape.width || 0) / 2) + ',0 ' +
+                                            (shape.width || 0) + ',' + (shape.height || 0) + ' ' +
+                                            '0,' + (shape.height || 0)" [attr.stroke]="shape.stroke"
+                                        [attr.stroke-width]="shape.strokeWidth"
+                                        [attr.stroke-dasharray]="shape.strokeDasharray" [attr.fill]="shape.fill"
+                                        [attr.opacity]="shape.opacity"
+                                        (click)="selectShape(shape); $event.stopPropagation()"
+                                        [class.selected]="selectedShape?.id === shape.id" class="drawing-shape" />
+                                </g>
+                            </ng-container>
+
+                            <!-- Text -->
+                            <ng-container *ngFor="let shape of drawingShapes">
+                                <g *ngIf="shape.type === 'text'" [attr.transform]="getShapeTransform(shape)">
+                                    <text [attr.x]="0" [attr.y]="0" [attr.style]="getTextStyle(shape)"
+                                        (click)="selectShape(shape); $event.stopPropagation()"
+                                        (mousedown)="startMoveShape($event)" style="cursor: move;"
+                                        [class.selected]="selectedShape?.id === shape.id" class="drawing-shape">
+                                        {{ shape.text }}
+                                    </text>
+                                </g>
+                            </ng-container>
+
+                            <!-- Preview Shape (real-time feedback while drawing) -->
+                            <ng-container *ngIf="previewShape">
+                                <line *ngIf="previewShape.type === 'line'" [attr.x1]="previewShape.x"
+                                    [attr.y1]="previewShape.y" [attr.x2]="previewShape.x + (previewShape.width || 0)"
+                                    [attr.y2]="previewShape.y + (previewShape.height || 0)"
+                                    [attr.stroke]="previewShape.stroke" [attr.stroke-width]="previewShape.strokeWidth"
+                                    [attr.stroke-dasharray]="previewShape.strokeDasharray" [attr.opacity]="0.5"
+                                    class="preview-shape" />
+
+                                <ellipse *ngIf="previewShape.type === 'oval'"
+                                    [attr.cx]="previewShape.x + (previewShape.width || 0) / 2"
+                                    [attr.cy]="previewShape.y + (previewShape.height || 0) / 2"
+                                    [attr.rx]="((previewShape.width || 0) / 2)"
+                                    [attr.ry]="((previewShape.height || 0) / 2)" [attr.stroke]="previewShape.stroke"
+                                    [attr.stroke-width]="previewShape.strokeWidth"
+                                    [attr.stroke-dasharray]="previewShape.strokeDasharray"
+                                    [attr.fill]="previewShape.fill" [attr.opacity]="0.5" class="preview-shape" />
+
+                                <rect *ngIf="previewShape.type === 'rectangle'" [attr.x]="previewShape.x"
+                                    [attr.y]="previewShape.y" [attr.width]="previewShape.width"
+                                    [attr.height]="previewShape.height" [attr.stroke]="previewShape.stroke"
+                                    [attr.stroke-width]="previewShape.strokeWidth"
+                                    [attr.stroke-dasharray]="previewShape.strokeDasharray"
+                                    [attr.fill]="previewShape.fill" [attr.opacity]="0.5" class="preview-shape" />
+
+                                <polygon *ngIf="previewShape.type === 'triangle'" [attr.points]="(previewShape.x + (previewShape.width || 0) / 2) + ',' + previewShape.y + ' ' +
+                                            (previewShape.x + (previewShape.width || 0)) + ',' + (previewShape.y + (previewShape.height || 0)) + ' ' +
+                                            previewShape.x + ',' + (previewShape.y + (previewShape.height || 0))"
+                                    [attr.stroke]="previewShape.stroke" [attr.stroke-width]="previewShape.strokeWidth"
+                                    [attr.stroke-dasharray]="previewShape.strokeDasharray"
+                                    [attr.fill]="previewShape.fill" [attr.opacity]="0.5" class="preview-shape" />
+                            </ng-container>
+
+                            <!-- Selected Shape Selection Box and Handles -->
+                            <g *ngIf="selectedShape && !isDrawing" class="shape-handles">
+                                <!-- Selection bounding box -->
+                                <rect *ngIf="selectedShape.type !== 'text'" [attr.x]="selectedShape.x"
+                                    [attr.y]="selectedShape.y" [attr.width]="selectedShape.width"
+                                    [attr.height]="selectedShape.height" class="shape-selection-box" />
+
+                                <!-- Text shape selection box -->
+                                <rect *ngIf="selectedShape.type === 'text'" [attr.x]="selectedShape.x - 5"
+                                    [attr.y]="selectedShape.y - (selectedShape.fontSize || 16) - 5"
+                                    [attr.width]="(selectedShape.text || '').length * 6 + 10"
+                                    [attr.height]="(selectedShape.fontSize || 16) + 10" class="shape-selection-box" />
+
+                                <!-- Center Move Handle (no distortion) -->
+                                <circle [attr.cx]="selectedShape.x + (selectedShape.width || 0) / 2"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0) / 2" r="6"
+                                    class="move-handle" (mousedown)="startMoveShape($event)" title="Drag: Move shape" />
+
+                                <!-- Resize Handles (8 points) - Shift+Drag to rotate -->
+                                <!-- Top-left -->
+                                <circle *ngIf="selectedShape.type !== 'text'" [attr.cx]="selectedShape.x"
+                                    [attr.cy]="selectedShape.y" r="5" class="resize-handle"
+                                    (mousedown)="startResizeHandle('top-left', $event)"
+                                    title="Drag: Resize | Shift+Drag: Rotate" />
+
+                                <!-- For text: Top-left becomes rotation handle -->
+                                <circle *ngIf="selectedShape.type === 'text'" [attr.cx]="selectedShape.x"
+                                    [attr.cy]="selectedShape.y" r="5" class="resize-handle"
+                                    (mousedown)="rotateStart($event)" title="Drag: Rotate" />
+
+                                <!-- Top-center -->
+                                <circle *ngIf="selectedShape.type !== 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0) / 2"
+                                    [attr.cy]="selectedShape.y" r="5" class="resize-handle"
+                                    (mousedown)="startResizeHandle('top-center', $event)" title="Resize: top-center" />
+
+                                <!-- Top-right -->
+                                <circle *ngIf="selectedShape.type !== 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0)" [attr.cy]="selectedShape.y"
+                                    r="5" class="resize-handle" (mousedown)="startResizeHandle('top-right', $event)"
+                                    title="Resize: top-right" />
+
+                                <!-- For text: Top-right becomes rotation handle -->
+                                <circle *ngIf="selectedShape.type === 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0)" [attr.cy]="selectedShape.y"
+                                    r="5" class="resize-handle" (mousedown)="rotateStart($event)"
+                                    title="Drag: Rotate" />
+
+                                <!-- Middle-right -->
+                                <circle *ngIf="selectedShape.type !== 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0)"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0) / 2" r="5"
+                                    class="resize-handle" (mousedown)="startResizeHandle('middle-right', $event)"
+                                    title="Resize: right" />
+
+                                <!-- Bottom-right -->
+                                <circle *ngIf="selectedShape.type !== 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0)"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0)" r="5"
+                                    class="resize-handle" (mousedown)="startResizeHandle('bottom-right', $event)"
+                                    title="Resize: bottom-right" />
+
+                                <!-- Bottom-center -->
+                                <circle *ngIf="selectedShape.type !== 'text'"
+                                    [attr.cx]="selectedShape.x + (selectedShape.width || 0) / 2"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0)" r="5"
+                                    class="resize-handle" (mousedown)="startResizeHandle('bottom-center', $event)"
+                                    title="Resize: bottom-center" />
+
+                                <!-- Bottom-left -->
+                                <circle *ngIf="selectedShape.type !== 'text'" [attr.cx]="selectedShape.x"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0)" r="5"
+                                    class="resize-handle" (mousedown)="startResizeHandle('bottom-left', $event)"
+                                    title="Resize: bottom-left" />
+
+                                <!-- Middle-left -->
+                                <circle *ngIf="selectedShape.type !== 'text'" [attr.cx]="selectedShape.x"
+                                    [attr.cy]="selectedShape.y + (selectedShape.height || 0) / 2" r="5"
+                                    class="resize-handle" (mousedown)="startResizeHandle('middle-left', $event)"
+                                    title="Resize: left" />
+                            </g>
+                        </g>
+
+                        <!-- Ball (drawn on top of all other elements) -->
+                        <g id="soccer-ball" [attr.transform]="getBallTransform()" class="ball-group"
+                            [class.multi-selected]="selectedPlayers.has('soccer-ball')"
+                            (click)="toggleBallSelection($event)">
+                            <!-- Main white sphere -->
+                            <circle r="10" fill="#fff" stroke="#333" stroke-width="1" />
+
+                            <!-- Black pentagon (top) -->
+                            <polygon points="0,-7.25 4.35,-2.175 2.72,-6.2 -2.72,-6.2 -4.35,-2.175" fill="#000" />
+
+                            <!-- Black hexagon (left upper) -->
+                            <polygon points="-5.44,-3.625 -2.72,-5.44 0,-4.08 0,-1.36 -2.72,-2.72 -5.44,-1.36"
+                                fill="#000" />
+
+                            <!-- Black hexagon (right upper) -->
+                            <polygon points="5.44,-3.625 2.72,-5.44 0,-4.08 0,-1.36 2.72,-2.72 5.44,-1.36"
+                                fill="#000" />
+
+                            <!-- Black pentagon (left lower) -->
+                            <polygon points="-5.44,3.625 -4.35,2.175 -2.72,6.2 2.72,6.2 0,2.72" fill="#000" />
+
+                            <!-- Black pentagon (right lower) -->
+                            <polygon points="5.44,3.625 4.35,2.175 2.72,6.2 -2.72,6.2 0,2.72" fill="#000" />
+
+                            <!-- Center black hexagon -->
+                            <polygon points="-2.72,-0.91 0,-1.81 2.72,-0.91 2.72,0.91 0,1.81 -2.72,0.91" fill="#000" />
+
+                            <!-- Shadow for depth -->
+                            <circle r="10" fill="none" stroke="#000" stroke-width="0.5" opacity="0.2" />
+
+                            <!-- Selection indicator -->
+                            <circle *ngIf="selectedPlayers.has('soccer-ball')" r="15" fill="none" stroke="#FFD700"
+                                stroke-width="2" class="selection-indicator" />
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Playback Controls - Below Field -->
+            <div class="playback-controls">
+                <div class="vcr-buttons">
+                    <button (click)="rewind()" [disabled]="isPlaying" class="vcr-btn" title="Rewind to start">
+                        ⏮️
+                    </button>
+                    <button (click)="previousKeyframe()"
+                        [disabled]="isPlaying || currentSequence.keyframes.length === 0" class="vcr-btn"
+                        title="Go to previous keyframe">
+                        ⬅️
+                    </button>
+                    <button (click)="toggleRecording()" [class.recording]="isRecording" class="vcr-btn vcr-record"
+                        title="Toggle recording">
+                        ⏺️
+                    </button>
+                    <button (click)="play()" [disabled]="isPlaying || currentSequence.keyframes.length < 2"
+                        class="vcr-btn vcr-play" title="Play">
+                        ▶️
+                    </button>
+                    <button (click)="pause()" [disabled]="!isPlaying" class="vcr-btn" title="Pause">
+                        ⏸️
+                    </button>
+                    <button (click)="captureKeyframe()" [disabled]="!isRecording" class="vcr-btn"
+                        title="Capture keyframe">
+                        📸
+                    </button>
+                    <button (click)="stop()" [disabled]="!isPlaying && currentTime === 0" class="vcr-btn" title="Stop">
+                        ⏹️
+                    </button>
+                    <button (click)="nextKeyframe()" [disabled]="isPlaying || currentSequence.keyframes.length === 0"
+                        class="vcr-btn" title="Go to next keyframe">
+                        ➡️
+                    </button>
+                    <button (click)="end()" [disabled]="isPlaying" class="vcr-btn" title="Jump to last keyframe">
+                        ⏭️
+                    </button>
+                    <button (click)="repeatMode = !repeatMode" [class.active]="repeatMode" class="vcr-btn repeat-btn"
+                        title="Toggle repeat mode">
+                        🔁
+                    </button>
+                </div>
+
+                <!-- Timeline Slider and Time Input -->
+                <div class="timeline-slider-section">
+                    <input type="number" [(ngModel)]="currentTime" min="0" [max]="currentSequence.duration" step="0.1"
+                        class="time-input" [disabled]="isPlaying" title="Current time">
+                    <div class="time-slider-container">
+                        <input type="range" id="time-slider" class="time-slider" [(ngModel)]="currentTime"
+                            [disabled]="isPlaying" min="1" max="30" step="0.1">
+                    </div>
+                    <span class="slider-value">{{ (currentTime ?? 0) | number:'1.1-1' }}s</span>
+                </div>
+
+                <!-- Timeline Navigator -->
+                <div class="timeline-container">
+                    <div class="timeline-track">
+                        <div class="timeline-progress" [style.width.%]="(currentTime / currentSequence.duration) * 100">
+                        </div>
+                        <div class="timeline-playhead" [style.left.%]="(currentTime / currentSequence.duration) * 100">
+                        </div>
+                        <div *ngFor="let keyframe of currentSequence.keyframes" class="timeline-keyframe"
+                            [style.left.%]="(keyframe.time / currentSequence.duration) * 100"
+                            (click)="goToKeyframe(keyframe)" [title]="formatTime(keyframe.time)">
+                        </div>
+                    </div>
+                    <div class="timeline-labels">
+                        <span>0s</span>
+                        <span>{{ formatTime(currentSequence.duration) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Panel - Away Team Toolbar -->
+        <div class="left-panel away-toolbar">
+            <div class="toolbar-header">👤 AWAY</div>
+
+            <!-- Away Team & Number Colors -->
+            <div class="toolbar-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <!-- Away Jersey Color -->
+                <div>
+                    <div class="section-title">Jersey</div>
+                    <label class="color-label small" style="display: block;">
+                        <input type="color" [(ngModel)]="awayTeamColor" (change)="updateTeamColors()"
+                            class="color-input small">
+                    </label>
+                </div>
+
+                <!-- Away Number Color -->
+                <div>
+                    <div class="section-title">Numbering</div>
+                    <label class="color-label small" style="display: block;">
+                        <input type="color" [(ngModel)]="awayNumberColor" (change)="updateTeamColors()"
+                            class="color-input small">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Away Player Selection -->
+            <div class="toolbar-section">
+                <button (click)="openPlayerSelectionDialog('away')" class="btn-primary small btn-block">
+                    👥 Select Players
+                </button>
+            </div>
+
+            <!-- Away Compactness -->
+            <div class="toolbar-section">
+                <div class="section-title">Compactness</div>
+                <div class="button-group">
+                    <button (click)="awayBlockDensityDimension = 'vertical'; applyBlockDensity('away')"
+                        [class.active]="awayBlockDensityDimension === 'vertical'" class="btn-secondary small"
+                        title="Vertical">
+                        V
+                    </button>
+                    <button (click)="awayBlockDensityDimension = 'horizontal'; applyBlockDensity('away')"
+                        [class.active]="awayBlockDensityDimension === 'horizontal'" class="btn-secondary small"
+                        title="Horizontal">
+                        H
+                    </button>
+                    <button (click)="awayBlockDensityDimension = 'both'; applyBlockDensity('away')"
+                        [class.active]="awayBlockDensityDimension === 'both'" class="btn-secondary small"
+                        title="Both Dimensions">
+                        B
+                    </button>
+                </div>
+                <label class="input-label small">
+                    Level: {{ awayBlockDensityValue }}%
+                    <input type="range" [(ngModel)]="awayBlockDensityValue" (input)="applyBlockDensity('away')" min="0"
+                        max="100" step="5" class="range-input small">
+                </label>
+            </div>
+
+            <!-- Away Block Movement -->
+            <div class="toolbar-section">
+                <div class="section-title">Block Movement</div>
+                <button (click)="blockMovementActive = 'away'; toggleBlockMovement()"
+                    [class.active]="blockMovementEnabled && blockMovementActive === 'away'"
+                    class="btn-secondary small btn-block">
+                    {{ (blockMovementEnabled && blockMovementActive === 'away') ? '🔒 Active' : '🔓 Inactive' }}
+                </button>
+            </div>
+
+            <!-- Away Block Height -->
+            <div class="toolbar-section">
+                <div class="section-title">Block Height</div>
+                <div class="button-group">
+                    <button (click)="blockHeightActive = 'away'; blockHeightType = 'high'; setBlockHeight()"
+                        class="btn-secondary small" title="High Block">
+                        H
+                    </button>
+                    <button (click)="blockHeightActive = 'away'; blockHeightType = 'mid'; setBlockHeight()"
+                        class="btn-secondary small" title="Medium Block">
+                        M
+                    </button>
+                    <button (click)="blockHeightActive = 'away'; blockHeightType = 'low'; setBlockHeight()"
+                        class="btn-secondary small" title="Low Block">
+                        L
+                    </button>
+                    <button (click)="blockHeightActive = 'away'; blockHeightType = 'bus'; setBlockHeight()"
+                        class="btn-secondary small" title="Parking the Bus">
+                        PB
+                    </button>
+                </div>
+                <label class="checkbox-label small">
+                    <input type="checkbox" [(ngModel)]="enforceBlockStrictness" (change)="setBlockHeight()">
+                    Strictness
+                </label>
+            </div>
+
+            <!-- Away Team Position Label -->
+            <div class="position-label-display">
+                {{ awayPositionLabel }}
+            </div>
+
+            <!-- Away Formation Presets -->
+            <div class="toolbar-section">
+                <div class="section-title">Formation Presets</div>
+                <select [(ngModel)]="selectedAwayPreset" class="field-select small">
+                    <option [value]="null">-- Select preset --</option>
+
+                    <optgroup label="System">
+                        <option *ngFor="let formation of baseFormations"
+                            [ngValue]="{ type: 'system', value: formation }">
+                            {{ formation.baseFormatName }}
+                        </option>
+                    </optgroup>
+
+                    <optgroup label="Custom" *ngIf="customFormationPresets.length > 0">
+                        <option *ngFor="let preset of customFormationPresets"
+                            [ngValue]="{ type: 'custom', value: preset }">
+                            {{ preset.name }}
+                        </option>
+                    </optgroup>
+                </select>
+                <button (click)="applyAwayPreset()" [disabled]="!selectedAwayPreset" class="btn-primary small btn-block"
+                    style="margin-top: 5px;">
+                    📍 Apply Away
+                </button>
+                <button (click)="openSaveAwayPresetDialog()" class="btn-secondary small btn-block"
+                    style="margin-top: 5px;">
+                    💾 Save as Away
+                </button>
+            </div>
+        </div>
+
+        <!-- Connection Context Menu -->
+        <div *ngIf="contextMenuPosition" class="connection-context-menu" [style.left.px]="contextMenuPosition.x"
+            [style.top.px]="contextMenuPosition.y" (click)="$event.stopPropagation()"
+            (contextmenu)="$event.preventDefault()">
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Line Style</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button (click)="setConnectionStrokeDasharray(contextMenuConnection!, 'none')"
+                        class="context-menu-item" style="flex: 1; min-width: 70px;">
+                        ─ Solid
+                    </button>
+                    <button (click)="setConnectionStrokeDasharray(contextMenuConnection!, '5,5')"
+                        class="context-menu-item" style="flex: 1; min-width: 80px;">
+                        ╌ Long Dash
+                    </button>
+                </div>
+            </div>
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Line Color</div>
+                <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#ff0000')"
+                        style="background: #ff0000; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Red"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#ff7f00')"
+                        style="background: #ff7f00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Orange"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#ffff00')"
+                        style="background: #ffff00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Yellow"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#00ff00')"
+                        style="background: #00ff00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Green"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#0000ff')"
+                        style="background: #0000ff; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Blue"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#4b0082')"
+                        style="background: #4b0082; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Indigo"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#9400d3')"
+                        style="background: #9400d3; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Violet"></button>
+                    <button (click)="setConnectionColor(contextMenuConnection!, '#ffffff')"
+                        style="background: #ffffff; width: 24px; height: 24px; border-radius: 4px; border: 1px solid #666; cursor: pointer;"
+                        title="White"></button>
+                    <input type="color" [value]="contextMenuConnection?.color || '#ffffff'"
+                        (change)="setConnectionColor(contextMenuConnection!, $event.target.value)"
+                        style="width: 30px; height: 24px; border: none; border-radius: 4px; cursor: pointer;"
+                        title="Custom color">
+                </div>
+            </div>
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Line Opacity</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button (click)="setConnectionOpacity(contextMenuConnection!, 1)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">100%</button>
+                    <button (click)="setConnectionOpacity(contextMenuConnection!, 0.75)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">75%</button>
+                    <button (click)="setConnectionOpacity(contextMenuConnection!, 0.5)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">50%</button>
+                    <button (click)="setConnectionOpacity(contextMenuConnection!, 0.25)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">25%</button>
+                </div>
+            </div>
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Fill</div>
+                <button (click)="toggleConnectionFill(contextMenuConnection!)" class="context-menu-item">
+                    🎨 {{ contextMenuConnection?.playerIds?.length >= 3 && contextMenuConnection.fillEnabled !==
+                    false ? '✓ Toggle Fill' : 'No Fill' }}
+                </button>
+            </div>
+
+            <div class="context-menu-section"
+                *ngIf="contextMenuConnection?.playerIds?.length >= 3 && contextMenuConnection?.fillEnabled !== false">
+                <div class="context-menu-header">Fill Type</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button (click)="setConnectionFillType(contextMenuConnection!, 'solid')" class="context-menu-item"
+                        [style.background]="contextMenuConnection?.fillType === 'solid' ? '#555' : '#333'"
+                        style="flex: 1; min-width: 70px;">
+                        ⬜ Solid
+                    </button>
+                    <button (click)="setConnectionFillType(contextMenuConnection!, 'striped')" class="context-menu-item"
+                        [style.background]="contextMenuConnection?.fillType === 'striped' ? '#555' : '#333'"
+                        style="flex: 1; min-width: 80px;">
+                        ≡ Striped
+                    </button>
+                </div>
+            </div>
+
+            <div class="context-menu-section" *ngIf="contextMenuConnection?.playerIds?.length >= 3">
+                <div class="context-menu-header">Fill Color</div>
+                <div class="context-menu-color-grid">
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(0, 0, 0, 0.3)')"
+                        style="background: rgba(0, 0, 0, 0.3); border: 1px solid #fff;" title="Black"
+                        class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(255, 0, 0, 0.3)')"
+                        style="background: rgba(255, 0, 0, 0.3);" title="Red" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(0, 255, 0, 0.3)')"
+                        style="background: rgba(0, 255, 0, 0.3);" title="Green" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(0, 0, 255, 0.3)')"
+                        style="background: rgba(0, 0, 255, 0.3);" title="Blue" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(255, 255, 0, 0.3)')"
+                        style="background: rgba(255, 255, 0, 0.3);" title="Yellow"
+                        class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(255, 165, 0, 0.3)')"
+                        style="background: rgba(255, 165, 0, 0.3);" title="Orange"
+                        class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(255, 0, 255, 0.3)')"
+                        style="background: rgba(255, 0, 255, 0.3);" title="Magenta"
+                        class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionFillColor(contextMenuConnection!, 'rgba(0, 255, 255, 0.3)')"
+                        style="background: rgba(0, 255, 255, 0.3);" title="Cyan"
+                        class="context-menu-color-btn"></button>
+                </div>
+            </div>
+
+            <div class="context-menu-section" *ngIf="contextMenuConnection?.playerIds?.length >= 3">
+                <div class="context-menu-header">Fill Opacity</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button (click)="setConnectionFillOpacity(contextMenuConnection!, 1)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">100%</button>
+                    <button (click)="setConnectionFillOpacity(contextMenuConnection!, 0.5)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">50%</button>
+                    <button (click)="setConnectionFillOpacity(contextMenuConnection!, 0.25)" class="context-menu-item"
+                        style="flex: 1; min-width: 45px;">25%</button>
+                </div>
+            </div>
+
+            <div class="context-menu-section"
+                *ngIf="contextMenuConnection?.playerIds?.length >= 3 && contextMenuConnection?.fillType === 'striped'">
+                <div class="context-menu-header">Stripe Color</div>
+                <div class="context-menu-color-grid">
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#ffffff')"
+                        style="background: #ffffff; border: 1px solid #999;" title="White"
+                        class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#000000')"
+                        style="background: #000000;" title="Black" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#ff0000')"
+                        style="background: #ff0000;" title="Red" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#00ff00')"
+                        style="background: #00ff00;" title="Green" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#0000ff')"
+                        style="background: #0000ff;" title="Blue" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#ffff00')"
+                        style="background: #ffff00;" title="Yellow" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#ff7f00')"
+                        style="background: #ff7f00;" title="Orange" class="context-menu-color-btn"></button>
+                    <button (click)="setConnectionStripeColor(contextMenuConnection!, '#ff00ff')"
+                        style="background: #ff00ff;" title="Magenta" class="context-menu-color-btn"></button>
+                    <input type="color" [value]="contextMenuConnection?.stripeColor || '#ffffff'"
+                        (change)="setConnectionStripeColor(contextMenuConnection!, $event.target.value)"
+                        style="width: 30px; height: 24px; border: none; border-radius: 4px; cursor: pointer; grid-column: 1 / -1;"
+                        title="Custom stripe color">
+                </div>
+            </div>
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Highlight Color</div>
+                <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, null)"
+                        style="background: #666; width: 24px; height: 24px; border-radius: 4px; border: 1px solid #fff; cursor: pointer;"
+                        title="None">✕</button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#ff0000')"
+                        style="background: #ff0000; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Red"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#ff7f00')"
+                        style="background: #ff7f00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Orange"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#ffff00')"
+                        style="background: #ffff00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Yellow"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#00ff00')"
+                        style="background: #00ff00; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Green"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#0000ff')"
+                        style="background: #0000ff; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Blue"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#4b0082')"
+                        style="background: #4b0082; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Indigo"></button>
+                    <button (click)="setConnectionHighlightColor(contextMenuConnection!, '#9400d3')"
+                        style="background: #9400d3; width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Violet"></button>
+                    <input type="color" [value]="contextMenuConnection?.highlightColor || '#ffff00'"
+                        (change)="setConnectionHighlightColor(contextMenuConnection!, $event.target.value)"
+                        style="width: 30px; height: 24px; border: none; border-radius: 4px; cursor: pointer;"
+                        title="Custom color">
+                </div>
+            </div>
+
+            <div class="context-menu-section">
+                <div class="context-menu-header">Glow</div>
+                <button (click)="toggleConnectionGlow(contextMenuConnection!)" class="context-menu-item">
+                    ✨ {{ contextMenuConnection?.glowEnabled ? '✓ Glow On' : 'Glow Off' }}
+                </button>
+            </div>
+
+            <div class="context-menu-section" *ngIf="contextMenuConnection?.glowEnabled">
+                <div class="context-menu-header">Glow Color</div>
+                <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(255, 0, 0, 0.5)')"
+                        style="background: rgba(255, 0, 0, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Red"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(255, 127, 0, 0.5)')"
+                        style="background: rgba(255, 127, 0, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Orange"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(255, 255, 0, 0.5)')"
+                        style="background: rgba(255, 255, 0, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Yellow"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(0, 255, 0, 0.5)')"
+                        style="background: rgba(0, 255, 0, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Green"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(0, 0, 255, 0.5)')"
+                        style="background: rgba(0, 0, 255, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Blue"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(75, 0, 130, 0.5)')"
+                        style="background: rgba(75, 0, 130, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Indigo"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(148, 0, 211, 0.5)')"
+                        style="background: rgba(148, 0, 211, 0.8); width: 24px; height: 24px; border-radius: 4px; border: none; cursor: pointer;"
+                        title="Violet"></button>
+                    <button (click)="setConnectionGlowColor(contextMenuConnection!, 'rgba(255, 255, 255, 0.5)')"
+                        style="background: rgba(255, 255, 255, 0.8); width: 24px; height: 24px; border-radius: 4px; border: 1px solid #666; cursor: pointer;"
+                        title="White"></button>
+                    <input type="color" value="#ffffff"
+                        (change)="setConnectionGlowColor(contextMenuConnection!, 'rgba(' + rgbFromHex($event.target.value) + ', 0.5)')"
+                        style="width: 30px; height: 24px; border: none; border-radius: 4px; cursor: pointer;"
+                        title="Custom color">
+                </div>
+            </div>
+
+            <div class="context-menu-section context-menu-danger">
+                <div class="context-menu-header">Disconnect</div>
+                <button (click)="disconnectLinkAtThisFrame(contextMenuConnection!)"
+                    class="context-menu-item context-menu-danger-item">
+                    🔗 Link at This Frame
+                </button>
+                <button (click)="disconnectLinkInAllKeyframes(contextMenuConnection!)"
+                    class="context-menu-item context-menu-danger-item">
+                    🔗 Link in All Keyframes
+                </button>
+                <button (click)="disconnectConnectionAtThisFrame(contextMenuConnection!)"
+                    class="context-menu-item context-menu-danger-item">
+                    🔌 Connection at This Frame
+                </button>
+                <button (click)="disconnectConnectionInAllKeyframes(contextMenuConnection!)"
+                    class="context-menu-item context-menu-danger-item">
+                    🔌 Connection in All Keyframes
+                </button>
+            </div>
+        </div>
+
+        <!-- Context Menu Backdrop (to close menu on click) -->
+        <div *ngIf="contextMenuPosition" class="context-menu-backdrop" (click)="closeContextMenu()"></div>
+    </div>

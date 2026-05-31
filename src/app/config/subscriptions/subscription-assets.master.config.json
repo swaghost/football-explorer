@@ -1,0 +1,598 @@
+{
+  "TierID": "MASTER",
+  "TierName": "Master Configuration",
+  "TierGroup": "SYSTEM",
+  "Assets": {
+    "toolbars": [
+      {
+        "key": "selectionTools",
+        "description": "Tools for selecting nodes and managing selections on the canvas",
+        "enabled": true,
+        "asAddOn": false,
+        "visible": true
+      },
+    {
+      "key": "annotation",
+      "description": "Annotation and markup tools for adding notes and highlights",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "screenshots",
+      "description": "Screenshot capture and export functionality",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "nodePainter",
+      "description": "Node styling and color customization tools",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "lessonViewer",
+      "description": "Lesson viewing and playback interface",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "lessonBuilderV2",
+      "description": "Advanced lesson creation and editing tools",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "lessonRunnerV2",
+      "description": "Interactive lesson playback and practice mode",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "techniqueExplorer",
+      "description": "Browse and explore techniques and strategies",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "skillsRadar",
+      "description": "Skills assessment and radar visualization",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "rotationControl",
+      "description": "Canvas rotation and orientation controls",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "quickNav",
+      "description": "Quick navigation shortcuts and controls",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "nodesList",
+      "description": "List view of all nodes in the current dataset",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "search",
+      "description": "Search functionality for finding nodes and content",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "importExport",
+      "description": "Data import and export tools",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "tenancy",
+      "description": "Tenant management and switching tools",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "teamRoster",
+      "description": "Team roster management and player selection",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "teamGroupMembers",
+      "description": "Team group member management and assignment",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "defaultTeamGroups",
+      "description": "Default team groups setup and configuration",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "statusPanel",
+      "description": "Status information and system notifications",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "favorites",
+      "description": "Favorite items quick access toolbar",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "bookmarks",
+      "description": "Bookmarks management for saved views and states",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "zoomControls",
+      "description": "Zoom in/out controls for canvas navigation",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "viewportInfo",
+      "description": "Viewport position and dimension information",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "visualizationOptions",
+      "description": "Visualization settings and display options",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "bottomToolbar",
+      "description": "Bottom toolbar with additional controls",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    }
+  ],
+    "dialogs": [
+    {
+      "key": "showAddChildDialog",
+      "description": "Dialog for adding a child node to the tree",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showReparentNodeDialog",
+      "description": "Dialog for changing a node's parent in the tree hierarchy",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showClearChildrenDialog",
+      "description": "Confirmation dialog for clearing all child nodes",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showPromoteChildrenDialog",
+      "description": "Confirmation dialog for promoting child nodes up the hierarchy",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDeleteNodeDialog",
+      "description": "Confirmation dialog for deleting a node",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showInsertNodeDialog",
+      "description": "Dialog for inserting a new node in the tree",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditNodeDialog",
+      "description": "Dialog for editing node properties and content",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showClearDrawingsDialog",
+      "description": "Confirmation dialog for clearing all drawings and annotations",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showClearSelectionsDialog",
+      "description": "Confirmation dialog for clearing all node selections",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showSystemDefaultWarningDialog",
+      "description": "Warning dialog when modifying system default settings",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showCreateTeamDialog",
+      "description": "Dialog for creating a new team",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditTeamDialog",
+      "description": "Dialog for editing team details and settings",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDeleteTeamDialog",
+      "description": "Confirmation dialog for deleting a team",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showCreateTeamGroupDialog",
+      "description": "Dialog for creating a new team group",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditTeamGroupDialog",
+      "description": "Dialog for editing team group details",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDeleteTeamGroupDialog",
+      "description": "Confirmation dialog for deleting a team group",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showAddDefaultTeamGroupsDialog",
+      "description": "Dialog for adding default team groups to a team",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showAutoBuildInfoDialog",
+      "description": "Information dialog about auto-build features and options",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showCreateLessonDialog",
+      "description": "Dialog for creating a new lesson",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditLessonDialog",
+      "description": "Dialog for editing lesson details and content",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDeleteLessonDialog",
+      "description": "Confirmation dialog for deleting a lesson",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showApplyNoLessonConfirmDialog",
+      "description": "Confirmation dialog for removing lesson assignment",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showCreateDatasetDialog",
+      "description": "Dialog for creating a new dataset",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditDatasetDialog",
+      "description": "Dialog for editing dataset properties and settings",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showCombineDatasetsDialog",
+      "description": "Dialog for combining multiple datasets into one",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showPromoteDatasetDialog",
+      "description": "Confirmation dialog for promoting a dataset",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDemoteDatasetDialog",
+      "description": "Confirmation dialog for demoting a dataset",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDeleteDatasetDialog",
+      "description": "Confirmation dialog for deleting a dataset",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showDatasetInfoDialog",
+      "description": "Information dialog showing dataset details and statistics",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showAddPlayerDialog",
+      "description": "Dialog for adding a new player to the system",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "showEditPlayerDialog",
+      "description": "Dialog for editing player information and details",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    }
+  ],
+    "drawers": [
+    {
+      "key": "isLoginDrawerOpen",
+      "description": "User authentication and login drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isTenantDrawerOpen",
+      "description": "Tenant selection and management drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isPlayerSelectionDrawerOpen",
+      "description": "Player/user selection and context drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isContextDrawerOpen",
+      "description": "Context management and settings drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isTeamsDrawerOpen",
+      "description": "Teams management and organization drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isTeamGroupsDrawerOpen",
+      "description": "Team groups management drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isDatasetsDrawerOpen",
+      "description": "Datasets browser and management drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isLessonBuilderDrawerOpen",
+      "description": "Lesson selector and builder drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isSubscriptionDrawerOpen",
+      "description": "Subscription management and billing drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    },
+    {
+      "key": "isAssignedLessonsDrawerOpen",
+      "description": "Assigned lessons tracker and progress drawer",
+      "enabled": true,
+      "asAddOn": false,
+      "visible": true
+    }
+  ],
+    "limits": [
+    {
+      "type": "tenantMaxActiveDatasets",
+      "description": "Maximum number of active tenant (non-system) datasets",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "tenantMaxActiveTeams",
+      "description": "Maximum number of active teams within the tenant",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "tenantMaxActiveLessons",
+      "description": "Maximum number of active lessons within the tenant",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "tenantMaxActiveUsers",
+      "description": "Maximum number of active users within the tenant",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "userMaxActiveDatasets",
+      "description": "Maximum number of active datasets per user",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "userMaxActiveTeams",
+      "description": "Maximum number of active teams per user",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "userExplorerLimit",
+      "description": "Maximum number of explorer items per user",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "userFavoritesLimit",
+      "description": "Maximum number of favorites per user",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "userBookmarksLimit",
+      "description": "Maximum number of bookmarks per user",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "teamMaxActiveDatasets",
+      "description": "Maximum number of active datasets per team",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "teamMaxActiveTeamGroups",
+      "description": "Maximum number of active team groups per team",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    },
+    {
+      "type": "teamMaxRosterSize",
+      "description": "Maximum roster size per team",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1,
+      "asAddOn": false
+    }
+  ],"extensions": []
+  },
+  "AddOnPackagesAvailable": []
+}

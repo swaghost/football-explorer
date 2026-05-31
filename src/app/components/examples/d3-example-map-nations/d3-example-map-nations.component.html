@@ -1,0 +1,57 @@
+<div>
+  <label for="Club:">Select Club:</label>
+  <select id="Club:" (change)="onSelectClub($event.target.value)">
+    <option value="">-- Choose --</option>
+    <option *ngFor="let nation of nations" [value]="nation.alpha3">{{ nation.name }}</option>
+  </select>
+
+</div>
+<div>
+  <label for="nation">Select Nation Code:</label>
+  <select id="nation" (change)="onSelect($event.target.value)">
+    <option value="">-- Choose --</option>
+    <option *ngFor="let nation of nations" [value]="nation.alpha3">{{ nation.name }}</option>
+  </select>
+
+</div>
+<div>
+    <label>
+    <input type="checkbox" [(ngModel)]="fillMap" />
+    Fill Map
+    </label>
+</div>
+<div>
+    <label>
+    Fill color:
+  <input type="color" [(ngModel)]="fillColor" />
+</label>
+</div>
+<div>
+  <label>
+    Outline color:
+    <input type="color" [(ngModel)]="outlineColor" />
+  </label>
+</div>
+<!-- <div>
+    {{svgPath}}
+</div> -->
+<div *ngIf="svgPath">
+  <svg width="1024" height="768" viewBox="0 0 1024 768" xmlns="http://www.w3.org/2000/svg">
+    <path 
+    [attr.fill]="fillMap ? fillColor : 'none'"
+    [attr.d]="svgPath"
+    [attr.stroke]="outlineColor"
+    stroke-width="2"
+    />
+    <circle *ngFor="let city of projectedCities()"
+        [attr.cx]="city.cx"
+        [attr.cy]="city.cy"
+        [attr.r]="city.r"
+        fill="red"
+        fill-opacity="0.6"
+        stroke="#fff"
+        stroke-width="1">
+        <title>{{ city.name }}</title>
+    </circle>
+  </svg>
+</div>

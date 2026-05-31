@@ -1,0 +1,43 @@
+<!-- Reparent Node Dialog -->
+<app-base-dialog [visible]="visible" [title]="'Reparent Node'" [icon]="'🔗'" [isDarkMode]="isDarkMode"
+    [maxWidth]="'600px'" (close)="onCancel()">
+    <div class="form-section">
+        <div class="field-info">
+            <span class="info-icon">ℹ️</span>
+            <span class="info-text">Moving node: <strong>{{ selectedNodeId }}</strong></span>
+        </div>
+
+        <div class="form-group">
+            <label for="newParentId">New Parent Node <span class="required">*</span></label>
+            <select id="newParentId" class="form-select" [(ngModel)]="newParentId" required>
+                <option value="">Select a new parent node...</option>
+                <option *ngFor="let node of availableNodes" [value]="node.id" [style.paddingLeft.em]="node.depth + 1">
+                    {{ getNodeDisplayText(node) }}
+                </option>
+            </select>
+            <div class="field-help">
+                Choose the node that will become the new parent
+            </div>
+        </div>
+
+        <div class="warning-section" *ngIf="selectedNodeId">
+            <div class="warning-message">
+                <span class="warning-icon">⚠️</span>
+                <span class="warning-text">
+                    This will move node "{{ selectedNodeId }}" and all its children to the selected parent.
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div slot="footer" class="modal-footer">
+        <button class="btn btn-secondary" (click)="onCancel()" title="Cancel and close dialog">
+            Cancel
+        </button>
+        <button class="btn btn-primary" [disabled]="!isFormValid" (click)="onConfirm()"
+            title="Move the node to the new parent">
+            <span class="button-icon">🔗</span>
+            Reparent Node
+        </button>
+    </div>
+</app-base-dialog>

@@ -1,0 +1,376 @@
+@use "../../../styles/components/toolbar-base";
+
+// OVERLAYS Toolbar Component Styles
+.overlays-panel {
+  // Note: overflow:hidden removed to allow help-overlay to display properly
+  // The help-overlay is positioned absolutely and needs to be visible over the panel
+
+  // Ensure panel-header has no border-radius and proper clipping
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Ensure panel-footer has no border-radius and proper clipping
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .overlays-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 600px;
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--color-bg-primary, #fff);
+  border-radius: 4px;
+  border: 1px solid var(--color-border, #ddd);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-header label {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--color-text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.btn-add {
+  background: var(--color-accent, #6366f1);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add:hover {
+  background: #4f46e5;
+}
+
+.sets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  padding: 12px;
+  text-align: center;
+  color: var(--color-text-secondary, #999);
+  font-style: italic;
+  font-size: 10px;
+}
+
+.set-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: var(--color-bg-secondary, #f5f5f5);
+  border-radius: 3px;
+  border: 1px solid var(--color-border, #ddd);
+}
+
+.set-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.set-radio {
+  cursor: pointer;
+}
+
+.set-name {
+  font-weight: 600;
+  color: var(--color-text-primary, #000);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.set-count {
+  font-size: 9px;
+  color: var(--color-text-secondary, #999);
+  white-space: nowrap;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-delete:hover {
+  opacity: 0.7;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 10px;
+  color: var(--color-text-secondary, #666);
+  text-transform: uppercase;
+}
+
+.form-select,
+.form-input {
+  padding: 6px;
+  border: 1px solid var(--color-border, #ddd);
+  border-radius: 3px;
+  background: var(--color-bg-primary, #fff);
+  color: var(--color-text-primary, #000);
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.form-select:focus,
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-accent, #6366f1);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.btn-primary {
+  background: var(--color-accent, #6366f1);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-bg-secondary, #f5f5f5);
+  color: var(--color-text-primary, #000);
+  border: 1px solid var(--color-border, #ddd);
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-border, #ddd);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.elements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.element-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px;
+  background: var(--color-bg-secondary, #f5f5f5);
+  border-radius: 3px;
+  border-left: 2px solid var(--color-accent, #6366f1);
+}
+
+.element-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.element-type {
+  font-weight: 600;
+  color: var(--color-text-primary, #000);
+  font-size: 10px;
+  word-break: break-word;
+}
+
+.element-location {
+  font-size: 9px;
+  color: var(--color-text-secondary, #999);
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover {
+  opacity: 0.7;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Dialog Styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: var(--color-bg-primary, #fff);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+}
+
+.dialog h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #000);
+}
+
+.dialog .form-group {
+  margin-bottom: 12px;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border, #ddd);
+}
+
+.btn-cancel {
+  background: var(--color-bg-secondary, #f5f5f5);
+  color: var(--color-text-primary, #000);
+  border: 1px solid var(--color-border, #ddd);
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: var(--color-border, #ddd);
+}
+
+.btn-confirm {
+  background: var(--color-accent, #6366f1);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Dark Mode Support */
+.overlays-panel.dark-mode {
+  .dialog {
+    background: var(--color-bg-primary, #2a2a2a);
+    color: var(--color-text-primary, #e0e0e0);
+  }
+
+  .dialog h4 {
+    color: var(--color-text-primary, #e0e0e0);
+  }
+
+  .dialog-buttons {
+    border-top-color: var(--color-border, #444);
+  }
+
+  .btn-cancel {
+    background: var(--color-bg-secondary, #1e1e1e);
+    color: var(--color-text-primary, #e0e0e0);
+    border-color: var(--color-border, #444);
+  }
+
+  .btn-cancel:hover {
+    background: var(--color-border, #444);
+  }
+}

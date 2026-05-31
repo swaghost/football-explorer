@@ -1,0 +1,32 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'To-Do List'" [position]="'right'" [width]="'450px'"
+    [drawerId]="'drawer-to-do'" [showHelpButton]="true" (close)="onClose()">
+    <div style="padding: 12px 16px; border-bottom: 1px solid #ddd; display: flex; gap: 8px;">
+        <button (click)="addNewEntry()"
+            style="padding: 6px 12px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;"
+            title="Add new to-do entry">
+            ➕ Add
+        </button>
+        <button (click)="exportToJSON()"
+            style="padding: 6px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;"
+            title="Export to-do list as JSON">
+            📥 Export JSON
+        </button>
+        <button (click)="importFileInput.click()"
+            style="padding: 6px 12px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;"
+            title="Import to-do list from JSON file">
+            📤 Import JSON
+        </button>
+        <input type="file" #importFileInput (change)="onImportFile($event)" accept=".json" style="display: none;" />
+    </div>
+    <app-drawer-to-do-list (editDialog)="onEditDialog($event)"></app-drawer-to-do-list>
+</app-base-sliding-drawer>
+
+<!-- Edit Dialog Modal - Positioned at window level -->
+<div *ngIf="showEditDialog && editingEntry" class="dialog-overlay" (click)="closeEditDialog()">
+    <div class="dialog-modal" (click)="$event.stopPropagation()">
+        <app-to-do-edit-dialog [entry]="editingEntry" [teams]="editDialogData?.teams || []"
+            [selectedTeam]="editDialogData?.selectedTeam || null" [teamGroups]="editDialogData?.teamGroups || []"
+            [teamPlayers]="editDialogData?.teamPlayers || []" (save)="saveEntry($event)"
+            (cancel)="closeEditDialog()"></app-to-do-edit-dialog>
+    </div>
+</div>

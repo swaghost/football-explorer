@@ -1,0 +1,90 @@
+<!-- Viewport Info Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="viewport-info-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <div class="info-section">
+            <h4>📊 Display</h4>
+            <div class="info-item">
+                <span class="info-label">Screen Size:</span>
+                <span class="info-value">{{ width }} × {{ height }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Theme:</span>
+                <span class="info-value">{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Visual Mode:</span>
+                <span class="info-value">{{ visualModeLabel }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tree Size:</span>
+                <span class="info-value">{{ treeSizeModeLabel }}</span>
+            </div>
+        </div>
+        <div class="info-section">
+            <h4>🔍 View Transform</h4>
+            <div class="info-item">
+                <span class="info-label">Zoom:</span>
+                <span class="info-value">{{ zoomLevel | number : '1.2-2' }}x</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Pan X:</span>
+                <span class="info-value">{{ panX | number : '1.2-2' }}px</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Pan Y:</span>
+                <span class="info-value">{{ panY | number : '1.2-2' }}px</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Rotation:</span>
+                <span class="info-value">{{ rotationAngle }}°</span>
+            </div>
+        </div>
+        <div class="info-section">
+            <h4>🌳 Tree Data</h4>
+            <div class="info-item">
+                <span class="info-label">Node Count:</span>
+                <span class="info-value">{{ nodeCount }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Selected Nodes:</span>
+                <span class="info-value">{{ selectedNodesCount }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Drawing Mode:</span>
+                <span class="info-value">{{ drawingMode }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Strokes:</span>
+                <span class="info-value">{{ strokesCount }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

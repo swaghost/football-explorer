@@ -1,0 +1,234 @@
+<div class="controls">
+    <h2>{{ config().title || 'D3 Tree Controls' }}</h2>
+
+    <div class="control-group">
+        <label for="colorMode">Color Mode:</label>
+        <select id="colorMode" [ngModel]="config().colorMode" (ngModelChange)="onColorModeChange($event)"
+            class="color-mode-select">
+            <option value="status">🟢 Status</option>
+            <option value="depth">🌈 Depth (Sequential)</option>
+            <option value="category">🎨 Category (Categorical)</option>
+            <option value="value">📊 Value (Diverging)</option>
+            <option value="custom">⚙️ Custom Property</option>
+            <option value="branch-block">🌳 Branch -(ROYGBIV)</option>
+            <option value="branch-gradient">🎨 Branch Gradient</option>
+            <option value="red-block">🔴 Red Block</option>
+            <option value="red-gradient">🔴 Red Gradient</option>
+            <option value="orange-block">🟠 Orange Block</option>
+            <option value="orange-gradient">🟠 Orange Gradient</option>
+            <option value="yellow-block">🟡 Yellow Block</option>
+            <option value="yellow-gradient">🟡 Yellow Gradient</option>
+            <option value="green-block">🟢 Green Block</option>
+            <option value="green-gradient">🟢 Green Gradient</option>
+            <option value="blue-block">🔵 Blue Block</option>
+            <option value="blue-gradient">🔵 Blue Gradient</option>
+            <option value="indigo-block">🟣 Indigo Block</option>
+            <option value="indigo-gradient">🟣 Indigo Gradient</option>
+            <option value="violet-block">🟣 Violet Block</option>
+            <option value="violet-gradient">🟣 Violet Gradient</option>
+            <option value="grayscale-block">⚫ Grayscale Block</option>
+            <option value="grayscale-gradient">⚫ Grayscale Gradient</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <label for="nodeCount">Node Count: {{ config().nodeCount }}</label>
+        <input type="range" id="nodeCount" min="5" max="2000" [ngModel]="config().nodeCount"
+            (ngModelChange)="onNodeCountChange($event)" class="slider">
+    </div>
+
+    <div class="control-group">
+        <label for="maxNameLength">Max Name Length: {{ config().maxNameLength }}</label>
+        <input type="range" id="maxNameLength" min="1" max="200" [ngModel]="config().maxNameLength"
+            (ngModelChange)="onMaxNameLengthChange($event)" class="slider">
+    </div>
+
+    <div class="control-group">
+        <button (click)="onRegenerateTree()" class="regenerate-btn">🔄 Regenerate Tree</button>
+    </div>
+
+    <div class="control-group">
+        <button (click)="onToggleSvgDarkMode()" class="toggle-dark-btn">
+            {{ config().svgDarkMode ? '☀️ Light Background' : '🌙 Dark Background' }}
+        </button>
+    </div>
+
+    <div class="control-group">
+        <label for="linkStyle">Link Style:</label>
+        <select id="linkStyle" [ngModel]="config().linkStyle" (ngModelChange)="onLinkStyleChange($event)"
+            class="link-style-select">
+            <option value="line">─ Line</option>
+            <option value="curve">⤴ Curve</option>
+            <option value="diagonal">⤡ Diagonal</option>
+            <option value="orthogonal">⊥ Orthogonal</option>
+            <option value="step">⊏ Step Links</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <label>Color Target:</label>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="colorTarget" value="nodes" [checked]="config().colorTarget === 'nodes'"
+                    (change)="onColorTargetChange('nodes')">
+                <span>Nodes (Colored)</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="colorTarget" value="text" [checked]="config().colorTarget === 'text'"
+                    (change)="onColorTargetChange('text')">
+                <span>Text (Colored)</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <button (click)="onShowLabelsChange(!config().showLabels)" class="toggle-labels-btn">
+            {{ config().showLabels ? '🏷️ Hide Labels' : '🏷️ Show Labels' }}
+        </button>
+    </div>
+
+    <div class="control-group">
+        <label for="radius">
+            Radius: {{ config().radius }}
+            @if (config().optimalRadius) {
+            <span style="color: #888; font-size: 0.9em;"> (Optimal: {{ config().optimalRadius }})</span>
+            }
+        </label>
+        <input type="range" id="radius" min="100" [max]="(config().optimalRadius || 800) + 200"
+            [ngModel]="config().radius" (ngModelChange)="onRadiusChange($event)" class="slider">
+    </div>
+
+    <div class="control-group">
+        <label for="rotation">Rotation: {{ config().rotation }}°</label>
+        <input type="range" id="rotation" min="0" max="360" [ngModel]="config().rotation"
+            (ngModelChange)="onRotationChange($event)" class="slider">
+    </div>
+
+    <div class="control-group">
+        <label for="layoutType">Layout Type:</label>
+        <select id="layoutType" [ngModel]="config().layoutType" (ngModelChange)="onLayoutTypeChange($event)"
+            class="layout-type-select">
+            <option value="tree">🌲 Tidy Tree</option>
+            <option value="cluster">🎯 Cluster</option>
+        </select>
+    </div>
+
+    <div class="legend">
+        <h3>Legend - {{ config().colorMode }}</h3>
+        <div class="legend-items">
+            @if (config().colorMode === 'status') {
+            <div class="legend-item">
+                <span class="legend-color" style="background: #4caf50;"></span>
+                <span>Active</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #f44336;"></span>
+                <span>Inactive</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ff9800;"></span>
+                <span>Pending</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #2196f3;"></span>
+                <span>Complete</span>
+            </div>
+            }
+            @if (config().colorMode === 'depth') {
+            <div class="legend-item">
+                <div class="gradient-bar" style="background: linear-gradient(to right, 
+              rgb(68, 1, 84), rgb(59, 82, 139), rgb(33, 145, 140), 
+              rgb(94, 201, 98), rgb(253, 231, 37));"></div>
+                <span>Depth 0 → 5+</span>
+            </div>
+            }
+            @if (config().colorMode === 'category') {
+            <div class="legend-item">
+                <span class="legend-color" style="background: #1f77b4;"></span>
+                <span>Category A</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ff7f0e;"></span>
+                <span>Category B</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #2ca02c;"></span>
+                <span>Category C</span>
+            </div>
+            }
+            @if (config().colorMode === 'value') {
+            <div class="legend-item">
+                <div class="gradient-bar" style="background: linear-gradient(to right, 
+              rgb(13, 8, 135), rgb(126, 3, 168), rgb(204, 71, 120), 
+              rgb(248, 149, 64), rgb(240, 249, 33));"></div>
+                <span>Value 0 → 100</span>
+            </div>
+            }
+            @if (config().colorMode === 'custom') {
+            <div class="legend-item">
+                <span class="legend-color" style="background: #a6cee3;"></span>
+                <span>Alpha</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #1f78b4;"></span>
+                <span>Beta</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #b2df8a;"></span>
+                <span>Gamma</span>
+            </div>
+            }
+            @if (config().colorMode === 'branch-block') {
+            <div class="legend-item">
+                <span class="legend-color" style="background: #FF0000;"></span>
+                <span>Branch 1 - Red</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #FF7F00;"></span>
+                <span>Branch 2 - Orange</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #FFFF00;"></span>
+                <span>Branch 3 - Yellow</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #00FF00;"></span>
+                <span>Branch 4 - Green</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #0000FF;"></span>
+                <span>Branch 5 - Blue</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #4B0082;"></span>
+                <span>Branch 6 - Indigo</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #9400D3;"></span>
+                <span>Branch 7 - Violet</span>
+            </div>
+            }
+            @if (config().colorMode === 'branch-gradient') {
+            <div class="legend-item">
+                <span>Each branch uses its ROYGBIV color</span>
+            </div>
+            <div class="legend-item">
+                <span>Colors fade from light (near root) to dark (leaves)</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    @if (config().svgWidth !== undefined) {
+    <div class="diagnostics">
+        <h3>Diagnostics</h3>
+        <div class="diagnostic-item"><strong>SVG Width:</strong> {{ config().svgWidth }}px</div>
+        <div class="diagnostic-item"><strong>SVG Height:</strong> {{ config().svgHeight }}px</div>
+        <div class="diagnostic-item"><strong>SVG Radius:</strong> {{ config().svgRadius }}px</div>
+        <div class="diagnostic-item"><strong>Container Width:</strong> {{ config().containerWidth }}px</div>
+        <div class="diagnostic-item"><strong>Container Height:</strong> {{ config().containerHeight }}px</div>
+        <div class="diagnostic-item"><strong>Node Count:</strong> {{ config().nodeCount }}</div>
+        <div class="diagnostic-item"><strong>Max Name Length:</strong> {{ config().maxNameLength }}</div>
+    </div>
+    }
+</div>

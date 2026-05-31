@@ -1,0 +1,168 @@
+@use "../../../styles/components/toolbar-base";
+
+// View / Effects Toolbar Component Styles
+.zoom-controls-panel {
+  // CRITICAL: Prevent header/footer content from bleeding outside rounded borders
+  overflow: hidden;
+
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Node count control group styling
+  .node-count-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    label {
+      flex-shrink: 0;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    // Container for input and button - keep them on same line
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .node-count-input {
+      width: 70px;
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+      background: #fffae6;
+      transition: all 0.2s ease;
+
+      .dark-mode & {
+        background: #2d2d2d;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+      }
+
+      &:hover {
+        border-color: #999;
+      }
+
+      // Remove spinner arrows for a cleaner look
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    // Regenerate button styling - compact for inline display
+    .regenerate-btn {
+      padding: 2px 8px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background: #1976d2;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+      }
+    }
+  }
+
+  // Dark mode support
+  &.dark-mode {
+    // Labels
+    label,
+    .node-count-group label {
+      color: #ccc;
+    }
+
+    .node-count-input {
+      background: #2d2d2d;
+      border-color: #555;
+      color: #e0e0e0;
+
+      &:focus {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.2);
+      }
+
+      &:hover {
+        border-color: #777;
+      }
+    }
+
+    .node-count-group .regenerate-btn {
+      background: #1976d2;
+
+      &:hover {
+        background: #1565c0;
+      }
+    }
+
+    // Dark mode for radio toggle labels and options
+    .radio-toggle-label {
+      color: #ccc;
+    }
+
+    .radio-toggle-container {
+      border-color: #555;
+      background: #333;
+
+      .radio-option {
+        background: #444;
+        color: #ccc;
+        border-color: #555;
+
+        &:hover {
+          background: #4a5568;
+          color: #64b5f6;
+        }
+      }
+
+      input[type="radio"]:checked + .radio-option {
+        background: #64b5f6;
+        color: #000;
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+@use "../../../styles/components/toolbar-base";
+
+// Rotation Control Toolbar Component Styles
+.rotation-pan-control-panel {
+  // CRITICAL: Prevent header/footer content from bleeding outside rounded borders
+  overflow: hidden;
+
+  // Make wider to prevent value changes from causing content jumping
+  min-width: 460px;
+
+  // Ensure light yellow background fills entire toolbar (except header which has its own gradient)
+  background: #fffae6 !important;
+
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Light yellow background in light mode
+  .panel-content {
+    background: #fffae6 !important;
+    padding: var(--spacing-3) !important;
+    margin: 0 !important;
+  }
+
+  .rotation-pan-layout {
+    background: #fffae6 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .zoom-container,
+  .pan-y-container,
+  .pan-x-container,
+  .rotation-center,
+  .rotation-slider-container,
+  .rotation-info,
+  .reset-controls {
+    background: #fffae6 !important;
+  }
+
+  // Ensure all text elements have light yellow background
+  .vertical-label,
+  .vertical-value,
+  .rotation-slider-label,
+  .rotation-slider-value,
+  .rotation-value,
+  .value-display {
+    background: transparent !important;
+  }
+
+  // Fix vertical value labels width to prevent layout shifts
+  .vertical-value {
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  // Ensure content area buttons have light yellow background (exclude header buttons)
+  .panel-content button,
+  .reset-controls button {
+    background: #fffae6 !important;
+  }
+
+  // Ensure rotation center has proper display
+  .rotation-center {
+    overflow: visible !important;
+  }
+
+  // Keep rotation wheel's own background
+  .rotation-wheel {
+    background: radial-gradient(circle, #f9f9f9 0%, #e0e0e0 100%) !important;
+    overflow: visible !important;
+
+    svg {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: visible !important;
+      z-index: 1 !important;
+    }
+  }
+
+  // Dark mode adjustments (using :host-context for automatic dark mode detection)
+  :host-context(.dark-mode) & {
+    // Revert main panel background in dark mode
+    background: inherit !important;
+
+    .panel-content {
+      background: inherit !important;
+    }
+
+    .rotation-pan-layout {
+      background: inherit !important;
+    }
+
+    .zoom-container,
+    .pan-y-container,
+    .pan-x-container,
+    .rotation-center,
+    .rotation-slider-container,
+    .rotation-info,
+    .reset-controls {
+      background: inherit !important;
+    }
+
+    // Revert content area button backgrounds in dark mode (exclude header buttons)
+    .panel-content button,
+    .reset-controls button {
+      background: inherit !important;
+    }
+
+    // Keep rotation wheel's dark mode gradient
+    .rotation-wheel {
+      background: radial-gradient(circle, #444 0%, #222 100%) !important;
+
+      svg {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: visible !important;
+        z-index: 1 !important;
+      }
+    }
+  }
+
+  // Component-specific styles can be added here
+}

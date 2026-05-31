@@ -1,0 +1,58 @@
+<div class="radar-chart-container">
+    <h2>D3 Radar Chart - Skill Assessment</h2>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="nodeCount">Number of Nodes (1-20):</label>
+            <input type="range" id="nodeCount" min="1" max="20" [(ngModel)]="nodeCount" (input)="onNodeCountChange()"
+                class="slider">
+            <span class="value-display">{{ nodeCount }}</span>
+        </div>
+
+        <div class="instructions">
+            <h4>Instructions:</h4>
+            <ul>
+                <li><strong>Drag the colored circles</strong> along their axis lines to adjust values</li>
+                <li><strong>Red circles:</strong> Perceived skill level</li>
+                <li><strong>Blue circles:</strong> Target skill level</li>
+                <li><strong>Green circles:</strong> Pro/Elite skill level</li>
+                <li><strong>Values range from 1-5</strong> based on distance from center</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Radar Chart -->
+    <div class="chart-wrapper">
+        <div #radarChart class="radar-chart"></div>
+
+        <!-- Chart Toggle Controls (below chart) -->
+        <div class="chart-toggle-controls">
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" [(ngModel)]="showPerceived" (change)="onToggleChange()">
+                    Show Perceived Values
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" [(ngModel)]="showProElite" (change)="onToggleChange()">
+                    Show Pro/Elite Values
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Node Data Display -->
+    <div class="node-data">
+        <h4>Node Values:</h4>
+        <div class="node-list">
+            <div *ngFor="let node of nodes" class="node-item">
+                <span class="node-name">{{ node.NodeName }}:</span>
+                <span class="current-value">Perceived: {{ node.NodeCurrentValue }}</span>
+                <span class="desired-value">Target: {{ node.NodeDesiredValue }}</span>
+                <span class="pro-value">Pro/Elite: {{ node.NodeProValue }}</span>
+            </div>
+        </div>
+    </div>
+</div>

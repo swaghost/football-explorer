@@ -1,0 +1,374 @@
+<!-- Annotation Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="annotation-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Drawing/Editing Tools Section -->
+        <div class="tool-section drawing-tools-section">
+            <div class="mode-buttons">
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'pencil'" (click)="onSetDrawingMode('pencil')"
+                        title="Pencil Mode">
+                        ✏️
+                    </button>
+                    <button [class.active]="drawingMode === 'eraser'" (click)="onSetDrawingMode('eraser')"
+                        title="Eraser Mode">
+                        🧹
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'rectangle'" (click)="onSetDrawingMode('rectangle')"
+                        title="Rectangle Mode">
+                        ▭
+                    </button>
+                    <button [class.active]="drawingMode === 'circle'" (click)="onSetDrawingMode('circle')"
+                        title="Circle Mode">
+                        ○
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'arrow'" (click)="onSetDrawingMode('arrow')"
+                        title="Arrow Mode">
+                        ➡️
+                    </button>
+                    <button [class.active]="drawingMode === 'text'" (click)="onSetDrawingMode('text')"
+                        title="Text Mode">
+                        📝
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button (click)="onUndo()" [disabled]="!(canUndo$ | async)" title="Undo (Ctrl+Z)">
+                        ↶
+                    </button>
+                    <button (click)="onRedo()" [disabled]="!(canRedo$ | async)" title="Redo (Ctrl+Y)">
+                        ↷
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blue Separator for Modifiers Section -->
+        <div class="modifiers-separator" *ngIf="
+          drawingMode === 'pencil' ||
+          drawingMode === 'eraser' ||
+          drawingMode === 'rectangle' ||
+          drawingMode === 'circle' ||
+          drawingMode === 'arrow' ||
+          drawingMode === 'text'
+        "></div>
+
+        <!-- Modifiers Section -->
+        <div class="modifiers-section" [class.text-modifiers]="drawingMode === 'text'" *ngIf="
+          drawingMode === 'pencil' ||
+          drawingMode === 'eraser' ||
+          drawingMode === 'rectangle' ||
+          drawingMode === 'circle' ||
+          drawingMode === 'arrow' ||
+          drawingMode === 'text'
+        ">
+            <!-- Pencil Color -->
+            <div class="tool-section pencil-color" *ngIf="drawingMode === 'pencil'">
+                <h4>Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="selectedColor" (input)="onSelectColor($any($event.target).value)"
+                        class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="selectedRgb.r"
+                            (input)="onSelectedRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="selectedRgb.g"
+                            (input)="onSelectedRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="selectedRgb.b"
+                            (input)="onSelectedRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brush Size -->
+            <div class="tool-section" *ngIf="drawingMode === 'pencil'">
+                <h4>Brush Size</h4>
+                <div class="slider-container">
+                    <input type="range" min="1" max="20" step="0.5" [value]="brushSize"
+                        (input)="onUpdateBrushSize($event)" />
+                    <span class="value-display">{{ brushSize }}px</span>
+                </div>
+                <div class="brush-preview" [style.width.px]="brushSize" [style.height.px]="brushSize"
+                    [style.backgroundColor]="selectedColor"></div>
+            </div>
+
+            <!-- Eraser Options -->
+            <div class="tool-section" *ngIf="drawingMode === 'eraser'">
+                <div class="eraser-mode-buttons">
+                    <button [class.active]="eraserMode === 'magic'" (click)="onSetEraserMode('magic')"
+                        title="Magic Eraser - Remove entire line segments">
+                        ✨
+                    </button>
+                    <button [class.active]="eraserMode === 'normal'" (click)="onSetEraserMode('normal')"
+                        title="Normal Eraser - Partially erase lines">
+                        🧹
+                    </button>
+                </div>
+            </div>
+
+            <!-- Eraser Size -->
+            <div class="tool-section" *ngIf="drawingMode === 'eraser'">
+                <div class="slider-container">
+                    <input type="range" min="5" max="50" step="1" [value]="eraserSize"
+                        (input)="onUpdateEraserSize($event)" />
+                    <span class="value-display">{{ eraserSize }}px</span>
+                </div>
+                <div class="eraser-preview" [style.width.px]="eraserSize" [style.height.px]="eraserSize"></div>
+            </div>
+
+            <!-- Rectangle Modifiers -->
+            <div class="tool-section shape-modifiers" *ngIf="drawingMode === 'rectangle'">
+                <h4>Stroke Width</h4>
+                <div class="slider-container">
+                    <input type="range" min="1" max="10" step="0.5" [value]="shapeStrokeWidth"
+                        (input)="onUpdateShapeStrokeWidth($event)" />
+                    <span class="value-display">{{ shapeStrokeWidth }}px</span>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'rectangle'">
+                <h4>Stroke Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="shapeStrokeColor"
+                        (input)="onUpdateShapeStrokeColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.r"
+                            (input)="onShapeStrokeRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.g"
+                            (input)="onShapeStrokeRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.b"
+                            (input)="onShapeStrokeRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'rectangle'">
+                <h4>Fill Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="shapeFillColor"
+                        (input)="onUpdateShapeFillColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.r"
+                            (input)="onShapeFillRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.g"
+                            (input)="onShapeFillRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.b"
+                            (input)="onShapeFillRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'rectangle'">
+                <h4>Fill Mode</h4>
+                <select [value]="shapeFillMode" (change)="onUpdateShapeFillMode($event)" class="select-input">
+                    <option value="outline">Outline Only</option>
+                    <option value="filled">Filled Only</option>
+                    <option value="filled-outline">Filled with Outline</option>
+                </select>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'rectangle'">
+                <label class="checkbox-label">
+                    <input type="checkbox" [checked]="rectangleConstrained" (change)="onToggleRectangleConstrained()" />
+                    <span>Constrain to Square</span>
+                </label>
+            </div>
+
+            <!-- Circle Modifiers -->
+            <div class="tool-section shape-modifiers" *ngIf="drawingMode === 'circle'">
+                <h4>Stroke Width</h4>
+                <div class="slider-container">
+                    <input type="range" min="1" max="10" step="0.5" [value]="shapeStrokeWidth"
+                        (input)="onUpdateShapeStrokeWidth($event)" />
+                    <span class="value-display">{{ shapeStrokeWidth }}px</span>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'circle'">
+                <h4>Stroke Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="shapeStrokeColor"
+                        (input)="onUpdateShapeStrokeColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.r"
+                            (input)="onShapeStrokeRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.g"
+                            (input)="onShapeStrokeRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeStrokeRgb.b"
+                            (input)="onShapeStrokeRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'circle'">
+                <h4>Fill Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="shapeFillColor"
+                        (input)="onUpdateShapeFillColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.r"
+                            (input)="onShapeFillRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.g"
+                            (input)="onShapeFillRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="shapeFillRgb.b"
+                            (input)="onShapeFillRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'circle'">
+                <h4>Fill Mode</h4>
+                <select [value]="shapeFillMode" (change)="onUpdateShapeFillMode($event)" class="select-input">
+                    <option value="outline">Outline Only</option>
+                    <option value="filled">Filled Only</option>
+                    <option value="filled-outline">Filled with Outline</option>
+                </select>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'circle'">
+                <label class="checkbox-label">
+                    <input type="checkbox" [checked]="circleConstrained" (change)="onToggleCircleConstrained()" />
+                    <span>Constrain to Circle</span>
+                </label>
+            </div>
+
+            <!-- Arrow Modifiers -->
+            <div class="tool-section arrow-modifiers" *ngIf="drawingMode === 'arrow'">
+                <h4>Arrow Size</h4>
+                <div class="slider-container">
+                    <input type="range" min="20" max="100" step="5" [value]="arrowSize"
+                        (input)="onUpdateArrowSize($event)" />
+                    <span class="value-display">{{ arrowSize }}px</span>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'arrow'">
+                <h4>Stroke Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="arrowStrokeColor"
+                        (input)="onUpdateArrowStrokeColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="arrowStrokeRgb.r"
+                            (input)="onArrowStrokeRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="arrowStrokeRgb.g"
+                            (input)="onArrowStrokeRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="arrowStrokeRgb.b"
+                            (input)="onArrowStrokeRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'arrow'">
+                <h4>Fill Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="arrowFillColor"
+                        (input)="onUpdateArrowFillColor($any($event.target).value)" class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="arrowFillRgb.r"
+                            (input)="onArrowFillRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="arrowFillRgb.g"
+                            (input)="onArrowFillRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="arrowFillRgb.b"
+                            (input)="onArrowFillRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Modifiers -->
+            <div class="tool-section" *ngIf="drawingMode === 'text'">
+                <h4>Font Size</h4>
+                <div class="slider-container">
+                    <input type="range" min="8" max="72" step="1" [value]="textFontSize"
+                        (input)="onUpdateTextFontSize($event)" />
+                    <span class="value-display">{{ textFontSize }}px</span>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'text'">
+                <h4>Text Color</h4>
+                <div class="color-picker-container">
+                    <input type="color" [value]="textColor" (input)="onUpdateTextColor($any($event.target).value)"
+                        class="color-input" />
+                    <div class="rgb-inputs">
+                        <input type="number" min="0" max="255" [value]="textRgb.r"
+                            (input)="onTextRgbChange('r', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="textRgb.g"
+                            (input)="onTextRgbChange('g', $any($event.target).value)" />
+                        <input type="number" min="0" max="255" [value]="textRgb.b"
+                            (input)="onTextRgbChange('b', $any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'text'">
+                <h4>Font Family</h4>
+                <select class="font-family-select" [value]="textFontFamily" (change)="onUpdateTextFontFamily($event)">
+                    <option *ngFor="let font of availableFonts" [value]="font">{{ font }}</option>
+                </select>
+            </div>
+
+            <div class="tool-section" *ngIf="drawingMode === 'text'">
+                <h4>Text Styles</h4>
+                <div class="text-style-buttons">
+                    <button [class.active]="textBold" (click)="onToggleTextBold()" title="Bold">
+                        <strong>B</strong>
+                    </button>
+                    <button [class.active]="textItalic" (click)="onToggleTextItalic()" title="Italic">
+                        <em>I</em>
+                    </button>
+                    <button [class.active]="textStrikethrough" (click)="onToggleTextStrikethrough()"
+                        title="Strikethrough">
+                        <s>S</s>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar Footer -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="capture-message" *ngIf="showCaptureMessage" [class.fade-out]="!showCaptureMessage">
+            {{ captureMessage }}
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

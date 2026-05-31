@@ -1,0 +1,275 @@
+@use "../../../styles/components/toolbar-base";
+
+/* Selected Nodes Component Specific Styles
+   Shared styles are loaded globally from styles.scss */
+.selected-nodes-panel {
+  // Remove width constraints to inherit from .draggable-toolbar (320px)
+  overflow: hidden; // Ensure header gradient is clipped to border-radius
+
+  // Ensure no text wrapping anywhere in this component
+  * {
+    white-space: nowrap !important;
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
+    text-wrap: none !important;
+  }
+  .selected-nodes-list {
+    max-height: 800px;
+    min-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fffae6; // Light yellow background in light mode
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: normal;
+    white-space: nowrap;
+  }
+
+  // Dark mode for selected nodes list
+  &.dark-mode .selected-nodes-list {
+    background: #2d2d2d; // Dark gray background in dark mode
+    border-color: #555;
+  }
+
+  .selected-nodes-list {
+    // Using common-list-item styles from _toolbar-base.scss
+    // Component-specific overrides and additions
+    .selected-node-item {
+      display: flex;
+      align-items: center;
+      user-select: none;
+      margin: 2px 4px;
+      padding: 3px 12px; // Override common-list-item padding for compact display
+
+      // Blue highlight for current selected node - matches Quick-Nav SVG selection colors
+      &.current-selected {
+        // Light mode
+        background: rgba(59, 130, 246, 0.2) !important;
+        border-left: 4px solid #2563eb !important;
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+        transform: scale(1.02);
+        font-weight: 600;
+
+        .node-link {
+          color: #4169e1 !important; // Royal blue for light mode
+        }
+
+        .common-list-item-title {
+          color: #4169e1 !important;
+          font-weight: 600;
+        }
+
+        .common-list-item-subtitle {
+          color: rgba(65, 105, 225, 0.8) !important;
+        }
+
+        .remove-btn {
+          color: #4169e1 !important;
+        }
+      }
+
+      .drag-handle {
+        cursor: grab;
+        display: flex;
+        align-items: center;
+        padding: 2px 4px;
+        margin-right: 4px;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        &:active {
+          cursor: grabbing;
+        }
+
+        svg {
+          display: block;
+        }
+      }
+
+      .node-link {
+        flex: 1;
+        cursor: pointer;
+        text-decoration: none;
+        padding: 1px 6px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+          text-decoration: underline;
+          background: rgba(0, 123, 255, 0.1);
+          color: #007bff;
+
+          .dark-mode & {
+            background: rgba(100, 181, 246, 0.2);
+            color: #64b5f6;
+          }
+        }
+      }
+
+      .remove-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 1px 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-size: 12px;
+        margin-left: 8px;
+        opacity: 0.6;
+
+        &:hover {
+          background: rgba(244, 67, 54, 0.2);
+          color: #f44336;
+          opacity: 1;
+          transform: scale(1.2);
+        }
+
+        .dark-mode & {
+          &:hover {
+            background: rgba(244, 67, 54, 0.3);
+            color: #ff6b6b;
+          }
+        }
+      }
+
+      // Drag and drop states
+      &.dragged {
+        opacity: 0.5;
+      }
+
+      &.drop-target {
+        border-top: 2px solid #2196f3;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .no-nodes-message {
+      padding: 20px;
+      text-align: center;
+
+      p {
+        color: #666;
+        font-style: italic;
+        margin: 0;
+
+        .dark-mode & {
+          color: #ccc;
+        }
+      }
+    }
+  }
+
+  // Unsaved changes styling
+  .apply-btn {
+    position: relative;
+
+    &.has-changes {
+      background: linear-gradient(135deg, #ff6b35, #f7931e);
+      color: white;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+      animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+
+    &.create-lesson-btn {
+      background: linear-gradient(135deg, #4caf50, #45a049);
+      color: white;
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+      animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+
+    .unsaved-indicator {
+      margin-left: 4px;
+      color: #ffeb3b;
+      font-weight: bold;
+      animation: blink 1s ease-in-out infinite alternate;
+    }
+  }
+
+  .unsaved-changes-notice {
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 4px;
+    font-size: 12px;
+
+    .unsaved-text {
+      color: #ff6b35;
+      font-weight: 500;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0% {
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    }
+    100% {
+      box-shadow: 0 2px 12px rgba(255, 107, 53, 0.5);
+    }
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+
+  // Dark mode adjustments
+  &.dark-mode .unsaved-changes-notice {
+    background: rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+
+  // Dark mode selected item styling - matches Quick-Nav colors
+  &.dark-mode {
+    .selected-nodes-list {
+      .selected-node-item.current-selected {
+        background: rgba(59, 130, 246, 0.3) !important;
+        border-left: 4px solid #3b82f6 !important;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
+
+        .node-link {
+          color: #ffffff !important;
+        }
+
+        .common-list-item-title {
+          color: #ffffff !important;
+        }
+
+        .common-list-item-subtitle {
+          color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .remove-btn {
+          color: #ffffff !important;
+        }
+      }
+    }
+  }
+
+  // Panel content and list need bottom padding for footer
+  .panel-content {
+    gap: 4px; // Reduce gap between buttons and list (was 12px from base)
+  }
+
+  .panel-content,
+  .selected-nodes-list {
+    padding-bottom: 10px;
+    margin-bottom: 50px; /* Space for footer */
+  }
+}

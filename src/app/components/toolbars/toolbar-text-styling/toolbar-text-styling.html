@@ -1,0 +1,1336 @@
+<!-- Style Vertical Tab Strip Component - extends BaseTabbedToolbar -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="style-toolbar-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <app-help-overlay *ngIf="showHelpOverlay" [helpText]="toolbarHelp" (close)="onCloseHelp()"></app-help-overlay>
+
+    <!-- Main Content: Tab Strip + Tab Content -->
+    <div class="tab-container" *ngIf="expanded">
+        <!-- Vertical Tab Strip (sticks out from the side) -->
+        <div [ngClass]="getTabStripClasses()">
+            <button *ngFor="let tab of tabs" [ngClass]="getTabClasses(tab)" (click)="selectTab(tab.id)"
+                [disabled]="tab.disabled" [title]="tab.label">
+                <!-- Icon and Label -->
+                <span class="tab-content-wrapper">
+                    <span class="tab-icon" *ngIf="tab.icon">{{ tab.icon }}</span>
+                    <span class="tab-label">{{ tab.label }}</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Tab Content Area -->
+        <div class="tab-content-area">
+            <div class="tab-content" *ngIf="getSelectedTab() as selectedTab" [attr.data-tab-id]="selectedTab.id">
+                <!-- Generic Template Content -->
+                <ng-container *ngIf="selectedTab.content">
+                    <ng-container *ngTemplateOutlet="selectedTab.content"></ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>
+
+<!-- Tab Templates -->
+
+<!-- Colorize Tab -->
+<ng-template #colorizeTab>
+    <div class="tab-section">
+        <!-- Colorization Category & Strategy Selection -->
+        <div class="section-group">
+            <label class="section-title">Colorization Category</label>
+            <div class="form-group">
+                <select id="colorization-category" [(ngModel)]="colorizationCategory"
+                    (change)="onColorizationCategoryChange(colorizationCategory)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorizationCategoryOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Colorization Strategy Selection -->
+        <div class="section-group">
+            <label class="section-title">Colorization Strategy</label>
+            <div class="form-group">
+                <select id="colorization-strategy" [(ngModel)]="colorStrategy"
+                    (change)="onColorStrategyChange(colorStrategy)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of getFilteredColorStrategies()" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Color Target Selection -->
+        <div class="section-group">
+            <label class="section-title">Color Target
+                <span *ngIf="isColorTargetLocked()" class="lock-indicator" title="Locked by strategy">🔒</span>
+            </label>
+            <div class="form-group" *ngIf="!isColorTargetLocked()">
+                <select [(ngModel)]="colorTarget" (change)="onColorTargetChange(colorTarget)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorTargetOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group" *ngIf="isColorTargetLocked()"
+                style="padding: 8px; background: #f5f5f5; border-radius: 4px;">
+                <strong>{{ getColorTargetDisplay() }}</strong>
+                <span style="font-size: 11px; color: #666; margin-left: 8px;">(locked by strategy)</span>
+            </div>
+        </div>
+
+        <!-- Strategy Details Section -->
+        <div class="section-group" *ngIf="currentStrategy">
+            <!-- Color Selection Mode -->
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Color Selection
+                    Mode:</label>
+                <span style="display: block; padding-left: 0; font-size: 12px;">
+                    {{ currentStrategy.colorSelectionMode }}
+                </span>
+            </div>
+
+            <!-- User-Defined Color Selection (only show for User-Defined-Color mode) -->
+            <!-- For Branch/Selection strategy: Show Qualified & Unqualified colors on same line -->
+            <div *ngIf="currentStrategy.colorSelectionMode === 'User-Defined-Color' && currentStrategy.strategyId === 'branch-selection'"
+                style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                    <label for="qualified-color" style="display: block; margin-bottom: 4px;">Qualified Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="qualified-color" [value]="qualifiedColor"
+                            (change)="onQualifiedColorChange($event)" class="color-picker"
+                            [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                        <span style="font-size: 11px; color: #666;">
+                            {{ qualifiedColor }}
+                        </span>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <label for="unqualified-color" style="display: block; margin-bottom: 4px;">Unqualified
+                        Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="unqualified-color" [value]="unqualifiedColor"
+                            (change)="onUnqualifiedColorChange($event)" class="color-picker"
+                            [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                        <span style="font-size: 11px; color: #666;">
+                            {{ unqualifiedColor }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For other strategies: Show default color -->
+            <div class="form-group"
+                *ngIf="currentStrategy.colorSelectionMode === 'User-Defined-Color' && currentStrategy.strategyId !== 'branch-selection'">
+                <label for="strategy-default-color">Default Color:</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="color" id="strategy-default-color" [value]="currentStrategy.defaultColor || '#0000FF'"
+                        (change)="onStrategyDefaultColorChange($event)" class="color-picker"
+                        [class.dark-mode]="isDarkMode" style="width: 50px; height: 30px; cursor: pointer;" />
+                    <span style="font-size: 11px; color: #666;">
+                        {{ currentStrategy.defaultColor || '#0000FF' }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Color Uniformity -->
+            <div class="form-group">
+                <label for="color-uniformity">Color Uniformity:</label>
+                <!-- Locked (Display as text) -->
+                <span *ngIf="isColorUniformityLocked()"
+                    style="display: block; padding: 6px; background: #f5f5f5; border-radius: 3px;">
+                    🔒 {{ getColorUniformityDisplay() }}
+                </span>
+                <!-- Unlocked (Display as dropdown) -->
+                <select *ngIf="!isColorUniformityLocked()" id="color-uniformity" [(ngModel)]="colorUniformity"
+                    (change)="onColorUniformityChange(colorUniformity)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorUniformityOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Color Gradient Directionality (only show if Gradient is selected) -->
+            <div class="form-group" *ngIf="colorUniformity === 'Gradient'">
+                <label for="color-gradient-directionality">Gradient Direction:</label>
+                <!-- Locked (Display as text) -->
+                <span *ngIf="isColorGradientDirectionalityLocked()"
+                    style="display: block; padding: 6px; background: #f5f5f5; border-radius: 3px;">
+                    🔒 {{ getColorGradientDirectionalityDisplay() }}
+                </span>
+                <!-- Unlocked (Display as dropdown) -->
+                <select *ngIf="!isColorGradientDirectionalityLocked()" id="color-gradient-directionality"
+                    [(ngModel)]="colorGradientDirectionality"
+                    (change)="onColorGradientDirectionalityChange(colorGradientDirectionality)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of colorGradientDirectionalityOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Brightness Slider (show for both Solid and Gradient) -->
+            <div class="form-group">
+                <label for="color-brightness">Brightness:
+                    <span style="float: right; font-weight: normal;">{{ colorBrightness }}%</span>
+                </label>
+                <input type="range" id="color-brightness" min="0" max="100" [value]="colorBrightness"
+                    (change)="onColorBrightnessChange($event)" class="slider" style="width: 100%; cursor: pointer;" />
+                <div style="font-size: 11px; color: #666; margin-top: 4px;">
+                    Adjust the brightness of the base color
+                </div>
+            </div>
+
+            <!-- Gradient Brightness End Slider (only show if Gradient is selected) -->
+            <div class="form-group" *ngIf="colorUniformity === 'Gradient'">
+                <label for="color-gradient-brightness-end">Gradient Brightness End:
+                    <span style="float: right; font-weight: normal;">{{ colorGradientBrightnessEnd }}%</span>
+                </label>
+                <input type="range" id="color-gradient-brightness-end" min="0" max="100"
+                    [value]="colorGradientBrightnessEnd" (change)="onColorGradientBrightnessEndChange($event)"
+                    class="slider" style="width: 100%; cursor: pointer;" />
+                <div style="font-size: 11px; color: #666; margin-top: 4px;">
+                    Set the brightness level where the gradient ends
+                </div>
+            </div>
+
+            <!-- Selected Branch (only show for branch-selection strategy) -->
+            <div class="form-group"
+                *ngIf="currentStrategy.strategyId === 'branch-selection' && availableBranches.length > 0">
+                <label for="selected-branch">Selected Branch:</label>
+                <select id="selected-branch" [(ngModel)]="selectedBranchIndex"
+                    (change)="onSelectedBranchIndexChange(selectedBranchIndex)" class="visualization-select"
+                    [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let branch of availableBranches; let i = index" [value]="i">
+                        {{ branch }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Node Colors (shown when colorTarget is 'text') -->
+        <div *ngIf="colorTarget === 'text'" class="section-group">
+            <label class="section-title">Node Colors</label>
+            <div style="display: flex; gap: 12px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="nodeFillColor">Node Fill Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="nodeFillColor" [value]="nodeFillColor"
+                            (input)="onNodeFillColorChange($event)" (change)="onNodeFillColorChange($event)"
+                            class="color-input-small" />
+                        <span style="font-size: 11px; color: #666;">{{ nodeFillColor }}</span>
+                    </div>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="nodeStrokeColor">Node Stroke Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="nodeStrokeColor" [value]="nodeStrokeColor"
+                            (input)="onNodeStrokeColorChange($event)" (change)="onNodeStrokeColorChange($event)"
+                            class="color-input-small" />
+                        <span style="font-size: 11px; color: #666;">{{ nodeStrokeColor }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Colors (shown when colorTarget is 'nodes') -->
+        <div *ngIf="colorTarget === 'nodes'" class="section-group">
+            <label class="section-title">Text Colors</label>
+            <div style="display: flex; gap: 12px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="textStrokeColor">Text Stroke Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="textStrokeColor" [value]="textStrokeColor"
+                            (input)="onTextStrokeColorChange($event)" (change)="onTextStrokeColorChange($event)"
+                            class="color-input-small" />
+                        <span style="font-size: 11px; color: #666;">{{ textStrokeColor }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Background Style -->
+        <div class="section-group">
+            <label class="section-title">Background Style</label>
+            <div class="tool-section">
+                <div class="control-group">
+                    <select [(ngModel)]="backgroundStyle" (change)="onBackgroundStyleChange(backgroundStyle)"
+                        class="visualization-select" [class.dark-mode]="isDarkMode">
+                        <option *ngFor="let option of backgroundStyleOptions" [value]="option.value"
+                            [disabled]="option.disabled"
+                            [style.color]="option.value === 'tenant-definition' ? '#dc3545' : 'inherit'">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
+
+<!-- General Node Style Tab -->
+<ng-template #generalNodeStyleTab>
+    <div class="tab-section">
+        <div class="section-group">
+            <label class="section-title">Tree Text</label>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                    <label for="treeTextFont">Font:</label>
+                    <select id="treeTextFont" [(ngModel)]="treeTextFont" (change)="onTreeTextFontChange(treeTextFont)"
+                        style="width: 100%;">
+                        <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                            <option *ngFor="let option of group.options" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div style="flex: 0.6;">
+                    <label for="treeTextSize">Size (pt):</label>
+                    <select id="treeTextSize" [(ngModel)]="treeTextSize" (change)="onTreeTextSizeChange(treeTextSize)"
+                        style="width: 100%;">
+                        <option *ngFor="let option of treeTextSizeOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group checkbox-row">
+                <label for="treeTextBold">
+                    <input type="checkbox" id="treeTextBold" [(ngModel)]="treeTextBold"
+                        (change)="onTreeTextStyleChange('bold')" />
+                    Bold
+                </label>
+
+                <label for="treeTextItalic">
+                    <input type="checkbox" id="treeTextItalic" [(ngModel)]="treeTextItalic"
+                        (change)="onTreeTextStyleChange('italic')" />
+                    Italic
+                </label>
+
+                <label for="treeTextUppercase">
+                    <input type="checkbox" id="treeTextUppercase" [(ngModel)]="treeTextUppercase"
+                        (change)="onTreeTextStyleChange('uppercase')" />
+                    Uppercase
+                </label>
+            </div>
+
+            <!-- Link Options -->
+            <div class="section-group">
+                <label class="section-title">Link Options</label>
+
+                <!-- Link Thickness and Color Override Controls -->
+                <div class="tool-section">
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <label for="linkThickness">Link Thickness:</label>
+                            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="range" id="linkThickness" min="0.5" max="5" step="0.1"
+                                    [value]="linkThickness"
+                                    (change)="onLinkThicknessChange($event.target.valueAsNumber)"
+                                    style="flex: 1; min-width: 0;" />
+                                <span class="slider-value" style="min-width: 35px; text-align: right;">{{
+                                    linkThickness.toFixed(1) }}px</span>
+                            </div>
+                            <div class="control-group" style="display: flex; gap: 6px; margin-top: 8px;">
+                                <button (click)="onLinkThicknessQuickSet(0.5)" [class.active]="linkThickness === 0.5"
+                                    style="flex: 1; padding: 4px; font-size: 11px; cursor: pointer;">Thin</button>
+                                <button (click)="onLinkThicknessQuickSet(1)" [class.active]="linkThickness === 1"
+                                    style="flex: 1; padding: 4px; font-size: 11px; cursor: pointer;">Normal</button>
+                                <button (click)="onLinkThicknessQuickSet(2)" [class.active]="linkThickness === 2"
+                                    style="flex: 1; padding: 4px; font-size: 11px; cursor: pointer;">Thick</button>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="linkColorOverride">Link Color Override:</label>
+                            <div class="form-group">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="color" id="linkColorOverride" [value]="linkColorOverride || '#cccccc'"
+                                        (change)="onLinkColorOverrideChange($event)" class="color-picker"
+                                        style="width: 50px; height: 30px; cursor: pointer;" />
+                                    <button (click)="onClearLinkColorOverride()" class="clear-button"
+                                        [disabled]="!linkColorOverride"
+                                        style="padding: 3px 6px; cursor: pointer; font-size: 10px;">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Root Node Style Tab -->
+<ng-template #rootNodeStyleTab>
+    <div class="tab-section">
+        <div class="section-group">
+            <label class="section-title">Override Root Node Style</label>
+            <div class="form-group">
+                <label for="overrideRootNodeStyle">
+                    <input type="checkbox" id="overrideRootNodeStyle" [(ngModel)]="overrideRootNodeStyle"
+                        (change)="onOverrideRootNodeStyleChange($event)" />
+                    Enable Root Node Overrides
+                </label>
+            </div>
+
+            <div class="indent-section">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <div style="flex: 1;">
+                        <label for="rootNodeFont">Font:</label>
+                        <select id="rootNodeFont" [(ngModel)]="rootNodeFont"
+                            (change)="onRootNodeFontChange(rootNodeFont)" [disabled]="!overrideRootNodeStyle"
+                            style="width: 100%;">
+                            <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                <option *ngFor="let option of group.options" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="flex: 0.6;">
+                        <label for="rootNodeSize">Size (pt):</label>
+                        <select id="rootNodeSize" [(ngModel)]="rootNodeSize"
+                            (change)="onRootNodeSizeChange(rootNodeSize)" [disabled]="!overrideRootNodeStyle"
+                            style="width: 100%;">
+                            <option *ngFor="let option of rootNodeSizeOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group checkbox-row">
+                    <label for="rootNodeBold">
+                        <input type="checkbox" id="rootNodeBold" [(ngModel)]="rootNodeBold"
+                            (change)="onRootNodeStyleChange('bold')" [disabled]="!overrideRootNodeStyle" />
+                        Bold
+                    </label>
+
+                    <label for="rootNodeItalic">
+                        <input type="checkbox" id="rootNodeItalic" [(ngModel)]="rootNodeItalic"
+                            (change)="onRootNodeStyleChange('italic')" [disabled]="!overrideRootNodeStyle" />
+                        Italic
+                    </label>
+
+                    <label for="rootNodeUppercase">
+                        <input type="checkbox" id="rootNodeUppercase" [(ngModel)]="rootNodeUppercase"
+                            (change)="onRootNodeStyleChange('uppercase')" [disabled]="!overrideRootNodeStyle" />
+                        Uppercase
+                    </label>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; gap: 20px; margin-bottom: 12px;">
+                        <div style="flex: 1;">
+                            <label for="rootNodeFillColor">Root Node Fill Color:</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="rootNodeFillColor" [(ngModel)]="rootNodeFillColor"
+                                    (input)="onRootNodeFillColorChange(rootNodeFillColor)"
+                                    (change)="onRootNodeFillColorChange(rootNodeFillColor)" class="color-input-small"
+                                    [disabled]="!overrideRootNodeStyle" />
+                                <span style="font-size: 11px; color: #666;">{{ rootNodeFillColor }}</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="rootNodeStrokeColor">Root Node Stroke Color:</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="color" id="rootNodeStrokeColor" [(ngModel)]="rootNodeStrokeColor"
+                                    (input)="onRootNodeStrokeColorChange(rootNodeStrokeColor)"
+                                    (change)="onRootNodeStrokeColorChange(rootNodeStrokeColor)"
+                                    class="color-input-small" [disabled]="!overrideRootNodeStyle" />
+                                <span style="font-size: 11px; color: #666;">{{ rootNodeStrokeColor }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rootNodeTextColor">Root Node Text Color:</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="color" id="rootNodeTextColor" [(ngModel)]="rootNodeTextColor"
+                            (input)="onRootNodeTextColorChange(rootNodeTextColor)"
+                            (change)="onRootNodeTextColorChange(rootNodeTextColor)" class="color-input-small"
+                            [disabled]="!overrideRootNodeStyle" />
+                        <span style="font-size: 11px; color: #666;">{{ rootNodeTextColor }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Key Options Tab -->
+<ng-template #keyOptionsTab>
+    <div class="tab-section">
+        <div class="section-group">
+            <label class="section-title">Include Color Key</label>
+            <div class="form-group">
+                <label for="includeColorKey">
+                    <input type="checkbox" id="includeColorKey" [(ngModel)]="includeColorKey"
+                        (change)="onIncludeColorKeyChange($event)" />
+                    Show Color Key
+                </label>
+            </div>
+
+            <div class="indent-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="keyPosition">Position:</label>
+                        <select id="keyPosition" [(ngModel)]="keyPosition" (change)="onKeyPositionChange(keyPosition)"
+                            [disabled]="!includeColorKey">
+                            <option *ngFor="let option of keyPositionOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyFont">Font:</label>
+                        <select id="keyFont" [(ngModel)]="keyFont" (change)="onKeyFontChange(keyFont)"
+                            [disabled]="!includeColorKey">
+                            <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                <option *ngFor="let option of group.options" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyFontSize">Font Size:</label>
+                        <input type="number" id="keyFontSize" [(ngModel)]="keyFontSize"
+                            (change)="onKeyFontSizeChange($event)" min="8" max="32" [disabled]="!includeColorKey" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="keyColorShape">Color Shape:</label>
+                        <select id="keyColorShape" [(ngModel)]="keyColorShape"
+                            (change)="onKeyColorShapeChange(keyColorShape)" [disabled]="!includeColorKey">
+                            <option *ngFor="let option of keyColorShapeOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyColorUniformity">Uniformity:</label>
+                        <select id="keyColorUniformity" [(ngModel)]="keyColorUniformity"
+                            (change)="onKeyColorUniformityChange(keyColorUniformity)" [disabled]="!includeColorKey">
+                            <option *ngFor="let option of keyColorUniformityOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyColorSize">Color Size:</label>
+                        <input type="number" id="keyColorSize" [(ngModel)]="keyColorSize"
+                            (change)="onKeyColorSizeChange($event)" min="5" max="100" [disabled]="!includeColorKey" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="keyTitle">Title:</label>
+                    <input type="text" id="keyTitle" [(ngModel)]="keyTitle" (change)="onKeyTitleChange($event)"
+                        [disabled]="!includeColorKey" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="keyTitleFont">Title Font:</label>
+                        <select id="keyTitleFont" [(ngModel)]="keyTitleFont"
+                            (change)="onKeyTitleFontChange(keyTitleFont)" [disabled]="!includeColorKey">
+                            <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                <option *ngFor="let option of group.options" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyTitleFontSize">Title Font Size:</label>
+                        <input type="number" id="keyTitleFontSize" [(ngModel)]="keyTitleFontSize"
+                            (change)="onKeyTitleFontSizeChange($event)" min="8" max="32"
+                            [disabled]="!includeColorKey" />
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-row">
+                    <label for="keyTitleBold">
+                        <input type="checkbox" id="keyTitleBold" [(ngModel)]="keyTitleBold"
+                            (change)="onKeyTitleBoldChange(keyTitleBold)" [disabled]="!includeColorKey" />
+                        Bold
+                    </label>
+
+                    <label for="keyTitleUnderline">
+                        <input type="checkbox" id="keyTitleUnderline" [(ngModel)]="keyTitleUnderline"
+                            (change)="onKeyTitleUnderlineChange(keyTitleUnderline)" [disabled]="!includeColorKey" />
+                        Underline
+                    </label>
+
+                    <label for="keyTitleItalic">
+                        <input type="checkbox" id="keyTitleItalic" [(ngModel)]="keyTitleItalic"
+                            (change)="onKeyTitleItalicChange(keyTitleItalic)" [disabled]="!includeColorKey" />
+                        Italic
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="keyBorder">Border:</label>
+                    <select id="keyBorder" [(ngModel)]="keyBorder" (change)="onKeyBorderChange(keyBorder)"
+                        [disabled]="!includeColorKey">
+                        <option *ngFor="let option of keyBorderOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="keyBorderColor">Border:</label>
+                        <input type="color" id="keyBorderColor" [(ngModel)]="keyBorderColor"
+                            (change)="onKeyBorderColorChange(keyBorderColor)" class="color-input-compact color-picker-key"
+                            [disabled]="!includeColorKey" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyBackgroundColor">Background:</label>
+                        <input type="color" id="keyBackgroundColor" [(ngModel)]="keyBackgroundColor"
+                            (change)="onKeyBackgroundColorChange(keyBackgroundColor)" class="color-input-compact color-picker-key"
+                            [disabled]="!includeColorKey" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyTextColor">Entry Text:</label>
+                        <input type="color" id="keyTextColor" [(ngModel)]="keyTextColor"
+                            (change)="onKeyTextColorChange(keyTextColor)" class="color-input-compact color-picker-key"
+                            [disabled]="!includeColorKey" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keyTitleTextColor">Title Text:</label>
+                        <input type="color" id="keyTitleTextColor" [(ngModel)]="keyTitleTextColor"
+                            (change)="onKeyTitleTextColorChange(keyTitleTextColor)" class="color-input-compact color-picker-key"
+                            [disabled]="!includeColorKey" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Title Tab -->
+<ng-template #titleTab>
+    <div class="tab-section">
+        <div class="section-group">
+            <label class="section-title">Title Settings</label>
+            <div class="form-group">
+                <label for="enableTitle">
+                    <input type="checkbox" id="enableTitle" [(ngModel)]="enableTitle"
+                        (change)="onEnableTitleChange($event)" />
+                    Enable Title
+                </label>
+            </div>
+
+            <div class="indent-section" [style.opacity]="enableTitle ? 1 : 0.5"
+                [style.pointer-events]="enableTitle ? 'auto' : 'none'">
+                <!-- Title Position -->
+                <div class="form-group">
+                    <label for="titlePosition">Position:</label>
+                    <select id="titlePosition" [(ngModel)]="titlePosition"
+                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!enableTitle">
+                        <option *ngFor="let option of titlePositionOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Title Line 1 -->
+                <div class="section-group" style="margin-top: 6px;">
+                    <label class="section-title" style="font-size: 12px;">Title Line 1</label>
+
+                    <div class="form-group">
+                        <label for="titleLine1">Text:</label>
+                        <input type="text" id="titleLine1" [(ngModel)]="titleLine1"
+                            (change)="onTitleLine1Change($event.target.value)" [disabled]="!enableTitle" />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="titleLine1Font">Font:</label>
+                            <select id="titleLine1Font" [(ngModel)]="titleLine1Font"
+                                (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!enableTitle">
+                                <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                    <option *ngFor="let option of group.options" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="flex: 0.5;">
+                            <label for="titleLine1Size">Size:</label>
+                            <input type="number" id="titleLine1Size" [(ngModel)]="titleLine1Size"
+                                (change)="onTitleLine1SizeChange(titleLine1Size)" min="8" max="72"
+                                [disabled]="!enableTitle" />
+                        </div>
+
+                        <div class="form-group" style="flex: 0.4;">
+                            <label for="titleLine1Color">Color:</label>
+                            <input type="color" id="titleLine1Color" [(ngModel)]="titleLine1Color"
+                                (change)="onTitleLine1ColorChange(titleLine1Color)"
+                                class="color-input-compact color-picker-small" [disabled]="!enableTitle" />
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox-row">
+                        <label for="titleLine1Bold">
+                            <input type="checkbox" id="titleLine1Bold" [(ngModel)]="titleLine1Bold"
+                                (change)="onTitleLine1BoldChange($event)" [disabled]="!enableTitle" />
+                            Bold
+                        </label>
+                        <label for="titleLine1Italic">
+                            <input type="checkbox" id="titleLine1Italic" [(ngModel)]="titleLine1Italic"
+                                (change)="onTitleLine1ItalicChange($event)" [disabled]="!enableTitle" />
+                            Italic
+                        </label>
+                        <label for="titleLine1Uppercase">
+                            <input type="checkbox" id="titleLine1Uppercase" [(ngModel)]="titleLine1Uppercase"
+                                (change)="onTitleLine1UppercaseChange($event)" [disabled]="!enableTitle" />
+                            Uppercase
+                        </label>
+                        <label for="titleLine1Underline">
+                            <input type="checkbox" id="titleLine1Underline" [(ngModel)]="titleLine1Underline"
+                                (change)="onTitleLine1UnderlineChange($event)" [disabled]="!enableTitle" />
+                            Underline
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Title Line 2 -->
+                <div class="section-group" style="margin-top: 6px;">
+                    <label class="section-title" style="font-size: 12px;">Title Line 2</label>
+
+                    <div class="form-group">
+                        <label for="titleLine2">Text:</label>
+                        <input type="text" id="titleLine2" [(ngModel)]="titleLine2"
+                            (change)="onTitleLine2Change($event.target.value)" [disabled]="!enableTitle" />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="titleLine2Font">Font:</label>
+                            <select id="titleLine2Font" [(ngModel)]="titleLine2Font"
+                                (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!enableTitle">
+                                <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                    <option *ngFor="let option of group.options" [value]="option.value">
+                                        {{ option.label }}
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="flex: 0.5;">
+                            <label for="titleLine2Size">Size:</label>
+                            <input type="number" id="titleLine2Size" [(ngModel)]="titleLine2Size"
+                                (change)="onTitleLine2SizeChange(titleLine2Size)" min="8" max="72"
+                                [disabled]="!enableTitle" />
+                        </div>
+
+                        <div class="form-group" style="flex: 0.4;">
+                            <label for="titleLine2Color">Color:</label>
+                            <input type="color" id="titleLine2Color" [(ngModel)]="titleLine2Color"
+                                (change)="onTitleLine2ColorChange(titleLine2Color)"
+                                class="color-input-compact color-picker-small" [disabled]="!enableTitle" />
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox-row">
+                        <label for="titleLine2Bold">
+                            <input type="checkbox" id="titleLine2Bold" [(ngModel)]="titleLine2Bold"
+                                (change)="onTitleLine2BoldChange($event)" [disabled]="!enableTitle" />
+                            Bold
+                        </label>
+                        <label for="titleLine2Italic">
+                            <input type="checkbox" id="titleLine2Italic" [(ngModel)]="titleLine2Italic"
+                                (change)="onTitleLine2ItalicChange($event)" [disabled]="!enableTitle" />
+                            Italic
+                        </label>
+                        <label for="titleLine2Uppercase">
+                            <input type="checkbox" id="titleLine2Uppercase" [(ngModel)]="titleLine2Uppercase"
+                                (change)="onTitleLine2UppercaseChange($event)" [disabled]="!enableTitle" />
+                            Uppercase
+                        </label>
+                        <label for="titleLine2Underline">
+                            <input type="checkbox" id="titleLine2Underline" [(ngModel)]="titleLine2Underline"
+                                (change)="onTitleLine2UnderlineChange($event)" [disabled]="!enableTitle" />
+                            Underline
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Border Settings -->
+                <div class="section-group" style="margin-top: 6px;">
+                    <label class="section-title" style="font-size: 12px;">Border</label>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="titleBorderType">Type:</label>
+                            <select id="titleBorderType" [(ngModel)]="titleBorderType"
+                                (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!enableTitle">
+                                <option *ngFor="let option of titleBorderTypeOptions" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="flex: 0.4;">
+                            <label for="titleBorderColor">Color:</label>
+                            <input type="color" id="titleBorderColor" [(ngModel)]="titleBorderColor"
+                                (change)="onTitleBorderColorChange(titleBorderColor)" class="color-input-compact color-picker-small"
+                                [disabled]="!enableTitle || titleBorderType === 'none'" />
+                        </div>
+
+                        <div class="form-group" style="flex: 0.6;">
+                            <label for="titleBorderThickness">Thickness:</label>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="range" id="titleBorderThickness" [(ngModel)]="titleBorderThickness"
+                                    (change)="onTitleBorderThicknessChange(titleBorderThickness)" min="1" max="10"
+                                    [disabled]="!enableTitle || titleBorderType === 'none'" style="flex: 1; min-width: 60px;" />
+                                <span style="font-size: 12px; white-space: nowrap;">{{ titleBorderThickness }}px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background Color -->
+                <div class="section-group" style="margin-top: 6px;">
+                    <label class="section-title" style="font-size: 12px;">Background</label>
+
+                    <div class="form-group">
+                        <label for="titleBackgroundColor">Background Color:</label>
+                        <input type="color" id="titleBackgroundColor" [(ngModel)]="titleBackgroundColor"
+                            (change)="onTitleBackgroundColorChange(titleBackgroundColor)" class="color-input-compact"
+                            [disabled]="!enableTitle" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Visualization Tab -->
+<ng-template #visualizationTab>
+    <div class="tab-section">
+        <!-- Arrangement and Layout Style Selection -->
+        <div class="tool-section">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h4>Arrangement</h4>
+                    <div class="visualization-dropdown">
+                        <select [(ngModel)]="selectedFormat" (change)="onFormatChange(selectedFormat)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of formatOptions" [value]="option.value">
+                                {{ option.icon }} {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div style="flex: 1;" *ngIf="selectedFormat !== 'hex'">
+                    <h4>Layout Style</h4>
+                    <div class="visualization-dropdown">
+                        <select [(ngModel)]="selectedLayoutStyle" (change)="onLayoutStyleChange(selectedLayoutStyle)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of layoutStyleOptions" [value]="option.value">
+                                {{ option.icon }} {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Count Controls -->
+        <div class="tool-section">
+            <h4>Node Count</h4>
+            <div class="control-group node-count-group">
+                <label for="viz-nodes">Nodes:</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">2000</span></div>
+                <input id="viz-nodes" type="range" min="1" max="2000" step="1" [value]="nodeCount"
+                    (input)="onUpdateNodeCount($event)" />
+                <div>
+                    <input type="number" class="node-count-input" min="1" max="2000" [value]="nodeCount"
+                        (input)="onUpdateNodeCountFromInput($event)" (blur)="onNodeCountInputBlur($event)" />
+                    <button class="regenerate-btn" (click)="onRegenerateNodes()"
+                        title="Generate new random tree structure">
+                        🎲
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Size Control -->
+        <div class="tool-section">
+            <h4>Node Size</h4>
+            <div class="control-group">
+                <div class="size-buttons">
+                    <button class="size-btn" [class.active]="nodeSize === 'xsmall'" (click)="onNodeSizeChange('xsmall')"
+                        title="Extra small nodes">XS</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'small'" (click)="onNodeSizeChange('small')"
+                        title="Small nodes">S</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'medium'" (click)="onNodeSizeChange('medium')"
+                        title="Medium nodes">M</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'large'" (click)="onNodeSizeChange('large')"
+                        title="Large nodes">L</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Position Control -->
+        <div class="tool-section">
+            <h5>Text Position</h5>
+            <div class="control-group">
+                <select [(ngModel)]="textPosition" (change)="onTextPositionChange(textPosition)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of getTextPositionOptions()" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Link Type and Connection Controls -->
+        <div class="tool-section">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h4>Link Type</h4>
+                    <div class="control-group">
+                        <select [(ngModel)]="lineType" (change)="onLineTypeChange(lineType)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of lineTypeOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <h4>Connection</h4>
+                    <div class="control-group">
+                        <select [(ngModel)]="linkConnection" (change)="onLinkConnectionChange(linkConnection)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of linkConnectionOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radius Control (Radial Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'radial'">
+            <h4>Radius</h4>
+            <div class="control-group">
+                <label for="viz-radius">Radius: {{ visualizationRadius }}px (Ideal: {{ visualizationRadiusIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">100</span><span class="max-label">{{
+                        visualizationRadiusMax }}</span></div>
+                <input id="viz-radius" type="range" min="100" [max]="visualizationRadiusMax" step="10"
+                    [value]="visualizationRadius" (input)="onRadiusChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Width Control (Horizontal Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'horizontal'">
+            <h4>Dimensions</h4>
+            <div class="control-group">
+                <label for="viz-width">Width: {{ visualizationWidth }}px (Ideal: {{ visualizationWidthIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationWidthMax }}</span></div>
+                <input id="viz-width" type="range" min="400" [max]="visualizationWidthMax" step="50"
+                    [value]="visualizationWidth" (input)="onWidthChange($event)" class="slider" />
+            </div>
+            <div class="control-group">
+                <label for="viz-height-h">Height: {{ visualizationHeight }}px (Ideal: {{ visualizationHeightIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationHeightMax }}</span></div>
+                <input id="viz-height-h" type="range" min="400" [max]="visualizationHeightMax" step="50"
+                    [value]="visualizationHeight" (input)="onHeightChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Width and Height Controls (Vertical Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'vertical'">
+            <h4>Dimensions</h4>
+            <div class="control-group">
+                <label for="viz-width-v">Width: {{ visualizationWidth }}px (Ideal: {{ visualizationWidthIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationWidthMax }}</span></div>
+                <input id="viz-width-v" type="range" min="400" [max]="visualizationWidthMax" step="50"
+                    [value]="visualizationWidth" (input)="onWidthChange($event)" class="slider" />
+            </div>
+            <div class="control-group">
+                <label for="viz-height">Height: {{ visualizationHeight }}px (Ideal: {{ visualizationHeightIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationHeightMax }}</span></div>
+                <input id="viz-height" type="range" min="400" [max]="visualizationHeightMax" step="50"
+                    [value]="visualizationHeight" (input)="onHeightChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Center Markers -->
+        <div class="tool-section">
+            <h4>Center Markers</h4>
+            <div style="display: flex; gap: 16px;">
+                <div class="control-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" [checked]="redDotCenterEnabled"
+                            (change)="onRedDotCenterToggle($event)" />
+                        <span>Red Dot (transforms)</span>
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" [checked]="blueDotScreenCenterEnabled"
+                            (change)="onBlueDotScreenCenterToggle($event)" />
+                        <span>Blue Dot (screen fixed)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-group" *ngIf="redDotCenterEnabled">
+                <label for="red-dot-size">Size: {{ redDotCenterSize }}px</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">50</span></div>
+                <input id="red-dot-size" type="range" min="1" max="50" step="1" [value]="redDotCenterSize"
+                    (input)="onRedDotCenterSizeChange($event)" class="slider" />
+            </div>
+            <div class="control-group" *ngIf="blueDotScreenCenterEnabled">
+                <label for="blue-dot-size">Size: {{ blueDotScreenCenterSize }}px</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">50</span></div>
+                <input id="blue-dot-size" type="range" min="1" max="50" step="1" [value]="blueDotScreenCenterSize"
+                    (input)="onBlueDotScreenCenterSizeChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Show Background Circle -->
+        <div class="tool-section">
+            <div class="control-group">
+                <label for="show-background-circle" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="show-background-circle" [checked]="showBackgroundCircle"
+                        (change)="onBackgroundCircleChange($event)" />
+                    <span>Show Background Circle</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Opacity Tab -->
+<ng-template #opacityTab>
+    <div class="tab-section">
+        <!-- Node Opacity (Select All - affects text, circle, and link) -->
+        <div class="section-group">
+            <label class="section-title">Node Opacity (Select All)</label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                <input type="range" id="node-opacity" min="0" max="1" step="0.01" [value]="nodeOpacity"
+                    (change)="onNodeOpacityChange($event.target.valueAsNumber)"
+                    style="flex: 0 1 auto; max-width: 120px;" />
+                <input type="number" min="0" max="100" [value]="(nodeOpacity * 100).toFixed(0)"
+                    (change)="onNodeOpacityChange($event.target.valueAsNumber / 100)"
+                    style="width: 50px; height: 28px; padding: 4px; line-height: 1; box-sizing: border-box;" />
+            </div>
+            <div class="control-group" style="display: flex; gap: 8px;">
+                <button *ngFor="let option of nodeOpacityOptions" class="opacity-button"
+                    [class.active]="nodeOpacity === option.value" (click)="onNodeOpacityQuickSet(option.value)">
+                    {{ option.label }}
+                </button>
+            </div>
+        </div>
+        <!-- Circle Opacity -->
+        <div class="section-group">
+            <label class="section-title">⭕ Circle Opacity</label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                <input type="range" id="circle-opacity" min="0" max="1" step="0.01" [value]="circleOpacity"
+                    (change)="onCircleOpacityChange($event.target.valueAsNumber)"
+                    style="flex: 0 1 auto; max-width: 120px;" />
+                <input type="number" min="0" max="100" [value]="(circleOpacity * 100).toFixed(0)"
+                    (change)="onCircleOpacityChange($event.target.valueAsNumber / 100)"
+                    style="width: 50px; height: 28px; padding: 4px; line-height: 1; box-sizing: border-box;" />
+            </div>
+            <div class="control-group" style="display: flex; gap: 8px;">
+                <button *ngFor="let option of circleOpacityOptions" class="opacity-button"
+                    [class.active]="circleOpacity === option.value" (click)="onCircleOpacityQuickSet(option.value)">
+                    {{ option.label }}
+                </button>
+            </div>
+        </div>
+        <!-- Text Opacity -->
+        <div class="section-group">
+            <label class="section-title">Text Opacity</label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                <input type="range" id="text-opacity" min="0" max="1" step="0.01" [value]="textOpacity"
+                    (change)="onTextOpacityChange($event.target.valueAsNumber)"
+                    style="flex: 0 1 auto; max-width: 120px;" />
+                <input type="number" min="0" max="100" [value]="(textOpacity * 100).toFixed(0)"
+                    (change)="onTextOpacityChange($event.target.valueAsNumber / 100)"
+                    style="width: 50px; height: 28px; padding: 4px; line-height: 1; box-sizing: border-box;" />
+            </div>
+            <div class="control-group" style="display: flex; gap: 8px;">
+                <button *ngFor="let option of textOpacityOptions" class="opacity-button"
+                    [class.active]="textOpacity === option.value" (click)="onTextOpacityQuickSet(option.value)">
+                    {{ option.label }}
+                </button>
+            </div>
+        </div>
+        <!-- Link Opacity -->
+        <div class="section-group">
+            <label class="section-title">Link Opacity</label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                <input type="range" id="link-opacity" min="0" max="1" step="0.01" [value]="linkOpacity"
+                    (change)="onLinkOpacityChange($event.target.valueAsNumber)"
+                    style="flex: 0 1 auto; max-width: 120px;" />
+                <input type="number" min="0" max="100" [value]="(linkOpacity * 100).toFixed(0)"
+                    (change)="onLinkOpacityChange($event.target.valueAsNumber / 100)"
+                    style="width: 50px; height: 28px; padding: 4px; line-height: 1; box-sizing: border-box;" />
+            </div>
+            <div class="control-group" style="display: flex; gap: 8px;">
+                <button *ngFor="let option of linkOpacityOptions" class="opacity-button"
+                    [class.active]="linkOpacity === option.value" (click)="onLinkOpacityQuickSet(option.value)">
+                    {{ option.label }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template><!-- Title Tab -->
+<ng-template #titleTab>
+    <div class="tab-section">
+        <div class="section-group">
+            <label class="section-title">Include Title</label>
+            <div class="form-group">
+                <label for="includeTitle">
+                    <input type="checkbox" id="includeTitle" [(ngModel)]="includeTitle"
+                        (change)="onIncludeTitleChange($event)" />
+                    Show Title
+                </label>
+            </div>
+
+            <div class="indent-section">
+                <!-- Title Position -->
+                <div class="form-group">
+                    <label for="titlePosition">Position:</label>
+                    <select id="titlePosition" [(ngModel)]="titlePosition"
+                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!includeTitle">
+                        <option *ngFor="let option of titlePositionOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Title Line 1 -->
+                <div class="form-group">
+                    <label for="titleLine1">Line 1 Text:</label>
+                    <input type="text" id="titleLine1" [(ngModel)]="titleLine1" (change)="onTitleLine1Change($event)"
+                        [disabled]="!includeTitle" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titleLine1Font">Line 1 Font:</label>
+                        <select id="titleLine1Font" [(ngModel)]="titleLine1Font"
+                            (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!includeTitle">
+                            <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                <option *ngFor="let option of group.options" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleLine1FontSize">Line 1 Size:</label>
+                        <input type="number" id="titleLine1FontSize" [(ngModel)]="titleLine1FontSize"
+                            (change)="onTitleLine1FontSizeChange($event)" min="8" max="32" [disabled]="!includeTitle" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="titleLine1Color">Line 1 Color:</label>
+                    <input type="color" id="titleLine1Color" [(ngModel)]="titleLine1Color"
+                        (change)="onTitleLine1ColorChange(titleLine1Color)" class="color-input-compact"
+                        [disabled]="!includeTitle" />
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label for="titleLine1Bold">
+                        <input type="checkbox" id="titleLine1Bold" [(ngModel)]="titleLine1Bold"
+                            (change)="onTitleLine1BoldChange(titleLine1Bold)" [disabled]="!includeTitle" />
+                        Bold
+                    </label>
+
+                    <label for="titleLine1Uppercase">
+                        <input type="checkbox" id="titleLine1Uppercase" [(ngModel)]="titleLine1Uppercase"
+                            (change)="onTitleLine1UppercaseChange(titleLine1Uppercase)" [disabled]="!includeTitle" />
+                        Uppercase
+                    </label>
+
+                    <label for="titleLine1Underlined">
+                        <input type="checkbox" id="titleLine1Underlined" [(ngModel)]="titleLine1Underlined"
+                            (change)="onTitleLine1UnderlinedChange(titleLine1Underlined)" [disabled]="!includeTitle" />
+                        Underline
+                    </label>
+
+                    <label for="titleLine1Italic">
+                        <input type="checkbox" id="titleLine1Italic" [(ngModel)]="titleLine1Italic"
+                            (change)="onTitleLine1ItalicChange(titleLine1Italic)" [disabled]="!includeTitle" />
+                        Italic
+                    </label>
+                </div>
+
+                <!-- Title Line 2 -->
+                <hr style="margin: 12px 0; border: none; border-top: 1px solid #ddd;" />
+
+                <div class="form-group">
+                    <label for="titleLine2">Line 2 Text:</label>
+                    <input type="text" id="titleLine2" [(ngModel)]="titleLine2" (change)="onTitleLine2Change($event)"
+                        [disabled]="!includeTitle" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titleLine2Font">Line 2 Font:</label>
+                        <select id="titleLine2Font" [(ngModel)]="titleLine2Font"
+                            (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!includeTitle">
+                            <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
+                                <option *ngFor="let option of group.options" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleLine2FontSize">Line 2 Size:</label>
+                        <input type="number" id="titleLine2FontSize" [(ngModel)]="titleLine2FontSize"
+                            (change)="onTitleLine2FontSizeChange($event)" min="8" max="32" [disabled]="!includeTitle" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="titleLine2Color">Line 2 Color:</label>
+                    <input type="color" id="titleLine2Color" [(ngModel)]="titleLine2Color"
+                        (change)="onTitleLine2ColorChange(titleLine2Color)" class="color-input-compact"
+                        [disabled]="!includeTitle" />
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label for="titleLine2Bold">
+                        <input type="checkbox" id="titleLine2Bold" [(ngModel)]="titleLine2Bold"
+                            (change)="onTitleLine2BoldChange(titleLine2Bold)" [disabled]="!includeTitle" />
+                        Bold
+                    </label>
+
+                    <label for="titleLine2Uppercase">
+                        <input type="checkbox" id="titleLine2Uppercase" [(ngModel)]="titleLine2Uppercase"
+                            (change)="onTitleLine2UppercaseChange(titleLine2Uppercase)" [disabled]="!includeTitle" />
+                        Uppercase
+                    </label>
+
+                    <label for="titleLine2Underlined">
+                        <input type="checkbox" id="titleLine2Underlined" [(ngModel)]="titleLine2Underlined"
+                            (change)="onTitleLine2UnderlinedChange(titleLine2Underlined)" [disabled]="!includeTitle" />
+                        Underline
+                    </label>
+
+                    <label for="titleLine2Italic">
+                        <input type="checkbox" id="titleLine2Italic" [(ngModel)]="titleLine2Italic"
+                            (change)="onTitleLine2ItalicChange(titleLine2Italic)" [disabled]="!includeTitle" />
+                        Italic
+                    </label>
+                </div>
+
+                <!-- Border Options -->
+                <hr style="margin: 12px 0; border: none; border-top: 1px solid #ddd;" />
+
+                <div class="form-group">
+                    <label for="titleBorderType">Border Type:</label>
+                    <select id="titleBorderType" [(ngModel)]="titleBorderType"
+                        (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!includeTitle">
+                        <option *ngFor="let option of titleBorderOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titleBorderColor">Border Color:</label>
+                        <input type="color" id="titleBorderColor" [(ngModel)]="titleBorderColor"
+                            (change)="onTitleBorderColorChange(titleBorderColor)" class="color-input-compact"
+                            [disabled]="!includeTitle" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="titleBorderThickness">Border Thickness:</label>
+                        <input type="range" id="titleBorderThickness" [(ngModel)]="titleBorderThickness"
+                            (change)="onTitleBorderThicknessChange($event)" min="0" max="10" [disabled]="!includeTitle"
+                            style="width: 100px;" />
+                        <span style="margin-left: 8px;">{{ titleBorderThickness }}px</span>
+                    </div>
+                </div>
+
+                <!-- Background Color -->
+                <div class="form-group">
+                    <label for="titleBackgroundColor">Background Color:</label>
+                    <input type="color" id="titleBackgroundColor" [(ngModel)]="titleBackgroundColor"
+                        (change)="onTitleBackgroundColorChange(titleBackgroundColor)" class="color-input-compact"
+                        [disabled]="!includeTitle" />
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

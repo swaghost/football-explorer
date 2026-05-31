@@ -1,0 +1,29 @@
+<app-base-dialog [visible]="visible" [title]="'Confirm Team Deletion'" [icon]="'⚠️'" [maxWidth]="'500px'"
+    (close)="onCancel()">
+    <div class="warning-icon">⚠️</div>
+    <p>
+        <strong>Are you sure you want to delete the team "{{
+            teamToDelete?.TeamName
+            }}"?</strong>
+    </p>
+    <div class="deletion-details">
+        <p>This action will permanently delete:</p>
+        <ul>
+            <li>The team "{{ teamToDelete?.TeamName }}"</li>
+            <li>{{ teamToDelete?.TeamGroups?.length || 0 }} team group(s)</li>
+            <li>{{ teamToDelete?.Players?.length || 0 }} player(s)</li>
+        </ul>
+    </div>
+    <div class="warning-text">
+        <strong>This action cannot be undone.</strong>
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="dialog-btn cancel-btn" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="button" class="dialog-btn delete-btn" (click)="onConfirm()">
+            Delete Team
+        </button>
+    </div>
+</app-base-dialog>

@@ -1,0 +1,45 @@
+<div class="controls" style="margin-bottom: 12px;">
+    <label for="speed-slider">Animation Speed:</label>
+    <input id="speed-slider" type="range" min="0.01" max="0.2" step="0.01" [(ngModel)]="rotationLerpSpeed">
+    <span>{{ rotationLerpSpeed | number:'1.2-2' }}</span>
+
+    <label for="zoom-slider" style="margin-left: 24px;">Zoom:</label>
+    <input id="zoom-slider" type="range" min="0.5" max="3" step="0.01" [(ngModel)]="zoom">
+    <span>{{ zoom | number:'1.2-2' }}</span>
+
+    <label for="rotation-slider" style="margin-left: 24px;">Rotation (°):</label>
+    <input id="rotation-slider" style="width: 400px;" type="range" min="-180" max="180" step="1"
+        [(ngModel)]="rotationDeg">
+    <span>{{ rotationDeg | number:'1.0-0' }}°</span>
+
+    <label for="popup-checkbox" style="margin-left: 24px;">Show Click Popup:</label>
+    <input id="popup-checkbox" type="checkbox" [(ngModel)]="showClickPopup">
+
+    <label for="radian-lines-checkbox" style="margin-left: 24px;">Show Radian Lines:</label>
+    <input id="radian-lines-checkbox" type="checkbox" [(ngModel)]="showRadianLines">
+    <label for="degree-lines-checkbox" style="margin-left: 12px;">Show Degree Lines:</label>
+    <input id="degree-lines-checkbox" type="checkbox" [(ngModel)]="showDegreeLines">
+
+    &nbsp;<label for="degree-lines-checkbox" style="margin-left: 12px;">{{rotationDeg}}</label>
+    &nbsp;<label for="degree-lines-checkbox" style="margin-left: 12px;">{{rotationRadians}}</label>
+</div>
+
+<div #sketchContainer class="sketch-container">
+    @if(hoveredNode){
+    <div class="hover-popup" [style.left.px]="hoverPopupPos.x" [style.top.px]="hoverPopupPos.y">
+        Hovered: {{ hoveredNode.label }}
+        X:{{hoverPopupPos.x}},Y:{{hoverPopupPos.y}}, ANGLE:{{ hoveredNode.angle | number:'1.2-2' }}
+    </div>
+    }
+</div>
+
+
+@if(clickedNode && showClickPopup){
+<div class="click-popup-overlay" (click)="clickedNode = null">
+    <div class="click-popup" (click)="$event.stopPropagation()" [style.position]="'fixed'"
+        [style.left.px]="sketchCenterX" [style.top.px]="sketchCenterY" style="transform: translate(-50%, -50%);">
+        <h3>{{ clickedNode.label }}</h3>
+        <p>Details about this node...</p>
+    </div>
+</div>
+}

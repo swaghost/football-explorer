@@ -1,0 +1,161 @@
+/* Datasets Toolbar Specific Styles */
+.datasets-panel {
+  width: 550px !important; // Width set to 550px - !important needed to override base toolbar width
+  min-height: 250px;
+}
+
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tenant-info {
+  margin-bottom: 8px;
+}
+
+.filtering-info {
+  color: #666;
+  font-size: 12px;
+}
+
+// Tabbed interface styles
+.tabs-group {
+  margin-bottom: 8px;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 4px;
+  margin-top: 8px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: #e0e0e0;
+    color: #333;
+  }
+
+  &.active {
+    background: #2196f3;
+    color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    color: #999;
+  }
+}
+
+// Dark mode tabs
+.datasets-panel.dark-mode {
+  .tabs {
+    background: #333;
+  }
+
+  .tab {
+    color: #ccc;
+
+    &:hover:not(:disabled) {
+      background: #444;
+      color: #fff;
+    }
+
+    &.active {
+      background: #1976d2;
+      color: white;
+    }
+
+    &:disabled {
+      color: #666;
+    }
+  }
+}
+
+// Dataset items styling
+.datasets-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #ffffff; // White background in light mode
+}
+
+.dataset-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.dataset-item:last-child {
+  border-bottom: none;
+}
+
+.dataset-item:hover {
+  background: #f0f0f0;
+}
+
+.dataset-item.selected {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.dataset-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+// Dark mode styles
+.datasets-panel.dark-mode {
+  .datasets-container {
+    background: #2d2d2d; // Dark gray background in dark mode
+    border-color: #555;
+  }
+
+  .dataset-item {
+    background: #2d2d2d;
+    border-bottom-color: #555;
+    color: #ffffff;
+  }
+
+  .dataset-item:hover {
+    background: #3a3a3a;
+  }
+
+  .dataset-item.selected {
+    background: rgba(59, 130, 246, 0.3);
+    border-left-color: #3b82f6;
+  }
+
+  .dataset-item.disabled {
+    background: #3a3a3a;
+  }
+}

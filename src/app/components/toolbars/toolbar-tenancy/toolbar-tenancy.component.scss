@@ -1,0 +1,262 @@
+@use "../../../styles/components/toolbar-base";
+
+/* Tenancy Toolbar Specific Styles */
+.tenancy-panel {
+  // CRITICAL: Prevent header/footer content from bleeding outside rounded borders
+  overflow: hidden;
+
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  min-width: 280px;
+  max-width: 350px;
+
+  // Light yellow background in light mode
+  .panel-content {
+    background: #fffae6 !important;
+  }
+
+  .tenancy-info {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #007bff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .current-org-display {
+      .org-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+      }
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 2px;
+      }
+
+      .user-role {
+        font-size: 11px;
+        font-weight: 400;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+
+  .organization-list {
+    h4 {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .org-selector-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fffae6;
+
+      .org-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        &:hover {
+          background: rgba(0, 123, 255, 0.05);
+        }
+
+        &.selected {
+          background: rgba(40, 167, 69, 0.1);
+          border-left: 3px solid #28a745;
+
+          .checkbox-container .checkmark {
+            color: #28a745;
+            font-weight: bold;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .checkbox-container {
+          margin-right: 12px;
+          margin-top: 2px;
+          min-width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 3px;
+          background: rgba(255, 255, 255, 0.5);
+          border: 1px solid #ddd;
+          flex-shrink: 0;
+
+          .checkmark {
+            color: #28a745;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1;
+          }
+
+          .checkbox {
+            color: #666;
+            font-size: 14px;
+            line-height: 1;
+          }
+        }
+
+        &.selected .checkbox-container {
+          background: rgba(40, 167, 69, 0.2);
+          border-color: #28a745;
+        }
+
+        .org-details {
+          flex: 1;
+          min-width: 0;
+
+          .org-line-1 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.3;
+          }
+
+          .org-line-2 {
+            font-size: 12px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 3px;
+            line-height: 1.3;
+          }
+
+          .org-line-3 {
+            font-size: 11px;
+            font-weight: 500;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+          }
+        }
+      }
+    }
+  }
+
+  // Dark mode adjustments (using :host-context for automatic dark mode detection)
+  :host-context(.dark-mode) & {
+    // Revert to dark backgrounds
+    .panel-content {
+      background: inherit !important;
+    }
+
+    .tenancy-info {
+      background: rgba(0, 123, 255, 0.15);
+      border-color: rgba(0, 123, 255, 0.3);
+
+      h4 {
+        color: #66b3ff;
+      }
+
+      .current-org-display {
+        .org-name {
+          color: #fff;
+        }
+
+        .user-name {
+          color: #ddd;
+        }
+
+        .user-role {
+          color: #bbb;
+        }
+      }
+    }
+
+    .organization-list {
+      h4 {
+        color: #fff;
+      }
+
+      .org-selector-list {
+        background: #333;
+        border-color: #555;
+
+        .org-item {
+          border-bottom-color: rgba(255, 255, 255, 0.1);
+
+          &:hover {
+            background: rgba(0, 123, 255, 0.1);
+          }
+
+          &.selected {
+            background: rgba(40, 167, 69, 0.15);
+          }
+
+          .checkbox-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #555;
+
+            .checkmark {
+              color: #4caf50;
+            }
+
+            .checkbox {
+              color: #bbb;
+            }
+          }
+
+          &.selected .checkbox-container {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+          }
+
+          .org-details {
+            .org-line-1 {
+              color: #fff;
+            }
+
+            .org-line-2 {
+              color: #ddd;
+            }
+
+            .org-line-3 {
+              color: #bbb;
+            }
+          }
+        }
+      }
+    }
+  }
+}

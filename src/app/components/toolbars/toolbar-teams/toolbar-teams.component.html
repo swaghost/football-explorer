@@ -1,0 +1,133 @@
+<!-- Teams Panel (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="teams-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <div class="form-group">
+            <label for="team-select">Team:</label>
+            <select id="team-select" class="team-dropdown" (change)="onTeamChange($event)" [(ngModel)]="selectedTeamId"
+                [disabled]="selectedOrganizationId === null">
+                <option value="">Select a team...</option>
+                <option *ngFor="let team of availableTeams" [value]="team.TeamID">
+                    {{ team.TeamName }}
+                </option>
+            </select>
+            <div class="button-container">
+                <button class="create-btn" (click)="onCreateTeam()" title="Create New Team">
+                    ➕
+                </button>
+                <button class="edit-btn" (click)="onEditTeam()" [disabled]="!selectedTeam" title="Edit Selected Team">
+                    ✏️
+                </button>
+                <button class="delete-btn" (click)="onDeleteTeam()" [disabled]="!selectedTeam"
+                    title="Delete Selected Team">
+                    🗑️
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="team-group-info" *ngIf="selectedTeamGroup">
+                <h4>Current Team Group</h4>
+                <div class="current-group-display">
+                    <div class="group-name">{{ selectedTeamGroup.TeamGroupName }}</div>
+                    <div class="group-details" *ngIf="selectedTeamGroup.MatchingPositions">
+                        Positions: {{ selectedTeamGroup.MatchingPositions }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-group-list" *ngIf="selectedTeam">
+                <h4>Available Team Groups</h4>
+                <div class="group-selector-list" *ngIf="availableTeamGroups?.length > 0; else noTeamGroups">
+                    <div *ngFor="let group of availableTeamGroups" class="group-item"
+                        [class.selected]="isTeamGroupSelected(group.TeamGroupID)"
+                        (click)="onTeamGroupSelect(group.TeamGroupID)">
+                        <div class="checkbox-container">
+                            <span class="checkmark" *ngIf="isTeamGroupSelected(group.TeamGroupID)">✓</span>
+                            <span class="checkbox" *ngIf="!isTeamGroupSelected(group.TeamGroupID)">□</span>
+                        </div>
+                        <div class="group-details">
+                            <div class="group-line-1">{{ group.TeamGroupName }}</div>
+                            <div class="group-line-2" *ngIf="group.MatchingPositions">
+                                {{ group.MatchingPositions }}
+                            </div>
+                            <div class="group-line-3" *ngIf="group.MatchingPositionNumbers">
+                                Numbers: {{ group.MatchingPositionNumbers }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noTeamGroups>
+                    <div class="no-groups-message">
+                        <p>No team groups available for this team.</p>
+                        <p>Create one to get started!</p>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="team-group-button-container">
+                <div class="button-row">
+                    <button class="create-btn" (click)="onCreateTeamGroup()" [disabled]="!selectedTeam"
+                        title="Create New Team Group">
+                        ➕
+                    </button>
+                    <button class="edit-btn" (click)="onEditTeamGroup()"
+                        [disabled]="!selectedTeamGroup || !canEditTeamGroup()" title="Edit Selected Team Group">
+                        ✏️
+                    </button>
+                    <button class="delete-btn" (click)="onDeleteTeamGroup()"
+                        [disabled]="!selectedTeamGroup || !canDeleteTeamGroup()" title="Delete Selected Team Group">
+                        🗑️
+                    </button>
+                    <button class="auto-build-btn" (click)="onAutoBuildTeamGroup()"
+                        [disabled]="!selectedTeamGroup || !canEditTeamGroup()"
+                        title="Auto-Build Team Group from Roster">
+                        🔧
+                    </button>
+                    <button class="import-btn" (click)="onImportTeamGroup()" [disabled]="!selectedTeam"
+                        title="Import Default Team Group">
+                        📥
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer with team groups count -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="footer-stats">
+            <span class="stat-item">Team Groups: <strong>{{ availableTeamGroups.length }}</strong></span>
+        </div>
+    </div>
+</div>

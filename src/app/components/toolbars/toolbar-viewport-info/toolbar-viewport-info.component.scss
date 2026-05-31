@@ -1,0 +1,21 @@
+@use "../../../styles/components/toolbar-base";
+
+// Viewport Info Toolbar Component Styles
+.viewport-info-panel {
+  // CRITICAL: Prevent header/footer content from bleeding outside rounded borders
+  overflow: hidden;
+
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Component-specific styles can be added here
+}

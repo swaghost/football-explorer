@@ -1,0 +1,109 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Teams'" [drawerId]="'teams-drawer'" [position]="'left'"
+    [width]="'450px'" [drawerHelp]="drawerHelp" (close)="onClose()">
+    <div class="teams-drawer-content">
+        <!-- Action Buttons (at top) -->
+        <div class="drawer-actions">
+            <button class="action-btn add-btn" (click)="onAddTeam()">
+                ➕ Add
+            </button>
+            <button class="action-btn edit-btn" [disabled]="!canEdit" (click)="onEditTeam()">
+                ✏️ Edit
+            </button>
+            <button class="action-btn delete-btn" [disabled]="!canDelete" (click)="onDeleteTeam()">
+                🗑️ Delete
+            </button>
+        </div>
+
+        <!-- Selected Team Section -->
+        <div class="selected-team-section">
+            <h3>Selected Team</h3>
+            <div class="selected-team-container" *ngIf="selectedTeam; else noTeamSelected">
+                <div class="selected-team-display">
+                    <img *ngIf="tenantLogoUrl" [src]="tenantLogoUrl" alt="Team Logo" class="team-logo" />
+                    <div class="team-info">
+                        <div class="team-name">{{ selectedTeam.TeamName }}</div>
+                        <div class="team-details" *ngIf="selectedTeam.Gender || selectedTeam.AgeGroup">
+                            <span *ngIf="selectedTeam.Gender">{{ selectedTeam.Gender }}</span>
+                            <span *ngIf="selectedTeam.Gender && selectedTeam.AgeGroup"> • </span>
+                            <span *ngIf="selectedTeam.AgeGroup">{{ selectedTeam.AgeGroup }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expandable section toggle button -->
+                <div class="expand-toggle" (click)="toggleExpanded(selectedTeam.TeamID, $event)">
+                    <span class="expand-icon">{{ isExpanded(selectedTeam.TeamID) ? '▼' : '▶' }}</span>
+                    <span class="expand-text">{{ isExpanded(selectedTeam.TeamID) ? 'Hide' : 'Show' }} Players</span>
+                </div>
+
+                <!-- Expandable players section -->
+                <div class="expandable-section" *ngIf="isExpanded(selectedTeam.TeamID)"
+                    (click)="$event.stopPropagation()">
+                    <div class="expandable-content">
+                        <div class="players-list">
+                            <div class="player-item" *ngFor="let player of selectedTeam.Players; let idx = index"
+                                (click)="onPlayerEdit(player)">
+                                <span class="player-number">{{ idx + 1 }}.</span>
+                                <span class="player-name">{{ player.FirstName }} {{ player.LastName }}</span>
+                                <span class="player-position" *ngIf="player.PositionAbbrev">{{ player.PositionAbbrev
+                                    }}</span>
+                                <span class="player-jersey" *ngIf="player.JerseyNumber">#{{ player.JerseyNumber
+                                    }}</span>
+                            </div>
+                            <div class="empty-players"
+                                *ngIf="!selectedTeam.Players || selectedTeam.Players.length === 0">
+                                No players in this team
+                            </div>
+                        </div>
+                        <button class="add-player-btn" (click)="onAddPlayer()" title="Add New Player to Team">
+                            ➕ Player
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noTeamSelected>
+                <div class="no-team-selected">No team selected</div>
+            </ng-template>
+        </div>
+
+        <!-- Staff Teams Section (show first if no regular teams) -->
+        <div class="staff-teams-section" *ngIf="staffTeams.length > 0 && teams.length === 0">
+            <h3>Staff Teams ({{ staffTeams.length }})</h3>
+            <div #staffTreeContainer class="staff-teams-tree-container"></div>
+        </div>
+
+        <!-- Available Teams Section -->
+        <div class="available-teams-section" *ngIf="teams.length > 0">
+            <h3>Available Teams ({{ teams.length }})</h3>
+
+            <!-- Simple List View (<=5 teams) -->
+            <div class="teams-list-container" *ngIf="hasSmallTeamList">
+                <div class="team-item" *ngFor="let team of teams" [class.selected]="isSelected(team)"
+                    (click)="onSelectTeam(team)">
+                    <img *ngIf="tenantLogoUrl" [src]="tenantLogoUrl" alt="Team Logo" class="team-logo" />
+                    <div class="team-content">
+                        <div class="team-name">{{ team.TeamName }}</div>
+                        <div class="team-details" *ngIf="team.Gender || team.AgeGroup">
+                            <span *ngIf="team.Gender">{{ team.Gender }}</span>
+                            <span *ngIf="team.Gender && team.AgeGroup"> • </span>
+                            <span *ngIf="team.AgeGroup">{{ team.AgeGroup }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-state" *ngIf="teams.length === 0">
+                    <div class="empty-icon">🏆</div>
+                    <p>No teams available</p>
+                </div>
+            </div>
+
+            <!-- D3 Collapsible Tree View (>5 teams) -->
+            <div #treeContainer class="teams-tree-container" *ngIf="!hasSmallTeamList"></div>
+        </div>
+
+        <!-- Staff Teams Section (show second if there are regular teams) -->
+        <div class="staff-teams-section" *ngIf="staffTeams.length > 0 && teams.length > 0">
+            <h3>Staff Teams ({{ staffTeams.length }})</h3>
+            <div #staffTreeContainer class="staff-teams-tree-container"></div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

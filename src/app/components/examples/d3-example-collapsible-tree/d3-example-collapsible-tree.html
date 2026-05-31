@@ -1,0 +1,38 @@
+<div class="indented-tree-container">
+    <h1>D3 Indented Collapsible Tree</h1>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <label for="nodeCount">Node Count:</label>
+            <input id="nodeCount" type="range" min="5" max="100" step="1" [value]="nodeCount"
+                (input)="updateNodeCount($event)" class="node-count-slider" />
+            <span class="value-display">{{ nodeCount }}</span>
+        </div>
+
+        <div class="control-group">
+            <button class="regenerate-button" (click)="regenerateTree()" title="Generate new random tree structure">
+                🔄 Regenerate Tree
+            </button>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+        <p><strong>Navigation:</strong> Click on any node circle to expand/collapse its children. This indented tree
+            layout is perfect for hierarchical navigation and exploration.</p>
+    </div>
+
+    <!-- Tree Container -->
+    <div class="tree-wrapper">
+        <div #treeContainer class="tree-container"></div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <h3>Tree Information</h3>
+        <p><strong>Total Nodes:</strong> {{ nodeCount }}</p>
+        <p><strong>Layout:</strong> Indented Tree (Observable HQ Style)</p>
+        <p><strong>Features:</strong> Smooth animations, enter/update/exit patterns, navigation-friendly</p>
+    </div>
+</div>

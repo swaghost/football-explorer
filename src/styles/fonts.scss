@@ -1,0 +1,91 @@
+// Font Face Declarations
+// Importing from Google Fonts API for local hosting
+
+// Times New Roman - using Georgia as primary with serif fallbacks
+@font-face {
+  font-family: "Times New Roman";
+  src: local("Georgia"), local("Times New Roman"), local("Times"),
+    local("serif");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Times New Roman";
+  src: local("Georgia Bold"), local("Times New Roman"), local("Times"),
+    local("serif");
+  font-weight: 700;
+  font-style: normal;
+}
+
+// Courier New - using 'Courier' monospace
+@font-face {
+  font-family: "Courier New";
+  src: local("Courier New"), local("Courier"), local("monospace");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Courier New";
+  src: local("Courier New"), local("Courier"), local("monospace");
+  font-weight: 700;
+  font-style: normal;
+}
+
+// Garamond - using Georgia as primary serif alternative
+@font-face {
+  font-family: "Garamond";
+  src: local("Georgia"), local("Garamond"), local("serif");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Garamond";
+  src: local("Georgia Bold"), local("Garamond"), local("serif");
+  font-weight: 700;
+  font-style: normal;
+}
+
+// Palatino Linotype - serif fonts
+@font-face {
+  font-family: "Palatino Linotype";
+  src: local("Book Antiqua"), local("Palatino"), local("Palatino Linotype"),
+    local("serif");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Palatino Linotype";
+  src: local("Book Antiqua Bold"), local("Palatino Bold"),
+    local("Palatino Linotype"), local("serif");
+  font-weight: 700;
+  font-style: normal;
+}
+
+// Comic Sans MS - cursive
+@font-face {
+  font-family: "Comic Sans MS";
+  src: local("Comic Sans MS"), local("cursive");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Comic Sans MS";
+  src: local("Comic Sans MS Bold"), local("cursive");
+  font-weight: 700;
+  font-style: normal;
+}
+
+// Standard font declarations with fallback chains
+$font-times: "Times New Roman", Times, serif;
+$font-courier: "Courier New", Courier, monospace;
+$font-garamond: "Garamond", Georgia, serif;
+$font-palatino: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+$font-comic: "Comic Sans MS", cursive;
+$font-arial: Arial, Helvetica, sans-serif;
+$font-georgia: Georgia, serif;
+$font-verdana: Verdana, Geneva, sans-serif;

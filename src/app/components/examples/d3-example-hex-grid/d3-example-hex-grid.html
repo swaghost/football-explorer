@@ -1,0 +1,49 @@
+<div class="hex-grid-container">
+    <!-- Control Panel (Top) -->
+    <div class="control-panel">
+        <div class="control-row">
+            <label>H Pan:</label>
+            <input type="range" [min]="panXMin" [max]="panXMax" step="1" [value]="panX"
+                (input)="updatePan($event, 'x')">
+            <span>{{ panX | number:'1.0-0' }}px</span>
+        </div>
+
+        <div class="control-row">
+            <label>V Pan:</label>
+            <input type="range" [min]="panYMin" [max]="panYMax" step="1" [value]="panY"
+                (input)="updatePan($event, 'y')">
+            <span>{{ panY | number:'1.0-0' }}px</span>
+        </div>
+
+        <div class="control-row">
+            <label>Zoom:</label>
+            <input type="range" min="0.5" max="5" step="0.1" [value]="zoomLevel" (input)="updateZoom($event)">
+            <span>{{ zoomLevel | number:'1.2-2' }}x</span>
+        </div>
+
+        <div class="control-row">
+            <label>Rotate:</label>
+            <input type="range" min="-180" max="180" step="1" [value]="rotationAngle" (input)="updateRotation($event)">
+            <span>{{ rotationAngle }}°</span>
+        </div>
+
+        <div class="control-row">
+            <label>Nodes:</label>
+            <input type="range" min="1" max="1200" step="1" [value]="nodeCount" (input)="updateNodeCount($event)">
+            <span>{{ nodeCount }}</span>
+        </div>
+
+        <div class="control-row">
+            <button class="randomize-btn" (click)="randomizeNodes()">🔀 Randomize</button>
+        </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <div class="header">
+            <h2>D3 Hexgrid Radial Layout</h2>
+            <p>Scroll to zoom • Drag to pan • Use controls to adjust layout</p>
+        </div>
+        <div #svgContainer class="svg-container"></div>
+    </div>
+</div>

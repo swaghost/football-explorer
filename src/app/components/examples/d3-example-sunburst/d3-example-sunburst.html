@@ -1,0 +1,30 @@
+<div class="sunburst-container">
+    <div class="header">
+        <h2>D3 Zoomable Sunburst</h2>
+        <p class="instructions">Click arcs to zoom in. Click center to zoom out. Use mousewheel to zoom.</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="radiusMultiplier">Radius Scale: {{ radiusMultiplier.toFixed(2) }}x (Radius: {{
+                    radius.toFixed(0)
+                    }}px)</label>
+                <input type="range" id="radiusMultiplier" [(ngModel)]="radiusMultiplier" [min]="minRadius"
+                    [max]="maxRadius" step="0.05" (input)="onRadiusChange()" />
+            </div>
+
+            <div class="control-group">
+                <label for="zoomLevel">Zoom Level: {{ zoomLevel.toFixed(2) }}x</label>
+                <input type="range" id="zoomLevel" [(ngModel)]="zoomLevel" [min]="minZoom" [max]="maxZoom" step="0.1"
+                    (input)="onZoomChange()" />
+            </div>
+
+            <div class="control-group">
+                <label for="rotation">Rotation: {{ rotation }}°</label>
+                <input type="range" id="rotation" [(ngModel)]="rotation" [min]="minRotation" [max]="maxRotation"
+                    step="1" (input)="onRotationChange()" />
+            </div>
+        </div>
+    </div>
+
+    <div #chartContainer class="chart-container"></div>
+</div>

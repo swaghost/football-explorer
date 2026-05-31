@@ -1,0 +1,133 @@
+<!-- Team Roster Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="team-roster-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <!-- No Team Selected Message -->
+        <div class="no-selection-message" *ngIf="!selectedTeam">
+            <div class="no-selection-icon">🏃</div>
+            <div class="no-selection-text">No Team Selected</div>
+            <div class="info-text">
+                Select a team from the Teams toolbar to view its roster.
+            </div>
+        </div>
+
+        <!-- Empty Team Selected Message -->
+        <div class="no-selection-message" *ngIf="selectedTeam && teamPlayers.length === 0">
+            <div class="no-selection-icon">🏃</div>
+            <div class="no-selection-text">Empty Team Selected</div>
+            <div class="info-text">
+                Add or import your roster to achieve full lesson assignment ability.
+            </div>
+        </div>
+
+        <!-- Team Players Section -->
+        <div class="players-section" *ngIf="selectedTeam && teamPlayers.length > 0">
+            <!-- Filter and Sort Controls -->
+            <div class="control-row">
+                <!-- Filter dropdown -->
+                <div class="filter-controls">
+                    <label for="playerFilter">Filter: &nbsp;</label>
+                    <select id="playerFilter" [value]="playerFilterBy" (change)="onPlayerFilterChange($event)"
+                        class="filter-select">
+                        <option *ngFor="let option of playerFilterOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Sort dropdown -->
+                <div class="sort-controls">
+                    <label for="playerSort">Sort: &nbsp;</label>
+                    <select id="playerSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)"
+                        class="sort-select">
+                        <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Select All/Deselect All Controls -->
+            <div class="players-list">
+                <div class="player-item" *ngIf="teamPlayers.length > 0">
+                    <label class="select-all-checkbox">
+                        <input type="checkbox" [checked]="areAllVisiblePlayersSelected"
+                            [indeterminate]="areSomeVisiblePlayersSelected"
+                            (change)="onSelectAllChange(areAllVisiblePlayersSelected)" />
+                    </label>
+                </div>
+                <div *ngFor="let player of teamPlayers; trackBy: trackByPlayerId" class="player-item">
+                    <label class="player-checkbox">
+                        <input type="checkbox" [checked]="isPlayerSelected(player.PlayerID)"
+                            (change)="onPlayerCheckboxChange(player.PlayerID, $event)" />
+                        <span class="player-name clickable" (click)="onPlayerEdit(player)">{{ getPlayerFullName(player)
+                            }}</span>
+                    </label>
+                    <span class="player-id">(ID: {{ player.PlayerID }})</span>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="action-buttons">
+                <button class="action-btn add-player-btn" (click)="onAddPlayer()" [disabled]="!selectedTeam"
+                    title="Add New Player to Team">
+                    + Player
+                </button>
+                <button class="action-btn remove-player-btn" (click)="onRemovePlayer()"
+                    [disabled]="selectedPlayerIds.length === 0" title="Remove Selected Player(s) from Team">
+                    - Player
+                </button>
+                <button class="action-btn create-btn" (click)="onCreateTeamGroup()"
+                    *ngIf="selectedPlayerIds.length > 0">
+                    + Team Group
+                </button>
+                <button class="action-btn import-btn" (click)="onImportTeamGroup()" [disabled]="!selectedTeam"
+                    title="Import Team Group">
+                    Import Team Group
+                </button>
+            </div>
+        </div>
+
+        <!-- Content spacing before footer -->
+        <div class="content-footer-spacer"></div>
+    </div>
+
+    <!-- Footer with Player Count Info -->
+    <div class="panel-footer" *ngIf="selectedTeam && expanded">
+        <div class="footer-stats">
+            <span class="stat-item">Rostered: <strong>{{ teamPlayers.length }}</strong></span>
+            <span class="stat-separator">|</span>
+            <span class="stat-item">Selected: <strong>{{ selectedPlayerIds.length }}</strong></span>
+        </div>
+    </div>
+</div>

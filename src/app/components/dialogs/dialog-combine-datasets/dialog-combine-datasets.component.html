@@ -1,0 +1,85 @@
+<app-base-dialog [visible]="visible" [title]="'Combine Datasets'" [icon]="'🔗'" [isDarkMode]="isDarkMode"
+    [maxWidth]="'700px'" (close)="onCancel()">
+    <!-- Basic Information -->
+    <div class="form-section">
+        <h4>New Dataset Information</h4>
+
+        <div class="form-group">
+            <label for="dataset-name">Dataset Name *</label>
+            <input id="dataset-name" type="text" [(ngModel)]="name" placeholder="Enter dataset name"
+                class="form-control" maxlength="100" />
+        </div>
+
+        <div class="form-group">
+            <label for="dataset-description">Description</label>
+            <textarea id="dataset-description" [(ngModel)]="description"
+                placeholder="Enter dataset description (optional)" class="form-control" rows="3"
+                maxlength="500"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="ownership-context">Ownership Context *</label>
+            <select id="ownership-context" [(ngModel)]="selectedOwnershipContext" class="form-control">
+                <option *ngFor="let context of availableContexts" [value]="context.value" [disabled]="context.disabled">
+                    {{ context.label }}
+                </option>
+            </select>
+            <small class="form-text">Choose the ownership level for the new combined dataset</small>
+        </div>
+    </div>
+
+    <!-- Dataset Selection -->
+    <div class="form-section">
+        <h4>Select Datasets to Combine</h4>
+        <p class="help-text">Select at least 2 datasets to combine. Each dataset's root node will become a child
+            of the new root node.</p>
+
+        <div class="datasets-selection">
+            <div *ngFor="let dataset of availableDatasets; trackBy: trackByFlowId" class="dataset-option"
+                [class.selected]="isDatasetSelected(dataset.FlowID!)" (click)="toggleDatasetSelection(dataset.FlowID!)">
+                <div class="dataset-checkbox">
+                    <input type="checkbox" [checked]="isDatasetSelected(dataset.FlowID!)"
+                        (change)="toggleDatasetSelection(dataset.FlowID!)" />
+                </div>
+                <div class="dataset-info">
+                    <div class="dataset-name">
+                        {{ dataset.FlowName || 'Unnamed Dataset' }}
+                    </div>
+                    <div class="dataset-details">
+                        <span class="dataset-description" *ngIf="dataset.FlowDesc">
+                            {{ dataset.FlowDesc }}
+                        </span>
+                        <span class="ownership-badge" [class.system]="getOwnershipLabel(dataset) === 'System'"
+                            [class.organization]="getOwnershipLabel(dataset) === 'Organization'"
+                            [class.team]="getOwnershipLabel(dataset) === 'Team'">
+                            {{ getOwnershipLabel(dataset) }}
+                        </span>
+                        <span class="flow-id">ID: {{ dataset.FlowID }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div *ngIf="availableDatasets.length === 0" class="empty-state">
+                <p>No datasets available for combining.</p>
+            </div>
+        </div>
+
+        <!-- Selection summary -->
+        <div class="selection-summary" *ngIf="selectedDatasetIds.length > 0">
+            <strong>{{ selectedDatasetIds.length }} dataset(s) selected</strong>
+            <span *ngIf="selectedDatasetIds.length < 2" class="warning-text">
+                (Select at least 2 datasets)
+            </span>
+        </div>
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button class="btn btn-secondary" (click)="onCancel()">
+            Cancel
+        </button>
+        <button class="btn btn-primary" (click)="onConfirm()" [disabled]="!isFormValid()">
+            Combine Datasets
+        </button>
+    </div>
+</app-base-dialog>

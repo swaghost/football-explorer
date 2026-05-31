@@ -1,0 +1,145 @@
+<!-- Overlays Panel (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+  class="overlays-panel">
+
+  <!-- Toolbar Header (from BaseToolbarComponent) -->
+  <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+    <h3>
+      <span class="toolbar-icon">{{ toolbarIcon }}</span>
+      {{ toolbarTitle }}
+    </h3>
+    <div class="header-actions">
+      <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+        ❓
+      </button>
+      <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+        {{ expanded ? '🔼' : '🔽' }}
+      </button>
+      <button class="close-button" (click)="onClose()" title="Close toolbar">
+        ✖️
+      </button>
+      <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+        {{ locked ? '🔒' : '🔓' }}
+      </button>
+      <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+    </div>
+  </div>
+
+  <!-- Help Overlay -->
+  <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+    <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+    <div class="help-content" (click)="$event.stopPropagation()">
+      <p [innerHTML]="toolbarHelp"></p>
+    </div>
+  </div>
+
+  <!-- Toolbar Content -->
+  <div class="panel-content" *ngIf="expanded">
+    <div class="overlays-content">
+      <!-- Overlay Sets Section -->
+      <div class="section">
+        <div class="section-header">
+          <label>Overlay Sets</label>
+          <button class="btn-add" (click)="onCreateSet()" title="Create new overlay set">
+            + New Set
+          </button>
+        </div>
+
+        <div class="sets-list">
+          <div *ngIf="currentOverlaySets.length === 0" class="empty-state">
+            No overlay sets yet. Create one to get started.
+          </div>
+
+          <div *ngFor="let set of currentOverlaySets" class="set-item">
+            <div class="set-content">
+              <input type="radio" [name]="'overlaySet'" [value]="set.id" [checked]="selectedSet?.id === set.id"
+                (change)="onSelectSet(set.id)" class="set-radio" />
+              <span class="set-name">{{ set.name }}</span>
+              <span class="set-count">({{ set.items.length }})</span>
+            </div>
+            <button class="btn-delete" (click)="onDeleteSet(set.id)" title="Delete overlay set">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay Elements Section (visible when set is selected) -->
+      <div class="section" *ngIf="selectedSet">
+        <div class="section-header">
+          <label>Add Element</label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Element Type:</label>
+          <select [(ngModel)]="selectedElement" class="form-select">
+            <option *ngFor="let element of overlayElements" [value]="element" [disabled]="isElementDisabled(element)">
+              {{ element }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location:</label>
+          <select [(ngModel)]="selectedLocation" class="form-select">
+            <option *ngFor="let location of overlayLocations" [value]="location">
+              {{ location }}
+            </option>
+          </select>
+        </div>
+
+        <button class="btn-primary" (click)="onAddElement()">Add Element</button>
+      </div>
+
+      <!-- Current Elements Section -->
+      <div class="section" *ngIf="selectedSet && selectedSetItems.length > 0">
+        <div class="section-header">
+          <label>Elements in Set</label>
+        </div>
+
+        <div class="elements-list">
+          <div *ngFor="let item of selectedSetItems" class="element-item">
+            <div class="element-info">
+              <div class="element-type">{{ item.element }}</div>
+              <div class="element-location">📍 {{ item.location }}</div>
+            </div>
+            <button class="btn-remove" (click)="onRemoveElement(item.id)" title="Remove element">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons Section -->
+      <div class="section" *ngIf="selectedSet">
+        <div class="action-buttons">
+          <button class="btn-secondary" (click)="onClearOverlay()" [disabled]="selectedSetItems.length === 0"
+            title="Clear all elements from this set">
+            Clear Overlay
+          </button>
+          <button class="btn-primary" (click)="onApplyOverlay()" title="Apply overlay to visualization">
+            Apply Overlay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Set Dialog -->
+    <div class="dialog-overlay" *ngIf="showCreateSetDialog" (click)="onCreateSetCancel()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <h4>Create Overlay Set</h4>
+        <div class="form-group">
+          <label>Set Name:</label>
+          <input type="text" [(ngModel)]="newSetName" placeholder="Enter overlay set name" class="form-input" autofocus
+            (keyup.enter)="onCreateSetConfirm()" />
+        </div>
+        <div class="dialog-buttons">
+          <button class="btn-cancel" (click)="onCreateSetCancel()">Cancel</button>
+          <button class="btn-confirm" (click)="onCreateSetConfirm()" [disabled]="!newSetName.trim()">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

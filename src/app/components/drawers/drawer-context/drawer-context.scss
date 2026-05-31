@@ -1,0 +1,613 @@
+.context-drawer-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+}
+
+.tenant-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tenant-card {
+    background: #e3f2fd;
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .tenant-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+
+      .tenant-logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+    }
+
+    .tenant-info {
+      flex: 1;
+
+      .tenant-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1976d2;
+        margin-bottom: 4px;
+      }
+
+      .tenant-id {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .tenant-roles {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.relatives-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .relatives-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .relative-item {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px 15px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .relative-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .relative-info {
+        flex: 1;
+
+        .relative-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 2px;
+        }
+
+        .relative-roles {
+          font-size: 12px;
+          color: #666;
+          font-style: italic;
+        }
+      }
+    }
+  }
+}
+
+.team-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .team-card {
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .team-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .team-info {
+      flex: 1;
+
+      .team-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #e65100;
+        margin-bottom: 4px;
+      }
+
+      .team-id {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+}
+
+.team-group-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .team-group-card {
+    background: #f3e5f5;
+    border: 2px solid #9c27b0;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(156, 39, 176, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .team-group-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .team-group-info {
+      flex: 1;
+
+      .team-group-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #7b1fa2;
+        margin-bottom: 4px;
+      }
+
+      .team-group-id {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+}
+
+.lesson-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .lesson-card {
+    background: #e3f2fd;
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+
+    .lesson-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .lesson-info {
+      flex: 1;
+
+      .lesson-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1565c0;
+        margin-bottom: 4px;
+      }
+
+      .lesson-desc {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      .lesson-meta {
+        font-size: 12px;
+        color: #666;
+
+        .lesson-nodes {
+          font-weight: 500;
+        }
+
+        .lesson-flow {
+          font-style: italic;
+        }
+      }
+    }
+  }
+}
+
+.dataset-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .dataset-card {
+    background: #e8f5e9;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+
+    .dataset-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .dataset-info {
+      flex: 1;
+
+      .dataset-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2e7d32;
+        margin-bottom: 4px;
+      }
+
+      .dataset-desc {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      .dataset-meta {
+        font-size: 12px;
+        color: #666;
+
+        .dataset-id {
+          font-weight: 500;
+          font-family: "Courier New", monospace;
+        }
+
+        .dataset-context {
+          font-style: italic;
+          text-transform: uppercase;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+.node-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .node-card {
+    background: #f3e5f5;
+    border: 2px solid #ab47bc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(171, 71, 188, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .node-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .node-info {
+      flex: 1;
+
+      .node-id {
+        font-size: 15px;
+        font-weight: 600;
+        color: #6a1b9a;
+        font-family: "Courier New", monospace;
+      }
+    }
+  }
+}
+
+.user-section {
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .user-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+
+    &.operating-as {
+      border-color: #4caf50;
+      background: #f1f8f4;
+    }
+
+    .user-icon {
+      font-size: 48px;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .info-row {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #999;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .value {
+          font-size: 14px;
+          color: #333;
+          word-break: break-word;
+        }
+      }
+    }
+  }
+}
+
+.no-user-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-style: italic;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
+  margin: 20px 0;
+}
+
+// Dark mode support
+:host-context(.dark-mode) {
+  .tenant-section {
+    .tenant-card {
+      background: #1e3a5a;
+      border-color: #42a5f5;
+
+      .tenant-info {
+        .tenant-name {
+          color: #64b5f6;
+        }
+
+        .tenant-id {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .relatives-section {
+    .relatives-list {
+      .relative-item {
+        background: #2a2a2a;
+        border-color: #444;
+
+        .relative-info {
+          .relative-name {
+            color: #e0e0e0;
+          }
+
+          .relative-roles {
+            color: #aaa;
+          }
+        }
+      }
+    }
+  }
+
+  .team-section {
+    .team-card {
+      background: #3a2a1a;
+      border-color: #ffb74d;
+
+      .team-info {
+        .team-name {
+          color: #ffcc80;
+        }
+
+        .team-id {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .team-group-section {
+    .team-group-card {
+      background: #2a1a3a;
+      border-color: #ba68c8;
+
+      .team-group-info {
+        .team-group-name {
+          color: #ce93d8;
+        }
+
+        .team-group-id {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .lesson-section {
+    .lesson-card {
+      background: #1a2a3a;
+      border-color: #64b5f6;
+
+      .lesson-info {
+        .lesson-name {
+          color: #90caf9;
+        }
+
+        .lesson-desc {
+          color: #b0b0b0;
+        }
+
+        .lesson-meta {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .dataset-section {
+    .dataset-card {
+      background: #1a3a1a;
+      border-color: #81c784;
+
+      .dataset-info {
+        .dataset-name {
+          color: #a5d6a7;
+        }
+
+        .dataset-desc {
+          color: #b0b0b0;
+        }
+
+        .dataset-meta {
+          color: #aaa;
+        }
+      }
+    }
+  }
+
+  .node-section {
+    .node-card {
+      background: #2a1a3a;
+      border-color: #ab47bc;
+
+      .node-info {
+        .node-id {
+          color: #ce93d8;
+        }
+      }
+    }
+  }
+
+  .user-section {
+    .user-card {
+      background: #2a2a2a;
+      border-color: #444;
+
+      &.operating-as {
+        border-color: #66bb6a;
+        background: #1e3a1e;
+      }
+
+      .user-info {
+        .info-row {
+          .label {
+            color: #aaa;
+          }
+
+          .value {
+            color: #e0e0e0;
+          }
+        }
+      }
+    }
+  }
+
+  .no-user-message {
+    color: #666;
+  }
+
+  .divider {
+    background: linear-gradient(to right, transparent, #444, transparent);
+  }
+}

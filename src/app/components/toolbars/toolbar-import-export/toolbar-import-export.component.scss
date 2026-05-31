@@ -1,0 +1,136 @@
+/* Import/Export Toolbar Styles */
+.import-export-panel {
+  /* Inherits from base toolbar styles */
+
+  .section-title {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .template-fields {
+    margin: 5px 0 0 15px;
+    padding: 0;
+
+    li {
+      list-style: disc;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin: 2px 0;
+    }
+  }
+
+  .help-text {
+    margin-top: 8px;
+
+    small {
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+
+    .warning-text {
+      color: var(--accent-warning, #ff9800);
+      font-weight: 500;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0;
+
+    .btn {
+      justify-content: flex-start;
+      text-align: left;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &.btn-primary {
+        background-color: #007bff;
+        color: white;
+        font-weight: 500;
+
+        &:hover:not(:disabled) {
+          background-color: #0056b3;
+        }
+      }
+
+      &.btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        font-weight: 500;
+
+        &:hover:not(:disabled) {
+          background-color: #545b62;
+        }
+      }
+
+      &.btn-info {
+        background-color: #17a2b8;
+        color: white;
+        font-weight: 500;
+
+        &:hover:not(:disabled) {
+          background-color: #138496;
+        }
+      }
+
+      &:disabled {
+        background-color: #6c757d;
+        color: #adb5bd;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  /* Dark mode adjustments */
+  &.dark-mode {
+    .section-title {
+      border-bottom-color: #444;
+    }
+
+    .action-buttons .btn {
+      &.btn-primary {
+        background-color: #0d6efd;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #0b5ed7;
+        }
+      }
+
+      &.btn-secondary {
+        background-color: #5a6268;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #494f54;
+        }
+      }
+
+      &.btn-info {
+        background-color: #0dcaf0;
+        color: #000;
+
+        &:hover:not(:disabled) {
+          background-color: #31d2f2;
+          color: #000;
+        }
+      }
+
+      &:disabled {
+        background-color: #495057;
+        color: #6c757d;
+      }
+    }
+  }
+}

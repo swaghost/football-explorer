@@ -1,0 +1,561 @@
+/* Technique Explorer Panel Specific Styles 
+   Shared styles are loaded from toolbar-base */
+
+@use "../../../styles/components/toolbar-base";
+
+/* Root panel - establish flex column like lesson-builder-v2 */
+.technique-explorer-panel {
+  overflow: hidden; /* Clip header gradient to border-radius */
+  display: flex !important;
+  flex-direction: column !important;
+
+  .panel-header {
+    flex: 0 0 auto !important; // Fixed height header
+    border-radius: 0 !important; /* Remove individual border radius */
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0 !important; /* Remove individual border radius */
+    background-clip: padding-box;
+  }
+}
+
+/* Favorites and Bookmark buttons */
+.star-button,
+.bookmark-button {
+  background: transparent; /* Transparent background */
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin-right: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle hover background */
+  }
+}
+
+/* Favorites star button styling */
+.star-button {
+  &.favorited {
+    color: #ffd700 !important; /* Yellow when favorited */
+    filter: none !important; /* No filter when favorited */
+  }
+
+  &:not(.favorited) {
+    color: #999 !important; /* Gray when not favorited */
+    filter: grayscale(
+      100%
+    ) !important; /* Make the star grayscale when not favorited */
+  }
+}
+
+/* Bookmark button styling */
+.bookmark-button {
+  &.bookmarked {
+    /* Use brightness and saturation for better emoji effect */
+    filter: brightness(1.3) saturate(1.8) !important;
+  }
+
+  &:not(.bookmarked) {
+    /* Make it clearly gray when not bookmarked */
+    filter: grayscale(100%) brightness(0.7) !important;
+  }
+}
+
+/* Share button styling */
+.share-button {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin-right: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &.copied {
+    color: #4caf50 !important; /* Green when copied */
+    animation: pulse 0.5s ease;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Technique Explorer specific panel styling */
+.technique-explorer-panel {
+  width: 600px;
+  background: #fffae6 !important; /* Light yellow background in light mode */
+  overflow: hidden; /* Clip header gradient to border-radius */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure it takes full available height */
+
+  // Note: Base component handles most panel styles (border, position, etc.)
+  // Only include component-specific overrides here
+}
+
+/* Panel content styling */
+.panel-content {
+  flex: 1 1 0 !important; // Grow to fill space between header and footer
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important; // Remove gap from base styles
+  overflow: hidden !important; // Prevent content from spilling out
+  min-height: 0 !important; // Critical for nested flex scrolling
+  max-height: none !important; // Override base toolbar max-height constraint
+  height: 100% !important; // Force it to fill the flex space
+  padding: 10px !important;
+  margin: 0 !important; // Override base negative margins
+  box-sizing: border-box; /* Ensure padding is included in height calculations */
+  background: #fffae6 !important; /* Light yellow background in light mode */
+}
+
+/* Node header styling */
+.node-header {
+  border-bottom: 1px solid #e6d700;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fffae6 !important; /* Light yellow background in light mode */
+
+  h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Node title section - Fixed at top, doesn't scroll */
+.node-title-section {
+  flex: 0 0 auto !important; // Don't grow/shrink
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fffae6;
+
+  .node-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+/* Node content area - Scrollable, fills remaining space */
+.node-content {
+  flex: 1 1 0 !important; // Grow to fill remaining space
+  overflow-y: auto !important; // Enable vertical scrolling
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 12px;
+  min-height: 0 !important; // Critical for scrolling - allow shrinking below content size
+  background: #fffae6 !important; /* Light yellow background in light mode */
+
+  /* Auto-sizing for content to prevent horizontal scrolling */
+  img,
+  video {
+    max-width: 100% !important;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  /* Video section styling */
+  .node-video-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e6d700;
+
+    .node-video {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      background: #f8f9fa;
+    }
+  }
+}
+
+/* Node title styling */
+.node-title-section {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e6d700;
+  background: #fffae6 !important; /* Light yellow background in light mode */
+
+  .node-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* Waiting mode styling */
+.waiting-mode {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+  background: #fffae6 !important; /* Light yellow background in light mode */
+
+  .waiting-icon {
+    font-size: 64px;
+    margin-bottom: 12px;
+  }
+
+  .waiting-message {
+    color: #999;
+    font-size: 14px;
+  }
+}
+
+/* Node description styling */
+.node-description-section {
+  margin-bottom: 15px;
+  background: #fffae6 !important; /* Light yellow background in light mode */
+}
+
+/* Video content styling within node descriptions */
+:deep(.node-video-container) {
+  margin: 15px 0;
+  max-width: 100%;
+  overflow: hidden; /* Prevent overflow */
+
+  h4 {
+    color: #333 !important;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #666 !important;
+  }
+
+  video {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    max-width: 550px !important; /* Hard limit to prevent overflow */
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Inline video styling within description content */
+.node-video-container {
+  margin: 15px 0;
+  width: 100%;
+  min-height: 200px; /* Prevent layout shift during load */
+  background: transparent; /* Prevent white flash */
+  position: relative;
+
+  .node-video-inline {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: transparent; /* Prevent white flash */
+    cursor: pointer;
+    opacity: 0; /* Hidden until loaded */
+    transition: opacity 0.15s ease-in; /* Smooth fade in only */
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    /* Show video once it can play */
+    &[data-loaded="true"] {
+      opacity: 1;
+    }
+
+    &:not([muted]) {
+      box-shadow: 0 2px 12px rgba(0, 123, 255, 0.3);
+    }
+  }
+}
+
+/* Dark mode overrides */
+.technique-explorer-panel.dark-mode {
+  background: inherit !important; /* Use default dark background */
+  color: #ffffff; /* White text for high contrast */
+
+  // Dark gray gradient header
+  .panel-header {
+    background: linear-gradient(135deg, #505050 0%, #3c3c3c 100%) !important;
+    border-bottom-color: #646464;
+
+    h3 {
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  .share-button:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .panel-content {
+    background: inherit !important; /* Use default dark background */
+    color: #ffffff; /* White text for high contrast */
+  }
+
+  .node-header {
+    border-bottom-color: #555;
+    background: inherit !important; /* Use default dark background */
+    color: #ffffff; /* White text for high contrast */
+  }
+
+  .node-content {
+    background: inherit !important; /* Use default dark background */
+    color: #ffffff; /* White text for high contrast */
+  }
+
+  .node-title-section {
+    border-bottom-color: #555;
+    background: inherit !important; /* Use default dark background */
+    color: #ffffff; /* White text for high contrast */
+
+    .node-title {
+      color: #ffffff; /* White text for high contrast */
+    }
+  }
+
+  .node-description-section {
+    background: inherit !important; /* Use default dark background */
+    color: #ffffff; /* White text for high contrast */
+  }
+
+  .action-row {
+    background: inherit !important; /* Use default dark background */
+    border-top-color: #555;
+
+    .last-visited .visit-message {
+      color: #aaa;
+    }
+
+    .completion-status .completion-message {
+      color: #66bb6a;
+    }
+  }
+
+  .waiting-mode {
+    background: inherit !important; /* Use default dark background */
+
+    .waiting-message {
+      color: #ccc;
+    }
+  }
+}
+.node-description-content {
+  line-height: 1.6;
+  color: var(--text-color);
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  ul,
+  ol {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  video {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+}
+
+/* Action row with status and buttons - Fixed at bottom */
+.action-row {
+  flex: 0 0 auto !important; // Fixed height, doesn't scroll
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: #fffae6 !important;
+  border-top: 1px solid #e8dca0;
+  gap: 12px;
+  position: relative; /* Keep in document flow but don't scroll */
+  z-index: 5; /* Above content */
+
+  .last-visited {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+
+    .visit-message {
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+      white-space: nowrap;
+    }
+  }
+
+  .completion-status {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+
+    .completion-message {
+      font-size: 12px;
+      color: #2e7d32;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+  }
+}
+
+/* Action buttons styling - smaller size */
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.complete-btn {
+  background: #4caf50;
+  color: white;
+
+  &:not(:disabled):hover {
+    background: #45a049;
+  }
+}
+
+.review-btn {
+  background: #ff9800;
+  color: white;
+
+  &:not(:disabled):hover {
+    background: #f57c00;
+  }
+}
+
+/* Vertical Resize Handle */
+.resize-handle {
+  position: absolute;
+  bottom: -4px; /* Extend slightly outside the panel for easier grabbing */
+  left: 0;
+  right: 0;
+  height: 12px; /* Increased height for easier targeting */
+  cursor: ns-resize;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* Higher than panel z-index */
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+
+    .resize-grip {
+      background: #666;
+
+      &::before,
+      &::after {
+        background: #666;
+      }
+    }
+  }
+
+  .resize-grip {
+    width: 40px;
+    height: 2px;
+    background: #bbb;
+    border-radius: 1px;
+    position: relative;
+    transition: background-color 0.2s ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #bbb;
+      border-radius: 1px;
+      transition: background-color 0.2s ease;
+    }
+  }
+}
+
+/* Ensure panel uses relative positioning for resize handle and remove max-height */
+.technique-explorer-panel {
+  min-height: 200px; /* Minimum height for usability */
+  max-height: none; /* Remove max-height to allow resizing */
+}

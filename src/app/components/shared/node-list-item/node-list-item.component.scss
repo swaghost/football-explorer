@@ -1,0 +1,155 @@
+// Shared Node List Item Component Styles
+.node-list-item {
+  display: block;
+  padding: 4px 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 24px;
+  line-height: 18px;
+  background: #fffef0; // Light yellow background for light mode
+
+  &:hover {
+    background: rgba(0, 123, 255, 0.1);
+    text-decoration: underline;
+
+    .node-id-col,
+    .node-name-col {
+      color: #0056b3;
+    }
+  }
+
+  &.selected {
+    background: rgba(0, 123, 255, 0.2);
+    border-left: 3px solid #007bff;
+  }
+
+  &.current-selected {
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-left: 4px solid #2563eb !important;
+    color: #4169e1 !important;
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+    transform: scale(1.02);
+
+    .node-id-col,
+    .node-name-col {
+      color: #4169e1 !important;
+      font-weight: 600;
+    }
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.node-table-row {
+  display: grid;
+  grid-template-columns: auto 8px 1fr auto; // Use auto for ID to fit content tightly
+  align-items: center;
+  gap: 0px; // No gap between columns for tighter spacing
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.node-id-col {
+  text-align: left;
+  font-weight: 600;
+  color: #007bff;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  font-size: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.node-separator-col {
+  text-align: center;
+  color: #666;
+  font-weight: 400;
+  font-size: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.node-name-col {
+  text-align: left;
+  font-weight: 400;
+  color: #007bff;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  transition: color 0.2s ease;
+}
+
+.node-match-type {
+  font-size: 9px;
+  background: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 12px;
+  color: #374151;
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+// Dark mode styling
+:host-context(.dark-mode) {
+  .node-list-item {
+    border-bottom-color: #444;
+    background: #2d2d2d; // Override light yellow in dark mode
+
+    &:hover {
+      background: rgba(0, 123, 255, 0.2);
+
+      .node-id-col,
+      .node-name-col {
+        color: #66b3ff;
+      }
+    }
+
+    &.selected {
+      background: rgba(0, 123, 255, 0.3);
+      border-left-color: #0d6efd;
+    }
+
+    &.current-selected {
+      background: rgba(59, 130, 246, 0.3) !important;
+      border-left: 4px solid #3b82f6 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
+
+      .node-id-col,
+      .node-name-col {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .node-id-col {
+    color: #4dabf7;
+  }
+
+  .node-separator-col {
+    color: #adb5bd;
+  }
+
+  .node-name-col {
+    color: #4dabf7;
+  }
+
+  .node-match-type {
+    background: rgba(59, 130, 246, 0.4);
+    border: 1px solid #3b82f6;
+    color: #ffffff;
+  }
+}

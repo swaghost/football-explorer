@@ -1,0 +1,443 @@
+{
+  "TierID": "ADDON-TEST",
+  "TierName": "Test Add-On",
+  "TierGroup": "ADD-ONS",
+  "AppliesToTiers": ["*"],
+  "Assets": {
+    "toolbars": [
+      {
+        "key": "selectionTools",
+        "enabled": true,
+        "visible": true
+      },
+    {
+      "key": "annotation",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "screenshots",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "nodePainter",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "lessonViewer",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "lessonBuilderV2",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "lessonRunnerV2",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "techniqueExplorer",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "skillsRadar",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "rotationControl",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "quickNav",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "nodesList",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "search",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "importExport",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "tenancy",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "teamRoster",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "teamGroupMembers",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "defaultTeamGroups",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "statusPanel",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "favorites",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "bookmarks",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "zoomControls",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "viewportInfo",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "visualizationOptions",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "bottomToolbar",
+      "enabled": true,
+      "visible": true
+    }
+  ],
+    "dialogs": [
+    {
+      "key": "showAddChildDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showReparentNodeDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showClearChildrenDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showPromoteChildrenDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDeleteNodeDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showInsertNodeDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditNodeDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showClearDrawingsDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showClearSelectionsDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showSystemDefaultWarningDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showCreateTeamDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditTeamDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDeleteTeamDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showCreateTeamGroupDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditTeamGroupDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDeleteTeamGroupDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showAddDefaultTeamGroupsDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showAutoBuildInfoDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showCreateLessonDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditLessonDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDeleteLessonDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showApplyNoLessonConfirmDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showCreateDatasetDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditDatasetDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showCombineDatasetsDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showPromoteDatasetDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDemoteDatasetDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDeleteDatasetDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showDatasetInfoDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showAddPlayerDialog",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "showEditPlayerDialog",
+      "enabled": true,
+      "visible": true
+    }
+  ],
+    "drawers": [
+    {
+      "key": "isLoginDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isTenantDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isPlayerSelectionDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isContextDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isTeamsDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isTeamGroupsDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isDatasetsDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isLessonBuilderDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isSubscriptionDrawerOpen",
+      "enabled": true,
+      "visible": true
+    },
+    {
+      "key": "isAssignedLessonsDrawerOpen",
+      "enabled": true,
+      "visible": true
+    }
+  ],
+    "limits": [
+    {
+      "type": "tenantMaxActiveDatasets",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "tenantMaxActiveTeams",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "tenantMaxActiveLessons",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "tenantMaxActiveUsers",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "userMaxActiveDatasets",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "userMaxActiveTeams",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "userExplorerLimit",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "userFavoritesLimit",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "userBookmarksLimit",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "teamMaxActiveDatasets",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "teamMaxActiveTeamGroups",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    },
+    {
+      "type": "teamMaxRosterSize",
+      "baseLimit": -1,
+      "tierLimit": -1,
+      "addOnLimit": 0,
+      "currentLimit": -1,
+      "warningAt": -1
+    }
+  ]
+  },
+  "AddOnPackagesAvailable": []
+}

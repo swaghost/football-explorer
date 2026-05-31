@@ -1,0 +1,27 @@
+/* Dialog Overlay and Modal */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.dialog-modal {
+  background: var(--color-bg-primary, #fff);
+  border-radius: 8px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
+}

@@ -1,0 +1,32 @@
+<div class="sliding-drawer-wrapper">
+    <!-- Sliding Drawer -->
+    <div class="drawer" [class.open]="isOpen" [class.drawer-left]="position === 'left'"
+        [class.drawer-right]="position === 'right'" [style.width]="width">
+        <div class="drawer-header">
+            <h3>{{ title }}</h3>
+            <div class="header-actions">
+                <button *ngIf="showHelpButton" class="help-button" (click)="onToggleHelp()" title="Show help">
+                    ❓
+                </button>
+                <button class="close-button" (click)="onClose()" title="Close drawer">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <!-- Help Overlay -->
+        <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+            <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+            <div class="help-content" (click)="$event.stopPropagation()">
+                <p [innerHTML]="drawerHelp"></p>
+            </div>
+        </div>
+
+        <div class="drawer-content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+
+    <!-- Overlay (darkens background when drawer is open) -->
+    <div class="overlay" *ngIf="showOverlay" [class.visible]="isOpen" (click)="onOverlayClick()"></div>
+</div>

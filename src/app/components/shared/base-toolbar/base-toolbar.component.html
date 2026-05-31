@@ -1,0 +1,47 @@
+<!-- Base Draggable Toolbar Template -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible"
+    [attr.data-toolbar-type]="toolbarId">
+
+    <!-- Toolbar Header -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <app-help-overlay [visible]="showHelpOverlay" [helpText]="toolbarHelp" (close)="onCloseHelp()">
+    </app-help-overlay>
+
+    <!-- Toolbar Content (provided by child component) -->
+    <div class="panel-content" *ngIf="expanded">
+        <ng-content></ng-content>
+    </div>
+
+    <!-- Optional Toolbar Footer (can be overridden by child components) -->
+    <div class="panel-footer" *ngIf="expanded">
+        <ng-content select="[slot=footer]"></ng-content>
+    </div>
+
+    <!-- Vertical Resize Handle (shown when resizable is enabled) -->
+    <div class="resize-handle" *ngIf="resizable && expanded" (mousedown)="onResizeStart($event)"
+        title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

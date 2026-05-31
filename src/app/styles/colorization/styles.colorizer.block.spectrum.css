@@ -1,0 +1,112 @@
+
+/* Channel-based color styles */
+/* Format: .channelX = base color for channel */
+/* Format: .channelX-Y = depth-based color for channel */
+
+.channelA { fill: #FF0000; }
+.channelA-0 { fill: #FF0000; }
+.channelA-1 { fill: #FF0000; }
+.channelA-2 { fill: #FF0000; }
+.channelA-3 { fill: #FF0000; }
+.channelA-4 { fill: #FF0000; }
+.channelA-5 { fill: #FF0000; }
+.channelA-6 { fill: #FF0000; }
+.channelA-7 { fill: #FF0000; }
+.channelA-8 { fill: #FF0000; }
+.channelA-9 { fill: #FF0000; }
+.channelA-10 { fill: #FF0000; }
+
+.channelB { fill: #FFA500; }
+.channelB-0 { fill: #FFA500; }
+.channelB-1 { fill: #FFA500; }
+.channelB-2 { fill: #FFA500; }
+.channelB-3 { fill: #FFA500; }
+.channelB-4 { fill: #FFA500; }
+.channelB-5 { fill: #FFA500; }
+.channelB-6 { fill: #FFA500; }
+.channelB-7 { fill: #FFA500; }
+.channelB-8 { fill: #FFA500; }
+.channelB-9 { fill: #FFA500; }
+.channelB-10 { fill: #FFA500; }
+
+.channelC { fill: #FFFF00; }
+.channelC-0 { fill: #FFFF00; }
+.channelC-1 { fill: #FFFF00; }
+.channelC-2 { fill: #FFFF00; }
+.channelC-3 { fill: #FFFF00; }
+.channelC-4 { fill: #FFFF00; }
+.channelC-5 { fill: #FFFF00; }
+.channelC-6 { fill: #FFFF00; }
+.channelC-7 { fill: #FFFF00; }
+.channelC-8 { fill: #FFFF00; }
+.channelC-9 { fill: #FFFF00; }
+.channelC-10 { fill: #FFFF00; }
+
+.channelD { fill: #008000; }
+.channelD-0 { fill: #008000; }
+.channelD-1 { fill: #008000; }
+.channelD-2 { fill: #008000; }
+.channelD-3 { fill: #008000; }
+.channelD-4 { fill: #008000; }
+.channelD-5 { fill: #008000; }
+.channelD-6 { fill: #008000; }
+.channelD-7 { fill: #008000; }
+.channelD-8 { fill: #008000; }
+.channelD-9 { fill: #008000; }
+.channelD-10 { fill: #008000; }
+
+.channelE { fill: #0000FF; }
+.channelE-0 { fill: #0000FF; }
+.channelE-1 { fill: #0000FF; }
+.channelE-2 { fill: #0000FF; }
+.channelE-3 { fill: #0000FF; }
+.channelE-4 { fill: #0000FF; }
+.channelE-5 { fill: #0000FF; }
+.channelE-6 { fill: #0000FF; }
+.channelE-7 { fill: #0000FF; }
+.channelE-8 { fill: #0000FF; }
+.channelE-9 { fill: #0000FF; }
+.channelE-10 { fill: #0000FF; }
+
+.channelF { fill: #4B0082; }
+.channelF-0 { fill: #4B0082; }
+.channelF-1 { fill: #4B0082; }
+.channelF-2 { fill: #4B0082; }
+.channelF-3 { fill: #4B0082; }
+.channelF-4 { fill: #4B0082; }
+.channelF-5 { fill: #4B0082; }
+.channelF-6 { fill: #4B0082; }
+.channelF-7 { fill: #4B0082; }
+.channelF-8 { fill: #4B0082; }
+.channelF-9 { fill: #4B0082; }
+.channelF-10 { fill: #4B0082; }
+
+.channelG { fill: #9400D3; }
+.channelG-0 { fill: #9400D3; }
+.channelG-1 { fill: #9400D3; }
+.channelG-2 { fill: #9400D3; }
+.channelG-3 { fill: #9400D3; }
+.channelG-4 { fill: #9400D3; }
+.channelG-5 { fill: #9400D3; }
+.channelG-6 { fill: #9400D3; }
+.channelG-7 { fill: #9400D3; }
+.channelG-8 { fill: #9400D3; }
+.channelG-9 { fill: #9400D3; }
+.channelG-10 { fill: #9400D3; }
+
+.channelH { fill: #FF1493; }
+.channelH-0 { fill: #FF1493; }
+.channelH-1 { fill: #FF1493; }
+.channelH-2 { fill: #FF1493; }
+.channelH-3 { fill: #FF1493; }
+.channelH-4 { fill: #FF1493; }
+.channelH-5 { fill: #FF1493; }
+.channelH-6 { fill: #FF1493; }
+.channelH-7 { fill: #FF1493; }
+.channelH-8 { fill: #FF1493; }
+.channelH-9 { fill: #FF1493; }
+.channelH-10 { fill: #FF1493; }
+
+/* Helper classes */
+.channel-default { fill: #CCCCCC; }
+.channel-highlight { stroke-width: 2; stroke: #333333; }

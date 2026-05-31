@@ -1,0 +1,103 @@
+<!-- Rotation & Pan Control Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="rotation-pan-control-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <div class="rotation-pan-layout">
+            <!-- Zoom control (left side) -->
+            <div class="zoom-container">
+                <label for="zoom" class="vertical-label">Zoom:</label>
+                <input id="zoom" type="range" min="0.5" max="5" step="0.1" [value]="zoomLevel"
+                    (input)="onZoomUpdate($event)" class="vertical-slider" />
+                <span class="vertical-value">{{ zoomLevel | number : '1.2-2' }}x</span>
+            </div>
+
+            <!-- Pan Y control (right side) -->
+            <div class="pan-y-container">
+                <label for="panY" class="vertical-label">Pan Y:</label>
+                <input id="panY" type="range" [min]="panYMin" [max]="panYMax" step="1" [value]="panY"
+                    (input)="onPanYUpdate($event)" class="vertical-slider" />
+                <span class="vertical-value">{{ panY | number : '1.0-2' }}</span>
+            </div>
+
+            <!-- Central rotation wheel -->
+            <div class="rotation-center">
+                <!-- Rotation Slider (above wheel) -->
+                <div class="rotation-slider-container">
+                    <label for="rotationSlider" class="rotation-slider-label">Rotation:</label>
+                    <input id="rotationSlider" type="range" min="0" max="359" step="1" [value]="rotationAngle"
+                        (input)="onRotationUpdate($event)" class="rotation-slider" />
+                    <span class="rotation-slider-value">{{ rotationAngle }}°</span>
+                </div>
+
+                <div class="rotation-wheel" #rotationWheel>
+                    <!-- Rotation wheel will be implemented via D3 -->
+                </div>
+                <div class="rotation-info">
+                    <span class="rotation-value">{{ rotationAngle }}°</span>
+                </div>
+            </div>
+
+            <!-- Pan X control (below) -->
+            <div class="pan-x-container">
+                <label for="panX">Pan X:</label>
+                <input id="panX" type="range" [min]="panXMin" [max]="panXMax" step="1" [value]="panX"
+                    (input)="onPanXUpdate($event)" />
+                <span class="value-display">{{ panX | number : '1.0-2' }}</span>
+            </div>
+
+            <!-- Reset Controls (all icon buttons) -->
+            <div class="reset-controls">
+                <button class="reset-rotation" (click)="onResetRotation()" title="Reset rotation to 0°">
+                    ↻
+                </button>
+                <button class="reset-pan" (click)="onResetPan()" title="Reset pan to center">
+                    ⌖
+                </button>
+                <button class="reset-zoom" (click)="onResetZoom()" title="Reset zoom to 1x">
+                    🔍
+                </button>
+                <button class="reset-all" (click)="onResetAll()" title="Reset rotation, pan, and zoom">
+                    ⟲
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

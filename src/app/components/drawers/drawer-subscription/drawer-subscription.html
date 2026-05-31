@@ -1,0 +1,122 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Subscription'" [drawerId]="'subscription-drawer'"
+    [position]="'right'" [drawerHelp]="drawerHelp" (close)="onClose()">
+    <div class="subscription-drawer-content">
+        <div *ngIf="!hasSubscription" class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <p class="error-message">No accessible subscription information was found.</p>
+            <p class="error-details">Please contact your administrator for access.</p>
+        </div>
+
+        <div *ngIf="hasSubscription" class="subscription-details">
+            <!-- Subscription Tier Information -->
+            <div class="subscription-header">
+                <h3>{{ subscription?.TierName }}</h3>
+                <div class="tier-badge">{{ subscription?.TierGroup }}</div>
+            </div>
+
+            <!-- Add-ons (if any) -->
+            <div *ngIf="subscription?.AddOnPackagesSelections && subscription.AddOnPackagesSelections.length > 0"
+                class="add-ons-section">
+                <h4>Active Add-ons</h4>
+                <div class="add-on-list">
+                    <div *ngFor="let addOn of subscription.AddOnPackagesSelections" class="add-on-item">
+                        <span class="add-on-icon">➕</span>
+                        <span class="add-on-name">{{ addOn.TierName }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assets Section -->
+            <div class="assets-section">
+                <h4>Available Assets</h4>
+
+                <!-- Toolbars -->
+                <div class="asset-category">
+                    <div class="category-header" (click)="toggleToolbars()">
+                        <span class="expand-icon">{{ toolbarsExpanded ? '▼' : '▶' }}</span>
+                        <span class="category-title">Toolbars ({{ toolbars.length }})</span>
+                    </div>
+                    <div *ngIf="toolbarsExpanded" class="asset-list">
+                        <div *ngFor="let toolbar of toolbars" class="asset-item">
+                            <input type="checkbox" [checked]="toolbar.enabled" disabled class="asset-checkbox" />
+                            <span class="asset-label" [class.disabled]="!toolbar.enabled">
+                                {{ toolbar.key }}
+                            </span>
+                            <span *ngIf="!toolbar.visible" class="visibility-badge">Hidden</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dialogs -->
+                <div class="asset-category">
+                    <div class="category-header" (click)="toggleDialogs()">
+                        <span class="expand-icon">{{ dialogsExpanded ? '▼' : '▶' }}</span>
+                        <span class="category-title">Dialogs ({{ dialogs.length }})</span>
+                    </div>
+                    <div *ngIf="dialogsExpanded" class="asset-list">
+                        <div *ngFor="let dialog of dialogs" class="asset-item">
+                            <input type="checkbox" [checked]="dialog.enabled" disabled class="asset-checkbox" />
+                            <span class="asset-label" [class.disabled]="!dialog.enabled">
+                                {{ dialog.key }}
+                            </span>
+                            <span *ngIf="!dialog.visible" class="visibility-badge">Hidden</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drawers -->
+                <div class="asset-category">
+                    <div class="category-header" (click)="toggleDrawers()">
+                        <span class="expand-icon">{{ drawersExpanded ? '▼' : '▶' }}</span>
+                        <span class="category-title">Drawers ({{ drawers.length }})</span>
+                    </div>
+                    <div *ngIf="drawersExpanded" class="asset-list">
+                        <div *ngFor="let drawer of drawers" class="asset-item">
+                            <input type="checkbox" [checked]="drawer.enabled" disabled class="asset-checkbox" />
+                            <span class="asset-label" [class.disabled]="!drawer.enabled">
+                                {{ drawer.key }}
+                            </span>
+                            <span *ngIf="!drawer.visible" class="visibility-badge">Hidden</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Limits Section -->
+            <div class="limits-section">
+                <h4>Subscription Limits</h4>
+
+                <!-- Limits Top-Level Expandable -->
+                <div class="limit-category">
+                    <div class="category-header" (click)="toggleLimits()">
+                        <span class="expand-icon">{{ limitsExpanded ? '▼' : '▶' }}</span>
+                        <span class="category-title">Limits ({{ limits.length }})</span>
+                    </div>
+
+                    <!-- Limit Groups -->
+                    <div *ngIf="limitsExpanded" class="limit-groups">
+                        <div *ngFor="let limitGroup of limitGroups" class="limit-group">
+                            <div class="group-header" (click)="toggleLimitGroup(limitGroup.group)">
+                                <span class="expand-icon">{{ isLimitGroupExpanded(limitGroup.group) ? '▼' : '▶'
+                                    }}</span>
+                                <span class="group-title">{{ limitGroup.group }} ({{ limitGroup.limits.length }})</span>
+                            </div>
+
+                            <!-- Limits in Group -->
+                            <div *ngIf="isLimitGroupExpanded(limitGroup.group)" class="limit-list">
+                                <div *ngFor="let limit of limitGroup.limits" class="limit-item">
+                                    <div class="limit-name">{{ getLimitDisplayName(limit) }}</div>
+                                    <div class="limit-values">
+                                        <span class="limit-current">{{ formatLimit(limit.currentLimit) }}</span>
+                                        <span *ngIf="limit.warningAt && limit.currentLimit >= limit.warningAt"
+                                            class="warning-indicator" title="Approaching limit">⚠️</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

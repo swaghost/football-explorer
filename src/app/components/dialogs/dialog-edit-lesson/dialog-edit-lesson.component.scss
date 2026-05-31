@@ -1,0 +1,117 @@
+// Edit Lesson Dialog chip styling
+.edit-lesson-dialog {
+  // Lesson chips styling
+  .chips-container {
+    .chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      min-height: 40px;
+      align-items: flex-start;
+      align-content: flex-start;
+
+      .dark-mode & {
+        background: #3a3a3a;
+        border-color: #555;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        background: #007bff;
+        color: white;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+        max-width: 200px;
+        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .dark-mode & {
+          background: #0d6efd;
+        }
+
+        .chip-remove {
+          margin-left: 8px;
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+          line-height: 1;
+          padding: 0;
+          width: 16px;
+          height: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+          }
+        }
+      }
+    }
+
+    .chip-input-container {
+      display: flex;
+      gap: 8px;
+
+      .chip-input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .add-chip-button {
+        padding: 8px 16px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background: #218838;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          background: #6c757d;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .dark-mode & {
+          &:hover:not(:disabled) {
+            background: #1e7e34;
+          }
+        }
+      }
+    }
+  }
+
+  // Textarea styling
+  .textarea-input {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.4;
+  }
+}

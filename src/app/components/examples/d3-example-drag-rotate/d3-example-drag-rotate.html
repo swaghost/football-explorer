@@ -1,0 +1,35 @@
+<div style="margin-bottom: 16px;">
+    <label>
+        Rotate:
+        <input type="range" min="-359" max="359" step="1" [value]="sliderAngle" (input)="onSliderChange($event)"
+            style="width: 400px;" />
+        <span>{{ sliderAngle }}°</span>
+    </label>
+</div>
+<div style="margin-bottom: 16px;">
+    <label>
+        <input type="radio" name="tickMode" value="degrees" [checked]="tickMode === 'degrees'"
+            (change)="onTickModeChange($event)" />
+        Degrees
+    </label>
+    <label style="margin-left: 16px;">
+        <input type="radio" name="tickMode" value="radians" [checked]="tickMode === 'radians'"
+            (change)="onTickModeChange($event)" />
+        Radians
+    </label>
+    <label style="margin-left: 16px;">
+        <input type="radio" name="tickMode" value="none" [checked]="tickMode === 'none'"
+            (change)="onTickModeChange($event)" />
+        None
+    </label>
+</div>
+<div style="margin-bottom: 16px;">
+    <label>
+        Zoom:
+        <input type="range" min="0.2" max="5" step="0.01" [value]="zoomSlider" (input)="onZoomSliderChange($event)"
+            style="width: 400px;" />
+        <span>{{ zoomSlider | number:'1.2-2' }}x</span>
+    </label>
+    <span style="margin-left: 16px; color: #888;">(Drag up/down outside the circle to zoom)</span>
+</div>
+<svg #svg [attr.width]="width" [attr.height]="height"></svg>

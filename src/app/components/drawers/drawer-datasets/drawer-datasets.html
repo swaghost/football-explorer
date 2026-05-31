@@ -1,0 +1,30 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Datasets'" [drawerHelp]="drawerHelp" [width]="'500px'"
+    (close)="onClose()">
+    <!-- Action Buttons -->
+    <div class="drawer-actions">
+        <button class="btn btn-primary" (click)="onCreate()" title="Create new dataset">
+            ➕ Create
+        </button>
+        <button class="btn btn-secondary" (click)="onCombine()" [disabled]="!selectedContextDataset"
+            title="Combine multiple datasets">
+            🔗 Combine
+        </button>
+        <button class="btn btn-promote" (click)="onPromote()" [disabled]="!selectedContextDataset"
+            title="Promote dataset to higher context">
+            ⬆️ Promote
+        </button>
+        <button class="btn btn-demote" (click)="onDemote()" [disabled]="!selectedContextDataset"
+            title="Demote dataset to lower context">
+            ⬇️ Demote
+        </button>
+        <button class="btn btn-danger" (click)="onDelete()" [disabled]="!selectedContextDataset" title="Delete dataset">
+            🗑️ Delete
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="drawer-body">
+        <!-- D3 Tree Container -->
+        <div #treeContainer class="tree-container"></div>
+    </div>
+</app-base-sliding-drawer>

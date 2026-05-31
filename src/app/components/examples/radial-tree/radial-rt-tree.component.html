@@ -1,0 +1,13 @@
+<div #sketchContainer></div>
+@if(hoveredNode){
+<div class="custom-tooltip">
+    <!-- Optionally, show Angular tooltip here if you want -->
+</div>
+}
+@if(clickedLabel){
+<div class="custom-dialog">
+    <h3>{{ clickedLabel.data.name }}</h3>
+    <p>Custom dialog for {{ clickedLabel.data.name }} (value: {{ clickedLabel.data.value }})</p>
+    <button (click)="clickedLabel = null">Close</button>
+</div>
+}

@@ -1,0 +1,94 @@
+// Quick-Nav Toolbar Component Styles
+
+// Light yellow background for entire panel in light mode
+.quick-nav-panel {
+  background: #fffae6 !important;
+}
+
+.control-row {
+  margin-bottom: 4px;
+  background: #fffae6; // Light yellow background in light mode
+}
+
+.level-expansion-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin: 0;
+  }
+
+  .level-input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+    background: #fffae6; // Light yellow background in light mode
+  }
+
+  .level-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.tree-container {
+  overflow-y: auto; // Only scroll vertically when content exceeds max-height
+  overflow-x: hidden; // Prevent horizontal scrolling
+  max-height: 500px;
+  border: none; // Remove border
+  border-radius: 0; // Remove border radius
+  background: #fffae6; // Light yellow background in light mode
+  padding: 0; // Remove padding
+  margin: 0; // Remove any extra margin
+}
+
+// Dark mode
+.quick-nav-panel.dark-mode {
+  background: inherit !important; // Use default dark mode background
+
+  .control-row {
+    background: inherit; // Use default dark mode background
+  }
+
+  .level-expansion-controls {
+    label {
+      color: #e5e7eb;
+    }
+
+    .level-input {
+      background: #404040;
+      border-color: #555;
+      color: #ffffff;
+    }
+
+    .level-input:focus {
+      border-color: #63b3ed;
+      box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2);
+    }
+  }
+
+  .tree-container {
+    background: #2d2d2d;
+    border-color: #555;
+  }
+}
+
+// Panel content - minimal padding
+.quick-nav-panel .panel-content {
+  background: #fffae6 !important; /* Light yellow background in light mode */
+  padding: 4px; /* Minimal padding */
+  padding-bottom: 50px; /* Space for footer */
+}
+
+// Dark mode - keep default background
+.quick-nav-panel.dark-mode .panel-content {
+  background: inherit !important; /* Use default dark mode background */
+}

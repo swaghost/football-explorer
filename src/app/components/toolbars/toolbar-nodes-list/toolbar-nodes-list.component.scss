@@ -1,0 +1,130 @@
+/* Nodes List Toolbar Component Specific Styles */
+
+// Nodes List Toolbar Styling
+.nodes-list-panel {
+  min-width: 250px;
+  max-width: 400px;
+  min-height: 300px;
+
+  // Ensure header and footer are clipped properly
+  overflow: hidden;
+
+  .panel-header {
+    border-radius: 0; // Remove border radius to prevent gradient clipping
+    background-clip: padding-box;
+  }
+
+  .panel-footer {
+    border-radius: 0; // Remove border radius to prevent gradient clipping
+    background-clip: padding-box;
+  }
+
+  // Blue highlight for current selected node - matches Quick-Nav SVG selection colors
+  .common-list-item.current-selected {
+    // Light mode
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-left: 4px solid #2563eb !important;
+    color: #4169e1 !important; // Royal blue for light mode
+    font-weight: 600;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+    transform: scale(1.02);
+
+    .node-id-col,
+    .node-name-col {
+      color: #4169e1 !important;
+      font-weight: 600;
+    }
+  }
+
+  &.dark-mode {
+    // Dark mode styling for consistency with Quick-Nav
+    .common-list-item.current-selected {
+      background: rgba(59, 130, 246, 0.3) !important;
+      border-left: 4px solid #3b82f6 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
+
+      .node-id-col,
+      .node-name-col {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .panel-content {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // Prevent content from overflowing panel
+  }
+
+  .nodes-list-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+    overflow: hidden; // Contain all content within container
+  }
+
+  .nodes-count {
+    padding: 8px 12px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+    flex-shrink: 0; // Don't shrink this element
+  }
+
+  .nodes-scroll-list {
+    flex: 1;
+    overflow-y: auto; // Enable scrolling for the list
+    overflow-x: hidden;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    position: relative;
+    min-height: 0; // Allow flex to shrink below content size
+
+    // Ensure smooth scrolling
+    scroll-behavior: smooth;
+
+    // Performance optimizations for virtual scrolling
+    will-change: scroll-position;
+    contain: layout style paint;
+
+    // Fix scrolling conflicts with virtual scrolling
+    overscroll-behavior: contain;
+    scroll-snap-type: none;
+  }
+
+  // Styles for node items are now in shared node-list-item component
+
+  .no-nodes-message {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+
+  // Dark mode styling
+  &.dark-mode {
+    .nodes-count {
+      background: rgba(0, 123, 255, 0.2);
+      color: #fff;
+      border-color: rgba(0, 123, 255, 0.3);
+    }
+
+    .nodes-scroll-list {
+      background: #2d2d2d;
+      border-color: #555;
+    }
+
+    // Node item dark mode styles are in shared component
+
+    .no-nodes-message {
+      color: #adb5bd;
+    }
+  }
+}

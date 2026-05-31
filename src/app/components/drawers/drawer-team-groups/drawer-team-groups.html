@@ -1,0 +1,89 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Team Groups'" [drawerId]="'team-groups-drawer'" [position]="'left'"
+    [drawerHelp]="drawerHelp" [width]="'450px'" (close)="onClose()">
+    <div class="team-groups-drawer-content">
+        <!-- Action Buttons (at top) -->
+        <div class="drawer-actions">
+            <button class="action-btn create-btn" (click)="onCreateTeamGroup()">
+                ➕ Create
+            </button>
+            <button class="action-btn edit-btn" [disabled]="!canEdit" (click)="onEditTeamGroup()">
+                ✏️ Edit
+            </button>
+            <button class="action-btn delete-btn" [disabled]="!canDelete" (click)="onDeleteTeamGroup()">
+                🗑️ Delete
+            </button>
+            <button class="action-btn import-btn" (click)="onImportDefaultTeamGroups()">
+                📥 Import
+            </button>
+        </div>
+
+        <!-- Selected Team Group Section -->
+        <div class="selected-group-section">
+            <h3>Selected Team Group</h3>
+            <div class="selected-group-display" *ngIf="selectedTeamGroup; else noGroupSelected">
+                <div class="group-info">
+                    <div class="group-name">{{ selectedTeamGroup.TeamGroupName }}</div>
+                    <div class="group-details">
+                        <span class="player-count">{{ getPlayerCount(selectedTeamGroup) }} players</span>
+                        <span class="separator"> • </span>
+                        <span class="positions">{{ getPositionsDisplay(selectedTeamGroup) }}</span>
+                    </div>
+                </div>
+
+                <!-- Expandable section toggle button -->
+                <div class="expand-toggle" (click)="toggleExpanded(selectedTeamGroup.TeamGroupID, $event)">
+                    <span class="expand-icon">{{ isExpanded(selectedTeamGroup.TeamGroupID) ? '▼' : '▶' }}</span>
+                    <span class="expand-text">{{ isExpanded(selectedTeamGroup.TeamGroupID) ? 'Hide' : 'Show' }}
+                        Players</span>
+                </div>
+
+                <!-- Expandable players section -->
+                <div class="expandable-section" *ngIf="isExpanded(selectedTeamGroup.TeamGroupID)"
+                    (click)="$event.stopPropagation()">
+                    <div class="expandable-content">
+                        <div class="players-list">
+                            <div class="player-item" *ngFor="let player of selectedTeamGroup.Players; let idx = index">
+                                <span class="player-number">{{ idx + 1 }}.</span>
+                                <span class="player-name">{{ player.FirstName }} {{ player.LastName }}</span>
+                                <span class="player-position" *ngIf="player.PositionAbbrev">{{ player.PositionAbbrev
+                                    }}</span>
+                                <span class="player-jersey" *ngIf="player.JerseyNumber">#{{ player.JerseyNumber
+                                    }}</span>
+                            </div>
+                            <div class="empty-players"
+                                *ngIf="!selectedTeamGroup.Players || selectedTeamGroup.Players.length === 0">
+                                No players in this team group
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noGroupSelected>
+                <div class="no-group-selected">No team group selected</div>
+            </ng-template>
+        </div>
+
+        <!-- Available Team Groups Section -->
+        <div class="available-groups-section">
+            <h3>Available Team Groups ({{ teamGroups.length }})</h3>
+
+            <!-- Team Groups List -->
+            <div class="groups-list-container">
+                <div class="group-item" *ngFor="let group of teamGroups" [class.selected]="isSelected(group)"
+                    (click)="onSelectTeamGroup(group)">
+                    <div class="group-name">{{ group.TeamGroupName }}</div>
+                    <div class="group-details">
+                        <span class="player-count">{{ getPlayerCount(group) }} players</span>
+                        <span class="separator"> • </span>
+                        <span class="positions">{{ getPositionsDisplay(group) }}</span>
+                    </div>
+                </div>
+                <div class="empty-state" *ngIf="teamGroups.length === 0">
+                    <div class="empty-icon">👥</div>
+                    <p>No team groups available</p>
+                    <p class="info-text">Create a team group to organize players</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

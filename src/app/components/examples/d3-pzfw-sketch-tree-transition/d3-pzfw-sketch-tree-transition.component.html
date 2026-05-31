@@ -1,0 +1,855 @@
+<!-- Full Window D3 Tree Transition Component Template -->
+<div class="d3-tree-container">
+    <!-- Static Top Toolbar for Toolbar Controls -->
+    <div class="static-toolbar-controls">
+        <!-- Show All / Hide All Controls -->
+        <button class="toolbar-toggle-btn" (click)="showAllToolbars()" title="Show All Toolbars">
+            👁️
+        </button>
+        <button class="toolbar-toggle-btn" (click)="hideAllToolbars()" title="Hide All Toolbars">
+            🙈
+        </button>
+
+        <!-- Separator -->
+        <div class="toolbar-controls-separator"></div>
+
+        <!-- Individual Toolbar Toggle Buttons -->
+        <button *ngFor="let toolbarKey of getToolbarKeys()" class="toolbar-toggle-btn"
+            [class.active]="getToolbarVisibility(toolbarKey)" (click)="toggleToolbarVisibility(toolbarKey)"
+            [title]="getToolbarDisplayName(toolbarKey)">
+            <span class="toolbar-icon">{{ getToolbarIcon(toolbarKey) }}</span>
+            <span class="toolbar-status">{{ getToolbarVisibility(toolbarKey) ? '●' : '○' }}</span>
+        </button>
+    </div>
+
+    <!-- SVG Container -->
+    <svg #svg class="svg-container"></svg>
+
+    <!-- Drawing Tools Panel (Draggable) -->
+    <div class="draggable-toolbar drawing-tools-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.selectionTools.x" [style.top.px]="toolbarPositions.selectionTools.y"
+        *ngIf="toolbarVisibility.selectionTools" data-toolbar-type="selectionTools">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.selectionTools"
+            (mousedown)="onToolbarDragStart($event, 'selectionTools')">
+            <h3>🎨 Drawing Tools</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('selectionTools')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('selectionTools')"
+                    [title]="toolbarLocks.selectionTools ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.selectionTools ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="tool-section">
+            <h4>Mode</h4>
+            <div class="mode-buttons">
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'pan'" (click)="setDrawingMode('pan')" title="Pan Mode">
+                        🤚
+                    </button>
+                    <button [class.active]="drawingMode === 'pencil'" (click)="setDrawingMode('pencil')"
+                        title="Pencil Mode">
+                        ✏️
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'eraser'" (click)="setDrawingMode('eraser')"
+                        title="Eraser Mode">
+                        🧹
+                    </button>
+                    <button [class.active]="getCurrentDrawingMode() === 'select'" (click)="setDrawingMode('select')"
+                        title="Select Mode">
+                        👆
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'lasso'" (click)="setDrawingMode('lasso')"
+                        title="Lasso Select Mode">
+                        🎯
+                    </button>
+                    <button [class.active]="getCurrentDrawingMode() === 'selectChildren'"
+                        (click)="setDrawingMode('selectChildren')" title="Select All Children Mode">
+                        🌳
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawing Modifiers Panel (Separate Draggable Toolbar) -->
+    <div class="draggable-toolbar drawing-modifiers-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.drawingModifiers.x" [style.top.px]="toolbarPositions.drawingModifiers.y"
+        *ngIf="toolbarVisibility.drawingModifiers && (drawingMode === 'pencil' || drawingMode === 'eraser' || drawingMode === 'lasso')"
+        data-toolbar-type="drawingModifiers">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.drawingModifiers"
+            (mousedown)="onToolbarDragStart($event, 'drawingModifiers')">
+            <h3>🔧 Modifiers</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('drawingModifiers')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('drawingModifiers')"
+                    [title]="toolbarLocks.drawingModifiers ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.drawingModifiers ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+
+        <!-- Color Palette -->
+        <div class="tool-section" *ngIf="drawingMode === 'pencil'">
+            <h4>Colors</h4>
+            <div class="color-palette">
+                <div *ngFor="let color of colors" class="color-swatch" [class.selected]="selectedColor === color"
+                    [style.backgroundColor]="color" (click)="selectColor(color)" [title]="color">
+                </div>
+            </div>
+        </div>
+
+        <!-- Brush Size -->
+        <div class="tool-section" *ngIf="drawingMode === 'pencil'">
+            <h4>Brush Size</h4>
+            <div class="slider-container">
+                <input type="range" min="1" max="20" step="0.5" [value]="brushSize" (input)="updateBrushSize($event)" />
+                <span class="value-display">{{ brushSize }}px</span>
+            </div>
+            <div class="brush-preview" [style.width.px]="brushSize" [style.height.px]="brushSize"
+                [style.backgroundColor]="selectedColor"></div>
+        </div>
+
+        <!-- Eraser Options -->
+        <div class="tool-section" *ngIf="drawingMode === 'eraser'">
+            <h4>Eraser Mode</h4>
+            <div class="eraser-mode-buttons">
+                <button [class.active]="eraserMode === 'magic'" (click)="setEraserMode('magic')"
+                    title="Magic Eraser - Remove entire line segments">
+                    ✨
+                </button>
+                <button [class.active]="eraserMode === 'normal'" (click)="setEraserMode('normal')"
+                    title="Normal Eraser - Partially erase lines">
+                    🧹
+                </button>
+            </div>
+        </div>
+
+        <!-- Eraser Size -->
+        <div class="tool-section" *ngIf="drawingMode === 'eraser'">
+            <h4>Eraser Size</h4>
+            <div class="slider-container">
+                <input type="range" min="5" max="50" step="1" [value]="eraserSize" (input)="updateEraserSize($event)" />
+                <span class="value-display">{{ eraserSize }}px</span>
+            </div>
+            <div class="eraser-preview" [style.width.px]="eraserSize" [style.height.px]="eraserSize">
+            </div>
+        </div>
+
+        <!-- Lasso Mode Options -->
+        <div class="tool-section" *ngIf="drawingMode === 'lasso'">
+            <h4>Lasso Mode</h4>
+            <div class="lasso-mode-buttons">
+                <button [class.active]="lassoMode === 'select'" (click)="setLassoMode('select')"
+                    title="Select Mode - Add nodes to selection">
+                    ➕
+                </button>
+                <button [class.active]="lassoMode === 'deselect'" (click)="setLassoMode('deselect')"
+                    title="Deselect Mode - Remove nodes from selection">
+                    ➖
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lessons Panel (Draggable) -->
+    <div class="draggable-toolbar lessons-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.lessons.x" [style.top.px]="toolbarPositions.lessons.y"
+        *ngIf="toolbarVisibility.lessons" data-toolbar-type="lessons">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.lessons"
+            (mousedown)="onToolbarDragStart($event, 'lessons')">
+            <h3>📚 Lessons</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('lessons')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('lessons')"
+                    [title]="toolbarLocks.lessons ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.lessons ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="lessons-dropdown" *ngIf="hasLessons$ | async">
+            <label for="lessonSelect">Select Lesson:</label>
+            <select id="lessonSelect" (change)="onLessonChange($event)"
+                [value]="(selectedLesson$ | async)?.LessonName || ''">
+                <option value="">-- Select a lesson --</option>
+                <option *ngFor="let lesson of currentLessons$ | async" [value]="lesson.LessonName">
+                    {{ lesson.LessonName }} ({{ lesson.LessonNodes.length }} nodes)
+                </option>
+            </select>
+        </div>
+        <div class="lesson-info" *ngIf="selectedLesson$ | async as selectedLesson">
+            <p><strong>Current:</strong> {{ selectedLesson.LessonName }}</p>
+            <p><strong>Nodes:</strong> {{ selectedLesson.LessonNodes.length }}</p>
+        </div>
+        <div class="lesson-actions">
+            <button class="edit-lesson-btn" (click)="editLesson()" [disabled]="!(selectedLesson$ | async)"
+                title="Edit Lesson Name">
+                ✏️ Edit
+            </button>
+            <button class="publish-btn" (click)="publishLesson()" [disabled]="!(selectedLesson$ | async)"
+                title="Publish Selected Lesson">
+                📤 Publish
+            </button>
+            <button class="delete-lesson-btn" (click)="deleteLesson()" [disabled]="!(selectedLesson$ | async)"
+                title="Delete Selected Lesson">
+                🗑️ Delete
+            </button>
+        </div>
+    </div>
+
+    <!-- Selected Nodes Panel (Draggable) -->
+    <div class="draggable-toolbar selected-nodes-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.selectedNodes.x" [style.top.px]="toolbarPositions.selectedNodes.y"
+        *ngIf="toolbarVisibility.selectedNodes && (selectedNodes.length > 0 || (selectedLesson$ | async))"
+        data-toolbar-type="selectedNodes">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.selectedNodes"
+            (mousedown)="onToolbarDragStart($event, 'selectedNodes')">
+            <h3>🎯 Nodes</h3>
+            <div class="header-actions">
+                <button *ngIf="!selectionMatchesLesson" class="apply-btn" (click)="applySelectionToLesson()"
+                    title="Apply current selection to selected lesson">
+                    📌 Apply
+                </button>
+                <button class="close-button" (click)="hideToolbar('selectedNodes')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('selectedNodes')"
+                    [title]="toolbarLocks.selectedNodes ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.selectedNodes ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="header-buttons">
+                <button class="create-lesson-btn" (click)="createLesson()" title="Create Lesson from Selected Nodes">
+                    📚 Create
+                </button>
+                <button class="clear-selection-btn" (click)="clearNodeSelection()" title="Clear All Selections">
+                    🗑️ Clear
+                </button>
+            </div>
+        </div>
+        <div class="selected-nodes-list">
+            <div *ngFor="let nodeId of selectedNodes" class="selected-node-item">
+                <span class="node-id">{{ nodeId }}</span>
+                <button class="remove-node-btn" (click)="removeNodeFromSelection(nodeId)" title="Remove from selection">
+                    ✖️
+                </button>
+            </div>
+            <div *ngIf="selectedNodes.length === 0 && (selectedLesson$ | async)" class="no-nodes-message">
+                <p>No nodes selected. Select nodes to update the lesson.</p>
+            </div>
+        </div>
+        <div class="selection-stats">
+            Total: {{ selectedNodes.length }} node{{ selectedNodes.length === 1 ? '' : 's' }}
+        </div>
+    </div>
+
+    <!-- Teams Panel (Draggable) -->
+    <div class="draggable-toolbar teams-panel" [class.dark-mode]="isDarkMode" [style.left.px]="toolbarPositions.teams.x"
+        [style.top.px]="toolbarPositions.teams.y" *ngIf="toolbarVisibility.teams" data-toolbar-type="teams">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.teams"
+            (mousedown)="onToolbarDragStart($event, 'teams')">
+            <h3>
+                <span class="toolbar-icon">👥</span>
+                Teams
+            </h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('teams')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('teams')"
+                    [title]="toolbarLocks.teams ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.teams ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label for="organization-select">Organization:</label>
+                <select id="organization-select" class="team-dropdown" [value]="selectedOrganizationId$ | async"
+                    (change)="onOrganizationChangeEvent($event)">
+                    <option value="" disabled>Select Organization</option>
+                    <option *ngFor="let org of organizations" [value]="org.OrgID">
+                        {{ org.OrgName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="team-select">Team:</label>
+                <select id="team-select" class="team-dropdown" (change)="onTeamChange($event)"
+                    [value]="selectedTeam?.TeamID || ''" [disabled]="!(selectedOrganizationId$ | async)">
+                    <option value="">Select a team...</option>
+                    <option *ngFor="let team of getTeamsForSelectedOrganization()" [value]="team.TeamID">
+                        {{ team.TeamName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="team-group-select">Team Group:</label>
+                <select id="team-group-select" class="team-dropdown" (change)="onTeamGroupChange($event)"
+                    [value]="selectedTeamGroup?.TeamGroupID || ''" [disabled]="!selectedTeam">
+                    <option value="">Select a team group...</option>
+                    <option *ngFor="let group of getAvailableTeamGroups()" [value]="group.TeamGroupID">
+                        {{ group.TeamGroupName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="team-info" *ngIf="selectedTeam">
+                <div class="info-item">
+                    <span class="info-label">Selected Team:</span>
+                    <span class="info-value">{{ selectedTeam.TeamName }}</span>
+                </div>
+                <div class="info-item" *ngIf="selectedTeamGroup">
+                    <span class="info-label">Selected Group:</span>
+                    <span class="info-value">{{ selectedTeamGroup.TeamGroupName }}</span>
+                </div>
+
+                <!-- Team Players -->
+                <div class="players-section" *ngIf="selectedTeam && !selectedTeamGroup">
+                    <h4>Team Players ({{ getSelectedTeamPlayers().length }}):</h4>
+
+                    <!-- Sort dropdown -->
+                    <div class="sort-controls">
+                        <label for="playerSort">Sort by:</label>
+                        <select id="playerSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)"
+                            class="sort-select">
+                            <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="players-list">
+                        <div *ngFor="let player of getSelectedTeamPlayers()" class="player-item">
+                            <label class="player-checkbox">
+                                <input type="checkbox" [checked]="isPlayerSelected(player.PlayerID)"
+                                    (change)="onPlayerCheckboxChange(player.PlayerID, $event.target.checked)">
+                                <span class="player-name clickable" (click)="openPlayerEditPopup(player)">{{
+                                    getPlayerFullName(player) }}</span>
+                            </label>
+                            <span class="player-id">(ID: {{ player.PlayerID }})</span>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons when no team group selected -->
+                    <div class="action-buttons" *ngIf="selectedPlayerIds.length > 0">
+                        <button class="action-btn publish-btn" (click)="onPublishToPlayers()">
+                            📢 Publish to Players
+                        </button>
+                        <button class="action-btn create-btn" (click)="onCreateTeamGroup()">
+                            ➕ Create Team Group
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team Group Players -->
+                <div class="players-section" *ngIf="selectedTeamGroup">
+                    <h4>Group Players ({{ getSelectedTeamGroupPlayers().length }}):</h4>
+
+                    <!-- Sort dropdown -->
+                    <div class="sort-controls">
+                        <label for="playerGroupSort">Sort by:</label>
+                        <select id="playerGroupSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)"
+                            class="sort-select">
+                            <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="players-list">
+                        <div *ngFor="let player of getSelectedTeamGroupPlayers()" class="player-item group-player">
+                            <span class="player-name clickable" (click)="openPlayerEditPopup(player)">{{
+                                getPlayerFullName(player) }}</span>
+                            <span class="player-id">(ID: {{ player.PlayerID }})</span>
+                        </div>
+                    </div>
+
+                    <!-- Edit button when team group is selected -->
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" (click)="onEditTeamGroup()">
+                            ✏️ Edit Team Group
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Controls Panel (Draggable) -->
+    <div class="draggable-toolbar zoom-controls-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.zoomControls.x" [style.top.px]="toolbarPositions.zoomControls.y"
+        *ngIf="toolbarVisibility.zoomControls" data-toolbar-type="zoomControls">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.zoomControls"
+            (mousedown)="onToolbarDragStart($event, 'zoomControls')">
+            <h3>⚙️ View Controls</h3>
+            <div class="header-actions">
+                <button class="theme-toggle" (click)="toggleTheme()"
+                    [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                    {{ isDarkMode ? '☀️' : '🌙' }}
+                </button>
+                <button class="close-button" (click)="hideToolbar('zoomControls')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('zoomControls')"
+                    [title]="toolbarLocks.zoomControls ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.zoomControls ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="nodes">Nodes:</label>
+            <input id="nodes" type="range" min="1" max="2000" step="1" [value]="nodeCount"
+                (input)="updateNodeCount($event)" />
+            <span class="value-display">{{ nodeCount }}</span>
+        </div>
+        <div class="control-group checkbox-group">
+            <label for="snapToolbars">
+                <input id="snapToolbars" type="checkbox" [checked]="snapToolbarsOnResize"
+                    (change)="toggleSnapToolbarsOnResize()" />
+                Snap toolbars on resize
+            </label>
+            <button class="snap-now-btn" (click)="snapToolbarsToEdges()" title="Snap all toolbars to nearest edges now">
+                📌 Snap Now
+            </button>
+        </div>
+    </div>
+
+    <!-- Rotation & Pan Control Panel (Draggable) -->
+    <div class="draggable-toolbar rotation-pan-control-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.rotationControl.x" [style.top.px]="toolbarPositions.rotationControl.y"
+        *ngIf="toolbarVisibility.rotationControl" data-toolbar-type="rotationControl">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.rotationControl"
+            (mousedown)="onToolbarDragStart($event, 'rotationControl')">
+            <h3>🔄 Rotation & Pan</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('rotationControl')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('rotationControl')"
+                    [title]="toolbarLocks.rotationControl ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.rotationControl ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="rotation-pan-layout">
+            <!-- Zoom control (left side) -->
+            <div class="zoom-container">
+                <label for="zoom" class="vertical-label">Zoom:</label>
+                <input id="zoom" type="range" min="0.5" max="5" step="0.1" [value]="zoomLevel"
+                    (input)="updateZoom($event)" (mousedown)="isUsingSliders = true" (mouseup)="isUsingSliders = false"
+                    class="vertical-slider" />
+                <span class="vertical-value">{{ (zoomLevel | number:'1.2-2') }}x</span>
+            </div>
+
+            <!-- Pan Y control (right side) -->
+            <div class="pan-y-container">
+                <label for="panY" class="vertical-label">Pan Y:</label>
+                <input id="panY" type="range" [min]="panYMin" [max]="panYMax" step="1" [value]="-panY"
+                    (input)="updatePan($event, 'y')" (mousedown)="isUsingSliders = true"
+                    (mouseup)="isUsingSliders = false" class="vertical-slider" />
+                <span class="vertical-value">{{ (panY | number:'1.2-2') }}</span>
+            </div>
+
+            <!-- Central rotation wheel -->
+            <div class="rotation-center">
+                <!-- Rotation Slider -->
+                <div class="rotation-slider-container">
+                    <label for="rotationSlider">Rotation:</label>
+                    <input id="rotationSlider" type="range" min="-180" max="180" step="1" [value]="rotationAngle"
+                        (input)="updateRotation($event)" (mousedown)="isUsingSliders = true"
+                        (mouseup)="isUsingSliders = false" class="rotation-slider" />
+                    <span class="rotation-slider-value">{{ rotationAngle }}°</span>
+                </div>
+
+                <div class="rotation-wheel" #rotationWheel>
+                    <!-- Compass and rotation wheel will be implemented via D3 -->
+                    <div class="compass-container">
+                        <svg class="compass-svg" #compassSvg width="200" height="200">
+                            <!-- Compass elements will be drawn here -->
+                        </svg>
+                    </div>
+                </div>
+                <div class="rotation-info">
+                    <span class="rotation-value">{{ rotationAngle }}°</span>
+                    <button class="reset-rotation" (click)="resetRotation()" title="Reset rotation to 0°">↻</button>
+                    <button class="reset-view" (click)="resetViewTransform()"
+                        title="Reset zoom, pan, and rotation to initial state">🔄</button>
+                </div>
+            </div>
+
+            <!-- Pan X control (below) -->
+            <div class="pan-x-container">
+                <label for="panX">Pan X:</label>
+                <input id="panX" type="range" [min]="panXMin" [max]="panXMax" step="1" [value]="panX"
+                    (input)="updatePan($event, 'x')" (mousedown)="isUsingSliders = true"
+                    (mouseup)="isUsingSliders = false" />
+                <span class="value-display">{{ (panX | number:'1.2-2') }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Presentation Panel (Draggable) -->
+    <div class="draggable-toolbar visual-presentation-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.visualPresentation.x" [style.top.px]="toolbarPositions.visualPresentation.y"
+        *ngIf="toolbarVisibility.visualPresentation" data-toolbar-type="visualPresentation">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.visualPresentation"
+            (mousedown)="onToolbarDragStart($event, 'visualPresentation')">
+            <h3>🎨 Visual Presentation</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('visualPresentation')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('visualPresentation')"
+                    [title]="toolbarLocks.visualPresentation ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.visualPresentation ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="control-group">
+                <label for="visualMode">Layout Mode:</label>
+                <select id="visualMode" [value]="visualMode" (change)="onVisualModeSelectChange($event)"
+                    class="visual-mode-select">
+                    <option *ngFor="let option of visualModeOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+            <div class="visual-mode-info">
+                Layout: <strong>{{ getCurrentVisualModeLabel() }}</strong><br>
+                Size: <strong>{{ getCurrentTreeSizeModeLabel() }}</strong>
+            </div>
+            <div class="regenerate-section">
+                <button class="regenerate-tree-btn" (click)="regenerateTree()"
+                    title="Generate a new random tree structure">
+                    🔄 Regenerate Tree
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Panel (Draggable) -->
+    <div class="draggable-toolbar status-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.statusPanel.x" [style.top.px]="toolbarPositions.statusPanel.y"
+        *ngIf="toolbarVisibility.statusPanel" data-toolbar-type="statusPanel">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.statusPanel"
+            (mousedown)="onToolbarDragStart($event, 'statusPanel')">
+            <h3>📍 Selected Node</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('statusPanel')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('statusPanel')"
+                    [title]="toolbarLocks.statusPanel ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.statusPanel ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="status-info" *ngIf="selectedNode">
+                Selected Node: <strong>{{ selectedNode }}</strong>
+            </div>
+            <div class="status-info" *ngIf="!selectedNode">
+                No node selected
+            </div>
+        </div>
+    </div>
+
+    <!-- Viewport Info Panel (Draggable) -->
+    <div class="draggable-toolbar viewport-info-panel" [class.dark-mode]="isDarkMode"
+        [style.left.px]="toolbarPositions.viewportInfo.x" [style.top.px]="toolbarPositions.viewportInfo.y"
+        *ngIf="toolbarVisibility.viewportInfo" data-toolbar-type="viewportInfo">
+        <div class="panel-header drag-handle" [class.locked]="toolbarLocks.viewportInfo"
+            (mousedown)="onToolbarDragStart($event, 'viewportInfo')">
+            <h3>📐 Viewport Info</h3>
+            <div class="header-actions">
+                <button class="close-button" (click)="hideToolbar('viewportInfo')" title="Close toolbar">
+                    ✖️
+                </button>
+                <button class="lock-toggle" (click)="toggleToolbarLock('viewportInfo')"
+                    [title]="toolbarLocks.viewportInfo ? 'Unlock toolbar' : 'Lock toolbar'">
+                    {{ toolbarLocks.viewportInfo ? '🔒' : '🔓' }}
+                </button>
+                <span class="drag-icon">⋮⋮</span>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="info-section">
+                <h4>📊 Display</h4>
+                <div class="info-item">
+                    <span class="info-label">Screen Size:</span>
+                    <span class="info-value">{{ width }} × {{ height }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Theme:</span>
+                    <span class="info-value">{{ isDarkMode ? 'Dark' : 'Light' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Visual Mode:</span>
+                    <span class="info-value">{{ getCurrentVisualModeLabel() }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tree Size:</span>
+                    <span class="info-value">{{ getCurrentTreeSizeModeLabel() }}</span>
+                </div>
+            </div>
+            <div class="info-section">
+                <h4>🔍 View Transform</h4>
+                <div class="info-item">
+                    <span class="info-label">Zoom:</span>
+                    <span class="info-value">{{ (zoomLevel | number:'1.2-2') }}x</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pan X:</span>
+                    <span class="info-value">{{ (panX | number:'1.2-2') }}px</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pan Y:</span>
+                    <span class="info-value">{{ (panY | number:'1.2-2') }}px</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Rotation:</span>
+                    <span class="info-value">{{ rotationAngle }}°</span>
+                </div>
+            </div>
+            <div class="info-section">
+                <h4>🌳 Tree Data</h4>
+                <div class="info-item">
+                    <span class="info-label">Node Count:</span>
+                    <span class="info-value">{{ nodeCount }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Selected Nodes:</span>
+                    <span class="info-value">{{ selectedNodes.length }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Drawing Mode:</span>
+                    <span class="info-value">{{ drawingMode }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Strokes:</span>
+                    <span class="info-value">{{ strokes.length }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" [class.dark-mode]="isDarkMode" *ngIf="tooltip.visible" [style.left.px]="tooltip.x + 10"
+        [style.top.px]="tooltip.y - 10">
+        {{ tooltip.text }}
+    </div>
+
+    <!-- Custom Confirmation Dialog -->
+    <div class="dialog-overlay" [class.dark-mode]="isDarkMode" *ngIf="showConfirmDialog" (click)="closeConfirmDialog()">
+        <div class="dialog-container" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h3>{{ confirmDialogTitle }}</h3>
+            </div>
+            <div class="dialog-content">
+                <p>{{ confirmDialogMessage }}</p>
+            </div>
+            <div class="dialog-actions">
+                @if (isConfirmDialog) {
+                <button class="dialog-button cancel-button" (click)="closeConfirmDialog()">
+                    Cancel
+                </button>
+                <button class="dialog-button confirm-button" (click)="onConfirmDialogConfirm()">
+                    OK
+                </button>
+                } @else {
+                <button class="dialog-button confirm-button" (click)="onConfirmDialogConfirm()">
+                    OK
+                </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Team Group Dialog -->
+    <div class="dialog-overlay" [class.dark-mode]="isDarkMode" *ngIf="showEditTeamGroupDialog"
+        (click)="closeEditTeamGroupDialog()">
+        <div class="dialog-container edit-group-dialog" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h3>Edit Team Group: {{ editingTeamGroup?.TeamGroupName }}</h3>
+            </div>
+            <div class="dialog-content">
+                <p>Select players for this team group:</p>
+
+                <!-- Sort dropdown for edit dialog -->
+                <div class="sort-controls" *ngIf="selectedTeam">
+                    <label for="editPlayerSort">Sort by:</label>
+                    <select id="editPlayerSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)"
+                        class="sort-select">
+                        <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="edit-players-list" *ngIf="selectedTeam">
+                    <div *ngFor="let player of getSelectedTeamPlayers()" class="edit-player-item">
+                        <label class="player-checkbox">
+                            <input type="checkbox" [checked]="isTempPlayerSelected(player.PlayerID)"
+                                (change)="onTempPlayerCheckboxChange(player.PlayerID, $event.target.checked)">
+                            <span class="player-name">{{ getPlayerFullName(player) }}</span>
+                        </label>
+                        <span class="player-id">(ID: {{ player.PlayerID }})</span>
+                    </div>
+                </div>
+
+                <div class="selected-count">
+                    Selected: {{ tempSelectedPlayerIds.length }} players
+                </div>
+            </div>
+            <div class="dialog-actions">
+                <button class="dialog-button cancel-button" (click)="closeEditTeamGroupDialog()">
+                    Cancel
+                </button>
+                <button class="dialog-button confirm-button" (click)="saveTeamGroupChanges()"
+                    [disabled]="tempSelectedPlayerIds.length === 0">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Edit Popup Modal -->
+    <div class="modal-overlay" *ngIf="isPlayerEditPopupOpen" (click)="closePlayerEditPopup()">
+        <div class="player-edit-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Edit Player Information</h2>
+                <button class="close-btn" (click)="closePlayerEditPopup()" title="Close">✖️</button>
+            </div>
+
+            <div class="modal-body" *ngIf="editingPlayer">
+                <form class="player-form" (ngSubmit)="savePlayerChanges()" #playerForm="ngForm">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" [(ngModel)]="editingPlayer.FirstName"
+                                    required placeholder="Enter first name" maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" [(ngModel)]="editingPlayer.LastName"
+                                    required placeholder="Enter last name" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jersey Number -->
+                    <div class="form-section">
+                        <h3>Jersey Number</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jerseyNumber">Jersey Number *</label>
+                                <input type="number" id="jerseyNumber" name="jerseyNumber"
+                                    [(ngModel)]="editingPlayer.JerseyNumber" required min="0" max="99"
+                                    placeholder="Enter jersey number">
+                                <small class="form-hint">0 for Goalkeeper, 1-99 for field players</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position -->
+                    <div class="form-section">
+                        <h3>Position</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="positionName">Position *</label>
+                                <select id="positionName" name="positionName" [(ngModel)]="editingPlayer.PositionName"
+                                    required (change)="onPositionChange()">
+                                    <option value="">Select Position</option>
+                                    <option *ngFor="let position of getAvailablePositions()" [value]="position.name">
+                                        {{ position.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="positionAbbrev">Position Abbreviation</label>
+                                <input type="text" id="positionAbbrev" name="positionAbbrev"
+                                    [(ngModel)]="editingPlayer.PositionAbbrev" readonly placeholder="Auto-filled"
+                                    maxlength="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="form-section">
+                        <h3>Gender</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="genderName">Gender *</label>
+                                <select id="genderName" name="genderName" [(ngModel)]="editingPlayer.GenderName"
+                                    required (change)="onGenderChange()">
+                                    <option value="">Select Gender</option>
+                                    <option *ngFor="let gender of getAvailableGenders()" [value]="gender.GenderName">
+                                        {{ gender.GenderName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age Group -->
+                    <div class="form-section">
+                        <h3>Age Group</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ageGroupName">Age Group *</label>
+                                <select id="ageGroupName" name="ageGroupName" [(ngModel)]="editingPlayer.AgeGroupName"
+                                    required (change)="onAgeGroupChange()">
+                                    <option value="">Select Age Group</option>
+                                    <option *ngFor="let ageGroup of getAvailableAgeGroups()"
+                                        [value]="ageGroup.AgeGroupName">
+                                        {{ ageGroup.AgeGroupName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" (click)="closePlayerEditPopup()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-save" [disabled]="!playerForm?.valid"
+                    (click)="savePlayerChanges()">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

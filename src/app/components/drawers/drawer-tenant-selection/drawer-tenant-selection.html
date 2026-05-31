@@ -1,0 +1,56 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Tenant Selection'" [drawerId]="'tenant-selection-drawer'"
+    [drawerHelp]="drawerHelp" [width]="450" (close)="onClose()">
+    <div class="tenant-drawer-content">
+        <!-- Current Organization Display -->
+        <div class="current-tenant-section" *ngIf="selectedOrganization">
+            <h4>Current Organization</h4>
+            <div class="current-org-display">
+                <div class="org-icon">
+                    <img *ngIf="selectedOrganization.LogoUrl" [src]="selectedOrganization.LogoUrl"
+                        [alt]="selectedOrganization.TenantName + ' logo'" class="org-logo" />
+                    <span *ngIf="!selectedOrganization.LogoUrl">🏢</span>
+                </div>
+                <div class="org-info">
+                    <div class="org-name">{{ selectedOrganization.TenantName }}</div>
+                    <div class="user-role">My Role(s): {{ getRoleNames(selectedOrganization) }}</div>
+                    <div class="user-relatives"
+                        *ngIf="selectedOrganization.Relatives && selectedOrganization.Relatives.length > 0">
+                        Relatives: {{ getRelativesInfo(selectedOrganization) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedOrganization"></div>
+
+        <!-- Organization List -->
+        <div class="organization-list">
+            <h4>Available Organizations</h4>
+            <div class="org-list">
+                <div *ngFor="let organization of organizations" class="org-item"
+                    [class.selected]="isOrganizationSelected(organization.TenantID)"
+                    (click)="onOrganizationSelect(organization.TenantID)">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="isOrganizationSelected(organization.TenantID)">✓</span>
+                        <span class="checkbox" *ngIf="!isOrganizationSelected(organization.TenantID)">□</span>
+                    </div>
+                    <div class="org-logo-container" *ngIf="organization.LogoUrl">
+                        <img [src]="organization.LogoUrl" [alt]="organization.TenantName + ' logo'"
+                            class="org-list-logo" />
+                    </div>
+                    <div class="org-details">
+                        <div class="org-line-1">{{ organization.TenantName }}</div>
+                        <div class="org-line-2">My Role(s): {{ getRoleNames(organization) }}</div>
+                        <div class="org-line-3" *ngIf="organization.Relatives && organization.Relatives.length > 0">
+                            {{ getRelativesInfo(organization) }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</app-base-sliding-drawer>

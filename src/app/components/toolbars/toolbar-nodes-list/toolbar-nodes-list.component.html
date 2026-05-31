@@ -1,0 +1,68 @@
+<!-- Nodes List Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="nodes-list-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <div class="nodes-list-container">
+            <div class="nodes-scroll-list" #nodesScrollContainer>
+                <!-- Use shared node list item component -->
+                <app-node-list-item *ngFor="let node of currentNodesList; let i = index; trackBy: trackByNodeId"
+                    [node]="toNodeListItem(node)" [selectedNode]="selectedNode" [isSelected]="isNodeSelected(node.id)"
+                    (nodeClick)="onNodeItemClick($event)">
+                </app-node-list-item>
+
+                <!-- No nodes message -->
+                <div class="no-nodes-message" *ngIf="currentNodesList.length === 0">
+                    No nodes available
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with node statistics -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="footer-stats">
+            <span class="stat-item">Total: <strong>{{ currentNodesList.length }}</strong></span>
+            <span class="stat-separator">|</span>
+            <span class="stat-item" *ngIf="selectedNode">Selected: <strong>{{ selectedNode }}</strong></span>
+            <span class="stat-item" *ngIf="!selectedNode">No selection</span>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

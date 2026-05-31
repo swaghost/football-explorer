@@ -1,0 +1,199 @@
+// Lesson Builder Drawer Styles
+
+.drawer-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.selected-lesson-info {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+  background: var(--bg-secondary, #f8f9fa);
+
+  .lesson-card {
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-left: 4px solid #2196f3;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2196f3;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+
+  .no-lesson-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #fff8e1;
+    border-radius: 6px;
+    border: 1px solid #ffd54f;
+
+    .icon {
+      font-size: 18px;
+    }
+
+    .message {
+      font-size: 14px;
+      color: #856404;
+      font-style: italic;
+    }
+  }
+
+  // Dark mode styles
+  :host-context(.dark-mode) & {
+    background: #1e1e1e;
+    border-bottom-color: #444;
+
+    .lesson-card {
+      background: #1a1a1a;
+      border-left-color: #1976d2;
+
+      h3 {
+        color: #64b5f6;
+      }
+
+      p {
+        color: #bbb;
+      }
+    }
+
+    .no-lesson-message {
+      background: #2d2508;
+      border-color: #665500;
+
+      .message {
+        color: #ffd54f;
+      }
+    }
+  }
+}
+
+.drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+  background: var(--bg-secondary, #f8f9fa);
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.btn-primary {
+      background-color: var(--primary-color, #007bff);
+      color: white;
+
+      &:not(:disabled):hover {
+        background-color: var(--primary-hover, #0056b3);
+      }
+    }
+
+    &.btn-secondary {
+      background-color: var(--secondary-color, #6c757d);
+      color: white;
+
+      &:not(:disabled):hover {
+        background-color: var(--secondary-hover, #545b62);
+      }
+    }
+
+    &.btn-success {
+      background-color: var(--success-color, #28a745);
+      color: white;
+
+      &:not(:disabled):hover {
+        background-color: var(--success-hover, #218838);
+      }
+    }
+
+    &.btn-info {
+      background-color: var(--info-color, #17a2b8);
+      color: white;
+
+      &:not(:disabled):hover {
+        background-color: var(--info-hover, #138496);
+      }
+    }
+
+    &.btn-warning {
+      background-color: var(--warning-color, #ffc107);
+      color: #212529;
+
+      &:not(:disabled):hover {
+        background-color: var(--warning-hover, #e0a800);
+      }
+    }
+
+    &.btn-danger {
+      background-color: var(--danger-color, #dc3545);
+      color: white;
+
+      &:not(:disabled):hover {
+        background-color: var(--danger-hover, #c82333);
+      }
+    }
+  }
+}
+
+.tree-container {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+
+  // D3 tree styles
+  svg {
+    font-family: var(--font-family-base);
+    user-select: none;
+  }
+
+  .node {
+    cursor: pointer;
+
+    circle {
+      transition: all 0.2s ease;
+    }
+
+    text {
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    &:hover circle {
+      stroke-width: 3px;
+    }
+  }
+
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
+}

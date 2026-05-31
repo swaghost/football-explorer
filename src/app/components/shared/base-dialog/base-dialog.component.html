@@ -1,0 +1,40 @@
+<!-- Base Dialog Component Template -->
+<div class="modal-overlay" *ngIf="visible" (click)="onOverlayClick()" [class.dark-mode]="isDarkMode">
+    <div class="dialog-container" (click)="onDialogClick($event)" [ngStyle]="getDialogStyles()" [ngClass]="dialogClass">
+
+        <!-- Dialog Header -->
+        <div class="dialog-header">
+            <h3>
+                <span class="dialog-icon" *ngIf="icon">{{ icon }}</span>
+                {{ title }}
+            </h3>
+            <div class="header-actions">
+                <button class="help-button" *ngIf="showHelpButton && dialogId" (click)="onToggleHelp()"
+                    title="Show help">
+                    ❓
+                </button>
+                <button class="close-button" *ngIf="showCloseButton" (click)="onCloseClick()" title="Close dialog">
+                    ✖️
+                </button>
+            </div>
+        </div>
+
+        <!-- Help Overlay -->
+        <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+            <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+            <div class="help-content" (click)="$event.stopPropagation()">
+                <p [innerHTML]="dialogHelp"></p>
+            </div>
+        </div>
+
+        <!-- Dialog Content (provided by child component) -->
+        <div class="dialog-content">
+            <ng-content></ng-content>
+        </div>
+
+        <!-- Optional Dialog Footer (provided by child component) -->
+        <div class="dialog-footer" *ngIf="hasFooter">
+            <ng-content select="[slot='footer']"></ng-content>
+        </div>
+    </div>
+</div>

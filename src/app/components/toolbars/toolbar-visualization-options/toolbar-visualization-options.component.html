@@ -1,0 +1,249 @@
+<!-- Visualization Options Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="visualization-options-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock(); $event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Arrangement and Layout Style Selection -->
+        <div class="tool-section">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h4>Arrangement</h4>
+                    <div class="visualization-dropdown">
+                        <select [(ngModel)]="selectedFormat" (change)="onFormatChange(selectedFormat)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of formatOptions" [value]="option.value">
+                                {{ option.icon }} {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div style="flex: 1;" *ngIf="selectedFormat !== 'hex'">
+                    <h4>Layout Style</h4>
+                    <div class="visualization-dropdown">
+                        <select [(ngModel)]="selectedLayoutStyle" (change)="onLayoutStyleChange(selectedLayoutStyle)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of layoutStyleOptions" [value]="option.value">
+                                {{ option.icon }} {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Count Controls -->
+        <div class="tool-section">
+            <h4>Node Count</h4>
+            <div class="control-group node-count-group">
+                <label for="viz-nodes">Nodes:</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">2000</span></div>
+                <input id="viz-nodes" type="range" min="1" max="2000" step="1" [value]="nodeCount"
+                    (input)="onUpdateNodeCount($event)" />
+                <div>
+                    <input type="number" class="node-count-input" min="1" max="2000" [value]="nodeCount"
+                        (input)="onUpdateNodeCountFromInput($event)" (blur)="onNodeCountInputBlur($event)" />
+                    <button class="regenerate-btn" (click)="onRegenerateNodes()"
+                        title="Generate new random tree structure">
+                        🎲
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Size Control -->
+        <div class="tool-section">
+            <h4>Node Size</h4>
+            <div class="control-group">
+                <div class="size-buttons">
+                    <button class="size-btn" [class.active]="nodeSize === 'xsmall'" (click)="onNodeSizeChange('xsmall')"
+                        title="Extra small nodes">XS</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'small'" (click)="onNodeSizeChange('small')"
+                        title="Small nodes">S</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'medium'" (click)="onNodeSizeChange('medium')"
+                        title="Medium nodes">M</button>
+                    <button class="size-btn" [class.active]="nodeSize === 'large'" (click)="onNodeSizeChange('large')"
+                        title="Large nodes">L</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Position Control -->
+        <div class="tool-section">
+            <h5>Text Position</h5>
+            <div class="control-group">
+                <select [(ngModel)]="textPosition" (change)="onTextPositionChange(textPosition)"
+                    class="visualization-select" [class.dark-mode]="isDarkMode">
+                    <option *ngFor="let option of getTextPositionOptions()" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Link Type and Connection Controls -->
+        <div class="tool-section">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h4>Link Type</h4>
+                    <div class="control-group">
+                        <select [(ngModel)]="lineType" (change)="onLineTypeChange(lineType)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of lineTypeOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <h4>Connection</h4>
+                    <div class="control-group">
+                        <select [(ngModel)]="linkConnection" (change)="onLinkConnectionChange(linkConnection)"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
+                            <option *ngFor="let option of linkConnectionOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radius Control (Radial Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'radial'">
+            <h4>Radius</h4>
+            <div class="control-group">
+                <label for="viz-radius">Radius: {{ visualizationRadius }}px (Ideal: {{ visualizationRadiusIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">100</span><span class="max-label">{{
+                        visualizationRadiusMax }}</span></div>
+                <input id="viz-radius" type="range" min="100" [max]="visualizationRadiusMax" step="10"
+                    [value]="visualizationRadius" (input)="onRadiusChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Width Control (Horizontal Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'horizontal'">
+            <h4>Dimensions</h4>
+            <div class="control-group">
+                <label for="viz-width">Width: {{ visualizationWidth }}px (Ideal: {{ visualizationWidthIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationWidthMax }}</span></div>
+                <input id="viz-width" type="range" min="400" [max]="visualizationWidthMax" step="50"
+                    [value]="visualizationWidth" (input)="onWidthChange($event)" class="slider" />
+            </div>
+            <div class="control-group">
+                <label for="viz-height-h">Height: {{ visualizationHeight }}px (Ideal: {{ visualizationHeightIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationHeightMax }}</span></div>
+                <input id="viz-height-h" type="range" min="400" [max]="visualizationHeightMax" step="50"
+                    [value]="visualizationHeight" (input)="onHeightChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Width and Height Controls (Vertical Only) -->
+        <div class="tool-section" *ngIf="selectedFormat === 'vertical'">
+            <h4>Dimensions</h4>
+            <div class="control-group">
+                <label for="viz-width-v">Width: {{ visualizationWidth }}px (Ideal: {{ visualizationWidthIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationWidthMax }}</span></div>
+                <input id="viz-width-v" type="range" min="400" [max]="visualizationWidthMax" step="50"
+                    [value]="visualizationWidth" (input)="onWidthChange($event)" class="slider" />
+            </div>
+            <div class="control-group">
+                <label for="viz-height">Height: {{ visualizationHeight }}px (Ideal: {{ visualizationHeightIdeal
+                    }})</label><br />
+                <div class="slider-bounds"><span class="min-label">400</span><span class="max-label">{{
+                        visualizationHeightMax }}</span></div>
+                <input id="viz-height" type="range" min="400" [max]="visualizationHeightMax" step="50"
+                    [value]="visualizationHeight" (input)="onHeightChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Red Dot Center -->
+        <div class="tool-section">
+            <h4>Center Markers</h4>
+            <div style="display: flex; gap: 16px;">
+                <div class="control-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" [checked]="redDotCenterEnabled"
+                            (change)="onRedDotCenterToggle($event)" />
+                        <span>Red Dot (transforms)</span>
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" [checked]="blueDotScreenCenterEnabled"
+                            (change)="onBlueDotScreenCenterToggle($event)" />
+                        <span>Blue Dot (screen fixed)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-group" *ngIf="redDotCenterEnabled">
+                <label for="red-dot-size">Size: {{ redDotCenterSize }}px</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">50</span></div>
+                <input id="red-dot-size" type="range" min="1" max="50" step="1" [value]="redDotCenterSize"
+                    (input)="onRedDotCenterSizeChange($event)" class="slider" />
+            </div>
+            <div class="control-group" *ngIf="blueDotScreenCenterEnabled">
+                <label for="blue-dot-size">Size: {{ blueDotScreenCenterSize }}px</label><br />
+                <div class="slider-bounds"><span class="min-label">1</span><span class="max-label">50</span></div>
+                <input id="blue-dot-size" type="range" min="1" max="50" step="1" [value]="blueDotScreenCenterSize"
+                    (input)="onBlueDotScreenCenterSizeChange($event)" class="slider" />
+            </div>
+        </div>
+
+        <!-- Show Background Circle -->
+        <div class="tool-section">
+            <div class="control-group">
+                <label for="show-background-circle" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="show-background-circle" [checked]="showBackgroundCircle"
+                        (change)="onBackgroundCircleChange($event)" />
+                    <span>Show Background Circle</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

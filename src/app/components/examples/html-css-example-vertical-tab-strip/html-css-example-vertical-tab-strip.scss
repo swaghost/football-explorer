@@ -1,0 +1,410 @@
+// Vertical Tab Strip Component Styles
+// Extends base toolbar styling with vertical tab-specific styles
+
+// CSS Variable for dynamic tab width
+:host {
+  --tab-width: 35px;
+  --num-tabs: 4;
+  --tab-bg: #2196f3;
+  --tab-hover-bg: #64b5f6;
+  --tab-active-bg: #0052a3;
+  --tab-text: #333;
+  --tab-active-text: #fff;
+  --tab-border: #ccc;
+  --content-bg: #fff;
+  --content-text: #333;
+
+  &.dark-mode {
+    --tab-bg: #1976d2;
+    --tab-hover-bg: #1565c0;
+    --tab-active-bg: #0066cc;
+    --tab-text: #e0e0e0;
+    --tab-active-text: #fff;
+    --tab-border: #444;
+    --content-bg: #1e1e1e;
+    --content-text: #e0e0e0;
+  }
+}
+
+// Main vertical tab strip panel
+.vertical-tab-strip-panel {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: var(--content-bg);
+  border: 2px solid var(--tab-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: visible;
+  width: fit-content;
+  min-height: calc(var(--tab-width) * 4 + 100px);
+
+  &.dark-mode {
+    background: var(--content-bg);
+    border-color: var(--tab-border);
+  }
+
+  // Header styling from base toolbar
+  .toolbar-header {
+    padding: 8px 12px;
+    background: linear-gradient(to bottom, #f8f8f8, #f0f0f0);
+    border-bottom: 2px solid var(--tab-border);
+    cursor: move;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 36px;
+
+    &.dark-mode {
+      background: linear-gradient(to bottom, #2a2a2a, #1f1f1f);
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--content-text);
+
+      .toolbar-icon {
+        font-size: 16px;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+
+      button {
+        background: transparent;
+        border: 1px solid transparent;
+        padding: 4px 6px;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 14px;
+        transition: all 0.2s;
+        color: var(--content-text);
+
+        &:hover {
+          background: var(--tab-hover-bg);
+          border-color: var(--tab-border);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .drag-icon {
+        cursor: grab;
+        color: var(--tab-text);
+        opacity: 0.6;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+    }
+  }
+}
+
+// Tab container layout
+.tab-container {
+  display: flex;
+  flex: 1;
+  min-height: 200px;
+  gap: 0;
+  position: relative;
+  overflow: visible;
+
+  &.strip-left {
+    flex-direction: row;
+    margin-left: calc(var(--tab-width) * -1);
+    padding-left: var(--tab-width);
+  }
+
+  &.strip-right {
+    flex-direction: row-reverse;
+    margin-right: calc(var(--tab-width) * -1);
+    padding-right: var(--tab-width);
+  }
+}
+
+// Vertical Tab Strip Styling
+.vertical-tab-strip {
+  display: flex;
+  flex-direction: column;
+  width: var(--tab-width);
+  background: transparent;
+  gap: 0;
+  padding: 0;
+  flex-shrink: 0;
+  overflow: visible;
+  position: absolute;
+  top: calc(36px - 50px + 2px);
+  bottom: calc(-1 * 2px);
+  z-index: 10;
+
+  &.tab-strip-left {
+    left: calc(var(--tab-width) * -1 - 2px - 50px + 20px + 16px);
+  }
+
+  &.tab-strip-right {
+    right: calc(var(--tab-width) * -1 - 2px - 50px + 20px + 18px);
+  }
+
+  // Individual Tab Button
+  .vertical-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 110px;
+    padding: 6px 4px;
+    background: var(--tab-bg);
+    border: none;
+    color: var(--tab-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    position: relative;
+    clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+
+    // Content wrapper for icon + label
+    .tab-content-wrapper {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      height: 100%;
+      padding: 6px 8px;
+    }
+
+    .tab-icon {
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+
+    .tab-label {
+      font-size: 10px;
+      line-height: 1.2;
+      width: 100%;
+      display: inline-block;
+      transform-origin: center;
+      white-space: nowrap;
+      padding: 2px 4px;
+    }
+
+    // Hover state
+    &:not(.tab-disabled):hover {
+      background: var(--tab-hover-bg);
+      border-color: var(--tab-border);
+      box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    // Active state
+    &.tab-active {
+      background: var(--tab-active-bg);
+      color: var(--tab-active-text);
+      border-color: var(--tab-active-bg);
+      font-weight: 600;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15);
+
+      .tab-label,
+      .tab-icon {
+        color: var(--tab-active-text);
+      }
+    }
+
+    // Disabled state
+    &.tab-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f5f5f5;
+      color: #999;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+    }
+
+    // Text rotation - vertical (default)
+    &.vertical-text {
+      .tab-label {
+        writing-mode: horizontal-tb;
+        text-orientation: initial;
+      }
+    }
+
+    // Text rotation - horizontal
+    &.horizontal-text {
+      .tab-label {
+        writing-mode: horizontal-tb;
+        text-orientation: initial;
+      }
+    }
+  }
+}
+
+// Tab Content Area
+.tab-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--content-bg);
+  color: var(--content-text);
+  overflow: hidden;
+  position: relative;
+
+  &.strip-left {
+    border-left: none;
+  }
+
+  &.strip-right {
+    border-right: 2px solid var(--tab-border);
+  }
+
+  // Individual tab content
+  .tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+    height: 100%;
+
+    // Default content styling
+    .default-content {
+      h4 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--content-text);
+      }
+
+      p {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--content-text);
+        opacity: 0.8;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+// Resize Handle (from BaseToolbarComponent)
+.resize-handle {
+  height: 6px;
+  background: linear-gradient(
+    to bottom,
+    var(--tab-border),
+    transparent,
+    var(--tab-border)
+  );
+  cursor: ns-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &:hover {
+    background: linear-gradient(to bottom, #0066cc, transparent, #0066cc);
+  }
+
+  .resize-grip {
+    width: 30px;
+    height: 2px;
+    background: var(--tab-border);
+    border-radius: 1px;
+  }
+}
+
+// Scrollbar styling for tab strip and content
+.vertical-tab-strip,
+.tab-content {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  &.dark-mode {
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+
+// Animation for tab switch
+.tab-content {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .vertical-tab-strip {
+    width: 36px;
+
+    .vertical-tab {
+      min-height: 36px;
+      padding: 4px 2px;
+
+      .tab-label {
+        font-size: 9px;
+      }
+
+      .tab-icon {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .tab-content-area {
+    .tab-content {
+      padding: 12px;
+    }
+  }
+}

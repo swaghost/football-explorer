@@ -1,0 +1,180 @@
+<div class="to-do-drawer" [class.dark-mode]="isDarkMode">
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <label>Target Type:</label>
+            <select [(ngModel)]="selectedTargetType" (change)="onFilterChange()">
+                <option value="All">All</option>
+                <option value="Development">Development</option>
+                <option value="Architecting">Architecting</option>
+                <option value="Teaching">Teaching</option>
+                <option value="Exploration">Exploration</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Status:</label>
+            <select [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+                <option value="">All Statuses</option>
+                <option *ngFor="let status of allStatuses" [value]="status">
+                    {{ status }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bulk-actions" *ngIf="selectedEntries.size > 0">
+        <span class="selection-count">{{ selectedEntries.size }} selected</span>
+        <div class="action-buttons">
+            <button class="btn-action" (click)="bulkUpdateStatus('Open')" title="Mark as Open">
+                Open
+            </button>
+            <button class="btn-action" (click)="bulkUpdateStatus('Ready')" title="Mark as Ready">
+                Ready
+            </button>
+            <button class="btn-action" (click)="bulkUpdateStatus('On Hold')" title="Mark as On Hold">
+                Hold
+            </button>
+            <button class="btn-action" (click)="bulkTogglePin()" title="Toggle pin status">
+                Pin
+            </button>
+            <button class="btn-action btn-danger" (click)="bulkDelete()" title="Delete selected">
+                Delete
+            </button>
+        </div>
+    </div>
+
+    <!-- To-Do List -->
+    <div class="to-do-list">
+        <div *ngIf="filteredEntries$ | async as entries" class="entries-container">
+            <div *ngIf="entries.length === 0" class="no-entries">
+                No to-do entries found
+            </div>
+
+            <ng-container *ngFor="let entry of entries">
+                <div class="to-do-item" [class.pinned]="entry.pinned"
+                    [class.selected]="selectedEntries.has(entry.toDoID)">
+                    <div class="item-header">
+                        <input type="checkbox" [checked]="selectedEntries.has(entry.toDoID)"
+                            (change)="toggleSelection(entry.toDoID)" class="item-checkbox" />
+
+                        <div class="item-title-section">
+                            <h4 class="item-title">{{ entry.title }}</h4>
+                            <div class="item-meta">
+                                <button *ngIf="entry.description || hasChildren(entry.toDoID)"
+                                    class="btn-expand-compact" (click)="toggleExpanded(entry.toDoID)" [title]="
+                          (expandedDescriptions.has(entry.toDoID) || expandedChildren.has(entry.toDoID))
+                            ? 'Hide details'
+                            : 'Show details'
+                        ">
+                                    {{ (expandedDescriptions.has(entry.toDoID) || expandedChildren.has(entry.toDoID)) ?
+                                    '▼' : '▶' }}
+                                </button>
+                                <span class="badge status" [ngClass]="entry.status.toLowerCase()">
+                                    {{ entry.status }}
+                                </span>
+                                <span class="badge priority" [ngClass]="entry.priority.toLowerCase()">
+                                    {{ entry.priority }}
+                                </span>
+                                <span class="badge target-type">{{ entry.targetType }}</span>
+                                <span class="badge specific-target-type">{{
+                                    entry.specificTargetType
+                                    }}</span>
+                            </div>
+                        </div>
+
+                        <div class="item-actions">
+                            <!-- Add child button -->
+                            <button class="btn-icon btn-add-child" (click)="addChildToEntry(entry)"
+                                title="Add child to-do">
+                                ➕
+                            </button>
+
+                            <button class="btn-icon" (click)="editEntry(entry)" title="Edit entry">
+                                ✏️
+                            </button>
+                            <button class="btn-icon" [class.pinned]="entry.pinned" (click)="togglePin(entry)"
+                                title="Toggle pin">
+                                📌
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="item-description" *ngIf="entry.description && expandedDescriptions.has(entry.toDoID)">
+                        {{ entry.description }}
+                    </div>
+
+                    <div class="item-target" *ngIf="entry.target">
+                        <small>Target: {{ entry.target }}</small>
+                    </div>
+
+                    <!-- Children section -->
+                    <div class="children-section"
+                        *ngIf="expandedChildren.has(entry.toDoID) && hasChildren(entry.toDoID)">
+                        <div *ngFor="let child of getChildrenOfEntry(entry.toDoID)" class="child-to-do-item">
+                            <div class="child-item-header">
+                                <input type="checkbox" [checked]="selectedEntries.has(child.toDoID)"
+                                    (change)="toggleSelection(child.toDoID)" class="item-checkbox" />
+
+                                <div class="child-item-title-section">
+                                    <h5 class="child-item-title">{{ child.title }}</h5>
+                                    <div class="item-meta">
+                                        <button *ngIf="child.description" class="btn-expand-compact"
+                                            (click)="toggleDescription(child.toDoID)" [title]="
+                                  expandedDescriptions.has(child.toDoID)
+                                    ? 'Hide description'
+                                    : 'Show description'
+                                ">
+                                            {{ expandedDescriptions.has(child.toDoID) ? '▼' : '▶' }}
+                                        </button>
+                                        <span class="badge status" [ngClass]="child.status.toLowerCase()">
+                                            {{ child.status }}
+                                        </span>
+                                        <span class="badge priority" [ngClass]="child.priority.toLowerCase()">
+                                            {{ child.priority }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="item-actions">
+                                    <!-- Add sub-child button -->
+                                    <button class="btn-icon btn-add-child" (click)="addChildToEntry(child)"
+                                        title="Add sub-to-do">
+                                        ➕
+                                    </button>
+
+                                    <button class="btn-icon" (click)="editEntry(child)" title="Edit entry">
+                                        ✏️
+                                    </button>
+                                    <button class="btn-icon" [class.pinned]="child.pinned" (click)="togglePin(child)"
+                                        title="Toggle pin">
+                                        📌
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="item-description"
+                                *ngIf="child.description && expandedDescriptions.has(child.toDoID)">
+                                {{ child.description }}
+                            </div>
+
+                            <div class="item-target" *ngIf="child.target">
+                                <small>Target: {{ child.target }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <app-confirmation-dialog [visible]="showDeleteConfirmation" title="Delete To-Do Entries" [message]="
+      'Delete ' +
+      selectedEntries.size +
+      ' to-do ' +
+      (selectedEntries.size === 1 ? 'entry' : 'entries') +
+      '? This cannot be undone.'
+    " confirmText="Delete" cancelText="Cancel" (confirmed)="onDeleteConfirmed($event)">
+        </app-confirmation-dialog>
+    </div>

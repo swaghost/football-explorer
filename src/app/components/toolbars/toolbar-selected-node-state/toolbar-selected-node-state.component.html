@@ -1,0 +1,29 @@
+<!-- Selected Node State Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="status-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <div class="status-info" *ngIf="selectedNode">
+            Selected Node: <strong>{{ selectedNode }}</strong>
+        </div>
+        <div class="status-info" *ngIf="!selectedNode">No node selected</div>
+    </div>
+</div>

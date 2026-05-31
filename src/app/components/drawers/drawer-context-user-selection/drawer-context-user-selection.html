@@ -1,0 +1,59 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Select Context User'" [drawerId]="'player-selection-drawer'"
+    [drawerHelp]="drawerHelp" (close)="onClose()">
+    <div class="player-drawer-content">
+        <!-- Current Selection Display -->
+        <div class="current-selection-section" *ngIf="selectedUser">
+            <h4>Current Context</h4>
+            <div class="current-user-display">
+                <div class="user-icon">👤</div>
+                <div class="user-info">
+                    <div class="user-name">{{ getUserDisplayName(selectedUser) }}</div>
+                    <div class="user-relationship">{{ getUserRelationship(selectedUser) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" *ngIf="selectedUser"></div>
+
+        <!-- User Selection List -->
+        <div class="user-list-section">
+            <h4>Who are you acting as?</h4>
+            <div class="user-list">
+                <!-- "Me" option if user can select themselves -->
+                <div *ngIf="canSelectSelf && loggedInUser" class="user-item"
+                    [class.selected]="isUserSelected(loggedInUser.UserId)"
+                    [class.disabled]="!isUserAssumable(loggedInUser)"
+                    [title]="!isUserAssumable(loggedInUser) ? 'Not assumable.' : ''"
+                    (click)="onUserSelect(loggedInUser)">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="isUserSelected(loggedInUser.UserId)">✓</span>
+                        <span class="checkbox" *ngIf="!isUserSelected(loggedInUser.UserId)">□</span>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-line-1">Me</div>
+                        <div class="user-line-1">{{ loggedInUser.FirstName }} {{ loggedInUser.LastName }}</div>
+                        <div class="user-line-3">{{ getUserEmail(loggedInUser) }}</div>
+                    </div>
+                </div>
+
+                <!-- Related users (excluding self if already shown above) -->
+                <div *ngFor="let user of availableUsers" class="user-item"
+                    [class.selected]="isUserSelected(user.UserId)" [class.disabled]="!isUserAssumable(user)"
+                    [title]="!isUserAssumable(user) ? 'Not assumable.' : ''"
+                    [hidden]="canSelectSelf && loggedInUser && user.UserId === loggedInUser.UserId"
+                    (click)="onUserSelect(user)">
+                    <div class="checkbox-container">
+                        <span class="checkmark" *ngIf="isUserSelected(user.UserId)">✓</span>
+                        <span class="checkbox" *ngIf="!isUserSelected(user.UserId)">□</span>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-line-1">{{ getUserDisplayName(user) }}</div>
+                        <div class="user-line-2">{{ getUserRelationship(user) }}</div>
+                        <div class="user-line-3">{{ getUserEmail(user) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

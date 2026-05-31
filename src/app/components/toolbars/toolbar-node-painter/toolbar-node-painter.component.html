@@ -1,0 +1,92 @@
+<!-- Node Painter Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="node-painter-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Node Modification Tools -->
+    <div class="tool-section" *ngIf="expanded">
+        <!-- Two-Column Button Grid -->
+        <div class="button-grid">
+            <button class="tool-button add-child" [disabled]="!isNodeSelected" (click)="onAddChild($event)"
+                title="ADD CHILD - Add a new child node to the selected node">
+                <span class="button-icon">➕</span>
+            </button>
+
+            <button class="tool-button reparent-node" [disabled]="!isNodeSelected" (click)="onReparentNode($event)"
+                title="REPARENT - Move the selected node to a different parent">
+                <span class="button-icon">🔗</span>
+            </button>
+
+            <button class="tool-button insert-between" [disabled]="!isNodeSelected" (click)="onInsertBetween($event)"
+                title="INSERT BETWEEN - Insert a new node between the selected node and its parent">
+                <span class="button-icon">📌</span>
+            </button>
+
+            <button class="tool-button promote-node" [disabled]="!isNodeSelected" (click)="onPromoteNode($event)"
+                title="PROMOTE - Make the selected node a sibling of its parent">
+                <span class="button-icon">⬆️</span>
+            </button>
+
+            <button class="tool-button delete-node" [disabled]="!isNodeSelected" (click)="onDeleteNode($event)"
+                title="DELETE">
+                <span class="button-icon">🗑️</span>
+            </button>
+
+            <button class="tool-button edit-node" [disabled]="!isNodeSelected" (click)="onEditNode($event)"
+                title="EDIT">
+                <span class="button-icon">✏️</span>
+            </button>
+
+            <button class="tool-button clear-children" [disabled]="!isNodeSelected || !selectedNodeHasChildren"
+                (click)="onClearChildren($event)" title="CLEAR CHILDREN - Clear all children from the selected node">
+                <span class="button-icon">🧹</span>
+            </button>
+
+            <button class="tool-button promote-children" [disabled]="!isNodeSelected || !selectedNodeHasChildren"
+                (click)="onPromoteChildren($event)"
+                title="DEMOTE - Make all the children of the selected node into siblings of the selected node">
+                <span class="button-icon">⬆️</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer with selected node info -->
+    <div class="panel-footer" *ngIf="expanded">
+        <div class="footer-stats">
+            <span class="stat-item" *ngIf="isNodeSelected">
+                Selected: <strong>{{ selectedNode }}</strong>
+            </span>
+            <span class="stat-item" *ngIf="!isNodeSelected">
+                No node selected
+            </span>
+        </div>
+    </div>
+</div>

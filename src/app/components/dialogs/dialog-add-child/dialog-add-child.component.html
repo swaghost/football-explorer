@@ -1,0 +1,38 @@
+<!-- Add Child Dialog -->
+<app-base-dialog [visible]="visible" [title]="title" [icon]="'➕'" [isDarkMode]="isDarkMode" [maxWidth]="'600px'"
+    (close)="onCancel()">
+    <div class="form-section">
+        <div class="field-info">
+            <span class="info-icon">ℹ️</span>
+            <span class="info-text">Adding child to node: <strong>{{ parentNodeId }}</strong></span>
+        </div>
+
+        <div class="form-group">
+            <label for="childName">Child Node Name <span class="required">*</span></label>
+            <input id="childName" type="text" class="form-input" [(ngModel)]="childName"
+                placeholder="Enter child node name" maxlength="50" required />
+            <div class="field-help">
+                The name for the new child node (required)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="childDescription">Description</label>
+            <textarea id="childDescription" class="form-textarea" [(ngModel)]="childDescription"
+                placeholder="Enter child node description (optional)" rows="3" maxlength="500"></textarea>
+            <div class="field-help">
+                Optional description for the child node
+            </div>
+        </div>
+    </div>
+
+    <div slot="footer" class="modal-footer">
+        <button class="btn btn-secondary" (click)="onCancel()" title="Cancel and close dialog">
+            Cancel
+        </button>
+        <button class="btn btn-primary" [disabled]="!isFormValid" (click)="onConfirm()" title="Create the child node">
+            <span class="button-icon">➕</span>
+            {{ confirmButtonText }}
+        </button>
+    </div>
+</app-base-dialog>

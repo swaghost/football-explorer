@@ -1,0 +1,130 @@
+<!-- Technique Explorer Panel (Using Base Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="technique-explorer-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <!-- Custom header buttons (favorites and bookmark) -->
+            <!-- Favorites Star Button (Chrome-style) -->
+            <button class="star-button header-btn" [ngClass]="{'favorited': isFavorite}"
+                (click)="onToggleFavorite($event)" [title]="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+                *ngIf="selectedNode">
+                ⭐
+            </button>
+            <!-- Bookmark Button (Firefox-style) -->
+            <button class="bookmark-button header-btn" [ngClass]="{'bookmarked': isBookmarked}"
+                (click)="onToggleBookmark($event)" [title]="isBookmarked ? 'Remove bookmark' : 'Add bookmark'"
+                *ngIf="selectedNode">
+                🔖
+            </button>
+            <!-- Share Button (only for system datasets) -->
+            <button class="share-button header-btn" [ngClass]="{'copied': shareUrlCopied}" (click)="onShare($event)"
+                [disabled]="!isShareEnabled" [title]="shareUrlCopied ? 'URL copied!' : 'Share node (copy URL)'"
+                *ngIf="selectedNode">
+                🔗
+            </button>
+            <!-- Standard toolbar buttons from base component -->
+            <button class="help-toggle header-btn" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle header-btn" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button header-btn" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle header-btn" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Fixed Node Title Section - Outside scrollable area -->
+        <div class="node-title-section" *ngIf="isExploratoryMode && selectedNode && nodeData">
+            <h5 class="node-title">{{ selectedNode }} - {{ nodeData?.name || 'Unknown Node' }}</h5>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="node-content" #nodeContent>
+            <!-- Waiting Mode - No node selected -->
+            <div class="waiting-mode" *ngIf="isWaitingMode">
+                <div class="waiting-icon">{{ toolbarIcon }}</div>
+                <p class="waiting-message">To begin exploring, select a node to explore</p>
+            </div>
+
+            <!-- Show node description when there's a selected node (Exploratory Mode) -->
+            <div class="node-details" *ngIf="isExploratoryMode && selectedNode && nodeData">
+                <div class="node-description-section">
+                    <div class="node-description-content" [innerHTML]="getNodeDescription()"></div>
+                    <!-- Video Section - Embedded in description area -->
+                    <div class="node-video-container"
+                        [style.display]="(nodeData?.videoUrl && nodeData.videoUrl.trim()) ? 'block' : 'none'">
+                        <!-- Debug info -->
+                        <div class="video-debug" style="font-size: 10px; color: #666; margin-bottom: 5px;">
+                            Node: {{selectedNode}} | Video: {{nodeData.videoUrl}}
+                        </div>
+                        <video #techniqueVideo autoplay loop muted class="node-video-inline"
+                            (click)="toggleVideoMute(techniqueVideo)" (loadstart)="onVideoLoadStart(techniqueVideo)"
+                            (canplay)="onVideoCanPlay(techniqueVideo)" [src]="nodeData.videoUrl">
+                            <source [src]="nodeData.videoUrl" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Row - Fixed at bottom (outside scrollable content) -->
+    <div class="action-row" *ngIf="expanded">
+        <!-- Completion Status Message -->
+        <div class="completion-status" *ngIf="isCurrentNodeCompleted">
+            <span class="completion-message">
+                ✅ Completed {{ currentNodeCompletionDate | date:'shortDate' }}
+            </span>
+        </div>
+        <!-- Last Visited Message (left-aligned) -->
+        <div class="last-visited" *ngIf="hasBeenVisitedBefore">
+            <span class="visit-message">
+                Last visited {{ lastVisitedText }}
+            </span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn complete-btn" [disabled]="isCurrentNodeCompleted" (click)="markAsCompleted()"
+                title="Mark this node as completed">
+                Complete
+            </button>
+            <button class="action-btn review-btn" [disabled]="!isCurrentNodeCompleted" (click)="markAsNeedsReview()"
+                title="Mark this completed node for review">
+                Needs Review
+            </button>
+        </div>
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>
+
+<!-- Content Quality Survey Dialog -->
+<app-dialog-lesson-survey [visible]="showSurveyDialog" [isDarkMode]="isDarkMode" [lessonId]="''" [lessonTitle]="''"
+    [nodeId]="currentNodeExplorationId || selectedNode || ''" [nodeName]="nodeData?.name || 'Unknown Node'"
+    [surveyType]="'node'" (submit)="onSurveySubmitted($event)" (skip)="onSurveySkipped()"
+    (close)="onSurveyDialogClosed()">
+</app-dialog-lesson-survey>

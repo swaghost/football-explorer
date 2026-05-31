@@ -1,0 +1,39 @@
+<!-- Example HTML template integration -->
+<!-- Replace the existing dialog HTML with the new component usage -->
+
+<!-- OLD: Inline dialog HTML (remove this) -->
+<!--
+<div class="modal-overlay" *ngIf="showEditTeamGroupDialog" (click)="closeEditTeamGroupDialog()">
+    <div class="team-group-edit-dialog" (click)="$event.stopPropagation()">
+        ... entire dialog content ...
+    </div>
+</div>
+-->
+
+<!-- NEW: Use the dialog component instead -->
+<app-dialog-edit-team-group [visible]="showEditTeamGroupDialog" [editingTeamGroup]="editingTeamGroup"
+    [selectedTeam]="selectedTeam" [playerSortBy]="playerSortBy" [playerSortOptions]="playerSortOptions"
+    [tempSelectedPlayerIds]="tempSelectedPlayerIds" (close)="onEditTeamGroupDialogClose()"
+    (save)="onEditTeamGroupDialogSave()" (playerSortChange)="onPlayerSortChange($event)"
+    (tempPlayerCheckboxChange)="onTempPlayerCheckboxChange($event)">
+</app-dialog-edit-team-group>
+
+<!-- Repeat this pattern for all other dialogs -->
+<app-dialog-edit-player [visible]="isPlayerEditPopupOpen" [editingPlayer]="editingPlayer"
+    [availablePositions]="getAvailablePositions()" [availableGenders]="getAvailableGenders()"
+    [availableAgeGroups]="getAvailableAgeGroups()" (close)="closePlayerEditPopup()" (save)="savePlayerChanges()"
+    (positionChange)="onPositionChange()" (genderChange)="onGenderChange()" (ageGroupChange)="onAgeGroupChange()">
+</app-dialog-edit-player>
+
+<app-dialog-add-player [visible]="isAddPlayerPopupOpen" [newPlayer]="newPlayer"
+    [availablePositions]="getAvailablePositions()" [availableGenders]="getAvailableGenders()"
+    [availableAgeGroups]="getAvailableAgeGroups()" [availableTeamGroups]="getAvailableTeamGroups()"
+    [selectedTeam]="selectedTeam" [newPlayerPositions]="newPlayerPositions"
+    [newPlayerPrimaryPosition]="newPlayerPrimaryPosition" [selectedTeamGroupIds]="selectedTeamGroupIds"
+    (close)="closeAddPlayerPopup()" (save)="saveNewPlayer()" (genderChange)="onNewPlayerGenderChange()"
+    (ageGroupChange)="onNewPlayerAgeGroupChange()"
+    (positionCheckboxChange)="onPositionCheckboxChange($event.position, $event.event)"
+    (teamGroupCheckboxChange)="onTeamGroupCheckboxChange($event.teamGroupId, $event.event)">
+</app-dialog-add-player>
+
+<!-- Continue with all other dialogs... -->

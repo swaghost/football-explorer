@@ -1,0 +1,78 @@
+<!-- Import/Export Panel (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="import-export-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+
+        <!-- Template Section -->
+        <div class="form-group">
+            <h4 class="section-title">📋 Templates</h4>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary icon-button" (click)="onDownloadTemplate()"
+                    title="Download roster template CSV file">
+                    📥 Download Template
+                </button>
+                <button type="button" class="btn btn-info icon-button" (click)="onDownloadTestFile()"
+                    title="Download mock roster for testing upload">
+                    📄 Download Test File
+                </button>
+            </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="form-group">
+            <h4 class="section-title">📤 Import</h4>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-secondary icon-button" [disabled]="!isTeamSelected"
+                    (click)="onImportRoster()"
+                    [title]="isTeamSelected ? 'Import roster from CSV file' : 'Select a team first to import roster'">
+                    📤 Import Roster
+                </button>
+            </div>
+            <div class="help-text" *ngIf="!isTeamSelected">
+                <small class="warning-text">⚠️ Please select a team first to import roster data.</small>
+            </div>
+            <div class="help-text" *ngIf="isTeamSelected">
+                <small>Import roster from CSV file. Required fields: Last Name, First Name, Email address.</small>
+            </div>
+
+            <!-- File upload input (hidden) -->
+            <input type="file" #fileInput accept=".csv" (change)="onFileSelected($event)" style="display: none;">
+        </div>
+
+        <!-- Export Section (Future) -->
+        <div class="form-group">
+            <h4 class="section-title">💾 Export</h4>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-info icon-button" disabled title="Export team data (Coming Soon)">
+                    💾 Export Data
+                </button>
+            </div>
+            <div class="help-text">
+                <small>Export functionality will be available soon.</small>
+            </div>
+        </div>
+
+    </div>
+</div>

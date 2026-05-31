@@ -1,0 +1,442 @@
+<div class="gsap-soccer-container" [class]="'toolbar-' + toolbarSide">
+    <!-- Icon Toolbar -->
+    <div class="icon-toolbar" [class]="'toolbar-' + toolbarSide">
+        <button class="toolbar-icon" (click)="openDrawerExclusive('sequence')"
+            [class.active]="openDrawer === 'sequence'" title="Sequence Controls">
+            📹
+        </button>
+        <button class="toolbar-icon" (click)="openDrawerExclusive('view')" [class.active]="openDrawer === 'view'"
+            title="View Options">
+            👁️
+        </button>
+        <button class="toolbar-icon" (click)="openDrawerExclusive('formations')"
+            [class.active]="openDrawer === 'formations'" title="Formation Presets">
+            📍
+        </button>
+        <button class="toolbar-icon" (click)="openDrawerExclusive('players')" [class.active]="openDrawer === 'players'"
+            title="Team Colors & Players">
+            👥
+        </button>
+    </div>
+
+    <!-- Control Drawers -->
+    <div class="control-drawer-overlay" *ngIf="openDrawer" (click)="closeDrawer()"></div>
+
+    <!-- Sequence Drawer -->
+    <div class="control-drawer" *ngIf="openDrawer === 'sequence'" [class]="'drawer-' + toolbarSide">
+        <div class="drawer-header">
+            <h3>Sequence</h3>
+            <button class="drawer-close" (click)="closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+            <button (click)="newSequence()" class="btn-secondary">🆕 New</button>
+            <button (click)="saveSequence()" [disabled]="currentSequence.keyframes.length === 0" class="btn-primary">💾
+                Save</button>
+            <button (click)="exportSequence()" [disabled]="currentSequence.keyframes.length === 0"
+                class="btn-secondary">📤 Export</button>
+            <label class="btn-secondary file-label">
+                📥 Import
+                <input type="file" accept=".json" (change)="importSequence($event)" style="display: none;">
+            </label>
+        </div>
+    </div>
+
+    <!-- View Options Drawer -->
+    <div class="control-drawer" *ngIf="openDrawer === 'view'" [class]="'drawer-' + toolbarSide">
+        <div class="drawer-header">
+            <h3>View Options</h3>
+            <button class="drawer-close" (click)="closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+            <label class="select-label">
+                Field Grid:
+                <select [(ngModel)]="selectedFieldGrid" class="field-select">
+                    <option *ngFor="let option of fieldGridOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="showGrid">
+                Show Grid
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="snapToGrid">
+                Snap to Grid
+            </label>
+            <button (click)="resetPositions()" class="btn-secondary">🔄 Reset Positions</button>
+        </div>
+    </div>
+
+    <!-- Formation Presets Drawer -->
+    <div class="control-drawer" *ngIf="openDrawer === 'formations'" [class]="'drawer-' + toolbarSide">
+        <div class="drawer-header">
+            <h3>Formation Presets</h3>
+            <button class="drawer-close" (click)="closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+            <label class="select-label">
+                Select Preset:
+                <select [(ngModel)]="selectedFormationPreset" class="field-select">
+                    <option [value]="null">-- Select a preset --</option>
+                    <optgroup label="[SYSTEM] Base Formations">
+                        <option *ngFor="let formation of baseFormations"
+                            [ngValue]="{ type: 'system', value: formation }">
+                            {{ formation.baseFormatName }}
+                        </option>
+                    </optgroup>
+                    <optgroup label="[CUSTOM] Saved Presets" *ngIf="customFormationPresets.length > 0">
+                        <option *ngFor="let preset of customFormationPresets"
+                            [ngValue]="{ type: 'custom', value: preset }">
+                            {{ preset.name }}
+                        </option>
+                    </optgroup>
+                </select>
+            </label>
+            <div class="button-group">
+                <button (click)="applySelectedFormationPreset()" [disabled]="!selectedFormationPreset"
+                    class="btn-primary">📍 Apply</button>
+                <button (click)="openSaveFormationPresetDialog()" class="btn-secondary">💾 Save</button>
+            </div>
+            <div class="button-group">
+                <button (click)="openOverwritePresetDialog()"
+                    [disabled]="!selectedFormationPreset || selectedFormationPreset.type === 'system'"
+                    class="btn-secondary">💾 Overwrite</button>
+                <button (click)="deleteSelectedFormationPreset()"
+                    [disabled]="!selectedFormationPreset || selectedFormationPreset.type === 'system'"
+                    class="btn-danger">🗑️ Delete</button>
+            </div>
+            <div class="button-group">
+                <button (click)="exportFormationPresets()" [disabled]="customFormationPresets.length === 0"
+                    class="btn-secondary">📤 Export</button>
+                <label class="btn-secondary file-label">
+                    📥 Import
+                    <input type="file" accept=".json" (change)="importFormationPresets($event)" style="display: none;">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Players Drawer -->
+    <div class="control-drawer" *ngIf="openDrawer === 'players'" [class]="'drawer-' + toolbarSide">
+        <div class="drawer-header">
+            <h3>Team Colors & Players</h3>
+            <button class="drawer-close" (click)="closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+            <label class="color-label">
+                Home:
+                <input type="color" [(ngModel)]="homeTeamColor" (change)="updateTeamColors()" class="color-input">
+                <span class="color-value">{{ homeTeamColor }}</span>
+            </label>
+            <label class="color-label">
+                Away:
+                <input type="color" [(ngModel)]="awayTeamColor" (change)="updateTeamColors()" class="color-input">
+                <span class="color-value">{{ awayTeamColor }}</span>
+            </label>
+            <button (click)="openPlayerSelectionDialog()" class="btn-primary">👥 Players</button>
+        </div>
+    </div>
+
+    <!-- Player Selection Dialog -->
+    <div *ngIf="showPlayerSelectionDialog" class="dialog-overlay" (click)="closePlayerSelectionDialog()">
+        <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Select Players</h2>
+                <button class="btn-close" (click)="closePlayerSelectionDialog()">✕</button>
+            </div>
+
+            <div class="dialog-body">
+                <div class="player-selection-grid">
+                    <!-- Home Team Players -->
+                    <div class="team-column">
+                        <h3>Home Team</h3>
+                        <div class="button-group">
+                            <button (click)="selectAllHomePlayers()" class="btn-small btn-primary">
+                                Select All
+                            </button>
+                            <button (click)="deselectAllHomePlayers()" class="btn-small btn-secondary">
+                                Deselect All
+                            </button>
+                        </div>
+                        <div class="player-checkboxes">
+                            <label *ngFor="let playerNumber of allPlayerNumbers" class="player-checkbox">
+                                <input type="checkbox" [checked]="selectedHomePlayerNumbers.includes(playerNumber)"
+                                    (change)="toggleHomePlayer(playerNumber)">
+                                <span class="player-info">
+                                    #{{ playerNumber }} - {{ getPositionAbbrev(playerNumber) }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Away Team Players -->
+                    <div class="team-column">
+                        <h3>Away Team</h3>
+                        <div class="button-group">
+                            <button (click)="selectAllAwayPlayers()" class="btn-small btn-primary">
+                                Select All
+                            </button>
+                            <button (click)="deselectAllAwayPlayers()" class="btn-small btn-secondary">
+                                Deselect All
+                            </button>
+                        </div>
+                        <div class="player-checkboxes">
+                            <label *ngFor="let playerNumber of allPlayerNumbers" class="player-checkbox">
+                                <input type="checkbox" [checked]="selectedAwayPlayerNumbers.includes(playerNumber)"
+                                    (change)="toggleAwayPlayer(playerNumber)">
+                                <span class="player-info">
+                                    #{{ playerNumber }} - {{ getPositionAbbrev(playerNumber) }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button (click)="applyPlayerSelection()" class="btn-primary">
+                    ✓ Apply
+                </button>
+                <button (click)="closePlayerSelectionDialog()" class="btn-secondary">
+                    ✕ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Formation Preset Dialog -->
+    <div *ngIf="showSaveFormationPresetDialog" class="dialog-overlay" (click)="closeSaveFormationPresetDialog()">
+        <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Save as Formation Preset</h2>
+                <button class="btn-close" (click)="closeSaveFormationPresetDialog()">✕</button>
+            </div>
+
+            <div class="dialog-body">
+                <label class="input-label">
+                    Preset Name:
+                    <input type="text" [(ngModel)]="formationPresetName" placeholder="e.g., Counter Attack Formation"
+                        class="text-input">
+                </label>
+                <label class="input-label">
+                    Description (optional):
+                    <textarea [(ngModel)]="formationPresetDescription" placeholder="Add notes about this formation..."
+                        class="textarea-input"></textarea>
+                </label>
+            </div>
+
+            <div class="dialog-footer">
+                <button (click)="saveCurrentAsFormationPreset()" [disabled]="!formationPresetName.trim()"
+                    class="btn-primary">
+                    💾 Save Preset
+                </button>
+                <button (click)="closeSaveFormationPresetDialog()" class="btn-secondary">
+                    ✕ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overwrite Formation Preset Confirmation Dialog -->
+    <div *ngIf="showOverwritePresetDialog" class="dialog-overlay" (click)="closeOverwritePresetDialog()">
+        <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Overwrite Formation Preset</h2>
+                <button class="btn-close" (click)="closeOverwritePresetDialog()">✕</button>
+            </div>
+
+            <div class="dialog-body">
+                <p class="confirmation-text">
+                    Are you sure you want to overwrite the preset <strong>"{{ selectedCustomPreset?.name }}"</strong>?
+                </p>
+                <p class="confirmation-text-secondary">
+                    This will replace its saved positions, colors, and player selections with the current state.
+                </p>
+            </div>
+
+            <div class="dialog-footer">
+                <button (click)="overwriteCustomFormationPreset()" class="btn-danger">
+                    ⚠️ Yes, Overwrite
+                </button>
+                <button (click)="closeOverwritePresetDialog()" class="btn-secondary">
+                    ✕ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Keyframe Dialog -->
+    <div *ngIf="showExportKeyframeDialog" class="dialog-overlay" (click)="closeExportKeyframeDialog()">
+        <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Export Keyframe</h2>
+                <button class="btn-close" (click)="closeExportKeyframeDialog()">✕</button>
+            </div>
+
+            <div class="dialog-body">
+                <label class="input-label">
+                    Keyframe Name:
+                    <input type="text" [(ngModel)]="exportKeyframeName" placeholder="e.g., Attacking Position"
+                        class="text-input">
+                </label>
+                <label class="input-label">
+                    Description (optional):
+                    <textarea [(ngModel)]="exportKeyframeDescription" placeholder="Add notes about this keyframe..."
+                        class="textarea-input"></textarea>
+                </label>
+            </div>
+
+            <div class="dialog-footer">
+                <button (click)="exportKeyframe()" [disabled]="!exportKeyframeName.trim()" class="btn-primary">
+                    📤 Export Keyframe
+                </button>
+                <button (click)="closeExportKeyframeDialog()" class="btn-secondary">
+                    ✕ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Field Panel with Controls Below -->
+        <div class="field-panel">
+            <!-- Soccer Field -->
+            <div class="field-container">
+                <svg #svgContainer [attr.width]="fieldWidth + fieldPadding * 2"
+                    [attr.height]="fieldHeight + fieldPadding * 2"
+                    [attr.viewBox]="'0 0 ' + (fieldWidth + fieldPadding * 2) + ' ' + (fieldHeight + fieldPadding * 2)">
+                    <defs>
+                        <pattern id="grass-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <rect width="100" height="100" fill="#2ECC71" />
+                            <rect width="100" height="100" fill="#27AE60" opacity="0.3" />
+                        </pattern>
+                        <pattern id="grid-pattern" x="0" y="0" [attr.width]="gridSize" [attr.height]="gridSize"
+                            patternUnits="userSpaceOnUse">
+                            <path [attr.d]="'M ' + gridSize + ' 0 L 0 0 0 ' + gridSize" fill="none"
+                                stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                        </pattern>
+                    </defs>
+                    <g [attr.transform]="'translate(' + fieldPadding + ',' + fieldPadding + ')'">
+                        <image [attr.href]="getFieldGridPath()" x="0" y="0" [attr.width]="fieldWidth"
+                            [attr.height]="fieldHeight" preserveAspectRatio="none" />
+                        <rect *ngIf="showGrid" x="0" y="0" [attr.width]="fieldWidth" [attr.height]="fieldHeight"
+                            fill="url(#grid-pattern)" />
+                        <g id="soccer-ball" [attr.transform]="getBallTransform()" class="ball-group">
+                            <circle r="11" fill="#fff" stroke="#333" stroke-width="1" />
+                            <polygon points="0,-8 4.8,-2.4 3,-6.8 -3,-6.8 -4.8,-2.4" fill="#000" />
+                            <polygon points="-6,-4 -3,-6 0,-4.5 0,-1.5 -3,-3 -6,-1.5" fill="#000" />
+                            <polygon points="6,-4 3,-6 0,-4.5 0,-1.5 3,-3 6,-1.5" fill="#000" />
+                            <polygon points="-6,4 -4.8,2.4 -3,6.8 3,6.8 0,3" fill="#000" />
+                            <polygon points="6,4 4.8,2.4 3,6.8 -3,6.8 0,3" fill="#000" />
+                            <polygon points="-3,-1 0,-2 3,-1 3,1 0,2 -3,1" fill="#000" />
+                            <circle r="11" fill="none" stroke="#000" stroke-width="0.5" opacity="0.2" />
+                        </g>
+                        <g *ngFor="let player of players" [attr.id]="player.id"
+                            [attr.transform]="getPlayerTransform(player)" class="player-group"
+                            [class.selected]="selectedPlayer?.id === player.id">
+                            <circle r="15" [attr.fill]="player.color" stroke="#fff" stroke-width="2"
+                                class="player-circle" />
+                            <text text-anchor="middle" dy="5" class="player-number" fill="#fff" font-size="14"
+                                font-weight="bold">{{ player.number }}</text>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Playback Controls Below Field -->
+            <div class="playback-controls">
+                <div class="vcr-buttons">
+                    <button (click)="rewind()" [disabled]="isPlaying" class="vcr-btn"
+                        title="Rewind to start">⏮️</button>
+                    <button (click)="previousKeyframe()"
+                        [disabled]="isPlaying || currentSequence.keyframes.length === 0" class="vcr-btn"
+                        title="Go to previous keyframe">⬅️</button>
+                    <button (click)="toggleRecording()" [class.recording]="isRecording" class="vcr-btn vcr-record"
+                        title="Toggle recording">⏺️</button>
+                    <button (click)="play()" [disabled]="isPlaying || currentSequence.keyframes.length < 2"
+                        class="vcr-btn vcr-play" title="Play">▶️</button>
+                    <button (click)="pause()" [disabled]="!isPlaying" class="vcr-btn" title="Pause">⏸️</button>
+                    <button (click)="captureKeyframe()" [disabled]="!isRecording" class="vcr-btn"
+                        title="Capture keyframe">📸</button>
+                    <button (click)="stop()" [disabled]="!isPlaying && currentTime === 0" class="vcr-btn"
+                        title="Stop">⏹️</button>
+                    <button (click)="nextKeyframe()" [disabled]="isPlaying || currentSequence.keyframes.length === 0"
+                        class="vcr-btn" title="Go to next keyframe">➡️</button>
+                    <button (click)="end()" [disabled]="isPlaying" class="vcr-btn"
+                        title="Jump to last keyframe">⏭️</button>
+                </div>
+
+                <!-- Timeline Controls -->
+                <div class="timeline-slider-section">
+                    <input type="number" [(ngModel)]="currentTime" min="0" [max]="currentSequence.duration" step="0.1"
+                        class="time-input" [disabled]="isPlaying" title="Current time">
+                    <div class="time-slider-container">
+                        <input type="range" id="time-slider" class="time-slider" [(ngModel)]="currentTime"
+                            [disabled]="isPlaying" min="1" max="30" step="0.1">
+                    </div>
+                    <span class="slider-value">{{ (currentTime ?? 0) | number:'1.1-1' }}s</span>
+                </div>
+
+                <!-- Timeline Navigator -->
+                <div class="timeline-container">
+                    <div class="timeline-track">
+                        <div class="timeline-progress" [style.width.%]="(currentTime / currentSequence.duration) * 100">
+                        </div>
+                        <div class="timeline-playhead" [style.left.%]="(currentTime / currentSequence.duration) * 100">
+                        </div>
+                        <div *ngFor="let keyframe of currentSequence.keyframes" class="timeline-keyframe"
+                            [style.left.%]="(keyframe.time / currentSequence.duration) * 100"
+                            (click)="goToKeyframe(keyframe)" [title]="formatTime(keyframe.time)"></div>
+                    </div>
+                    <div class="timeline-labels">
+                        <span>0s</span>
+                        <span>{{ formatTime(currentSequence.duration) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyframes & Sequences Panel Below Controls -->
+            <div class="sequences-panel">
+                <div class="keyframes-section">
+                    <h4>Keyframes ({{ currentSequence.keyframes.length }})</h4>
+                    <div class="keyframes-list">
+                        <div *ngFor="let keyframe of currentSequence.keyframes; let i = index" class="keyframe-item"
+                            [class.active]="Math.abs(currentTime - keyframe.time) < 0.1">
+                            <span class="keyframe-time">{{ formatTime(keyframe.time) }}</span>
+                            <div class="keyframe-actions">
+                                <button (click)="goToKeyframe(keyframe)" class="btn-small"
+                                    title="Go to this keyframe">🎯</button>
+                                <button (click)="openExportKeyframeDialog(i)" class="btn-small"
+                                    title="Export keyframe">📤</button>
+                                <button (click)="deleteKeyframe(i)" class="btn-small btn-danger"
+                                    title="Delete keyframe">🗑️</button>
+                            </div>
+                        </div>
+                        <div *ngIf="currentSequence.keyframes.length === 0" class="empty-state">No keyframes yet.</div>
+                    </div>
+                </div>
+
+                <div class="sequences-section">
+                    <h4>Saved Sequences ({{ savedSequences.length }})</h4>
+                    <div class="sequences-list">
+                        <div *ngFor="let sequence of savedSequences; let i = index" class="sequence-item">
+                            <div class="sequence-info">
+                                <strong>{{ sequence.name }}</strong>
+                                <span class="sequence-meta">{{ sequence.keyframes.length }} keyframes</span>
+                            </div>
+                            <div class="sequence-actions">
+                                <button (click)="loadSequence(sequence)" class="btn-small"
+                                    title="Load sequence">📂</button>
+                                <button (click)="deleteSequence(i)" class="btn-small btn-danger"
+                                    title="Delete sequence">🗑️</button>
+                            </div>
+                        </div>
+                        <div *ngIf="savedSequences.length === 0" class="empty-state">No saved sequences yet.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

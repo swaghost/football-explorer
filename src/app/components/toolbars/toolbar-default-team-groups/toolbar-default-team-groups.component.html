@@ -1,0 +1,172 @@
+<!-- Default Team Groups Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="default-team-groups-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Default Team Groups List -->
+        <div class="default-groups-list" *ngIf="!editing">
+            <div class="form-group">
+                <div class="groups-container">
+                    <div *ngFor="let group of defaultTeamGroups; trackBy: trackByGroupId" class="default-group-item"
+                        [class.selected]="
+                  selectedDefaultTeamGroup?.TeamGroupID === group.TeamGroupID
+                " (click)="onSelectDefaultTeamGroup(group)">
+                        <div class="group-header">
+                            <span class="group-name">{{ group.TeamGroupName }}</span>
+                            <span class="ownership-badge" [class]="
+                      'ownership-' +
+                      group.OwnershipContext.Context.toLowerCase()
+                    ">
+                                {{ getOwnershipLabel(group.OwnershipContext) }}
+                            </span>
+                        </div>
+                        <div class="group-details">
+                            <span class="position-info" *ngIf="group.MatchingPositions.length > 0">
+                                Positions: {{ group.MatchingPositions.join(', ') }}
+                            </span>
+                            <span class="position-numbers" *ngIf="group.MatchingPositionNumbers.length > 0">
+                                Numbers: {{ group.MatchingPositionNumbers.join(', ') }}
+                            </span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="action-btn edit-btn" (click)="
+                      onEditDefaultTeamGroup(group); $event.stopPropagation()
+                    " [title]="
+                      group.IsSystemDefault
+                        ? 'View Group (Read-only)'
+                        : 'Edit Group'
+                    ">
+                                {{ group.IsSystemDefault ? '👁️' : '✏️' }}
+                            </button>
+                            <button class="action-btn delete-btn" *ngIf="!group.IsSystemDefault" (click)="
+                      onDeleteDefaultTeamGroup(group); $event.stopPropagation()
+                    " title="Delete Group">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="create-btn" (click)="onCreateDefaultTeamGroup()" title="Create New Default Group">
+                    ➕ Create Default Group
+                </button>
+                <button class="apply-btn" *ngIf="selectedDefaultTeamGroup && selectedTeam"
+                    (click)="onApplyDefaultGroupToTeam()" title="Apply to Current Team">
+                    📥 Apply to Team
+                </button>
+            </div>
+        </div>
+
+        <!-- Default Team Group Edit Form -->
+        <div class="default-group-form" *ngIf="editing">
+            <div class="form-header" *ngIf="isViewingSystemDefault">
+                <div class="read-only-notice">
+                    🔒 <strong>Read-Only:</strong> System defaults cannot be modified
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="defaultGroupName">Group Name:</label>
+                <input type="text" id="defaultGroupName" [(ngModel)]="formName" placeholder="Enter group name..."
+                    class="form-input" [disabled]="isViewingSystemDefault" />
+            </div>
+
+            <div class="form-group">
+                <label for="ownershipLevel">Ownership Level:</label>
+                <select id="ownershipLevel" [(ngModel)]="formOwnership" class="form-select"
+                    [disabled]="isViewingSystemDefault" (ngModelChange)="onOwnershipChange()">
+                    <option value="SYS">System (All Users)</option>
+                    <option value="ORG">Organization</option>
+                    <option value="TEAM">Team Specific</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="formOwnership === 'ORG'">
+                <label for="defaultGroupOrganization">Organization:</label>
+                <select id="defaultGroupOrganization" [(ngModel)]="formOrganizationId" class="form-select"
+                    [disabled]="isViewingSystemDefault">
+                    <option value="" disabled>Select Organization</option>
+                    <option *ngFor="let org of organizations" [value]="org.TenantID">
+                        {{ org.TenantName }}
+                    </option>
+                </select>
+                <small class="form-help">Select which organization this default team group applies
+                    to</small>
+            </div>
+
+            <div class="form-group">
+                <label for="matchingPositions">Matching Positions:</label>
+                <input type="text" id="matchingPositions" [(ngModel)]="formMatchingPositions"
+                    placeholder="e.g., HM, CB, WB, GK (comma separated)" class="form-input"
+                    [disabled]="isViewingSystemDefault" />
+                <small class="form-help">Position abbreviations that this group template matches</small>
+            </div>
+
+            <div class="form-group">
+                <label for="matchingNumbers">Matching Position Numbers:</label>
+                <input type="text" id="matchingNumbers" [(ngModel)]="formMatchingNumbers"
+                    placeholder="e.g., 1, 4, 5, 7 (comma separated)" class="form-input"
+                    [disabled]="isViewingSystemDefault" />
+                <small class="form-help">Jersey numbers 1-11 that this group template matches</small>
+            </div>
+
+            <div class="action-buttons">
+                <button class="save-btn" *ngIf="!isViewingSystemDefault" (click)="onSaveDefaultTeamGroup()"
+                    [disabled]="!formName.trim()">
+                    💾 Save Group
+                </button>
+                <button class="copy-btn" *ngIf="isViewingSystemDefault" (click)="onCopySystemDefaultAsTemplate()">
+                    📄 Copy as Template
+                </button>
+                <button class="cancel-btn" (click)="onCancelEdit()">
+                    ❌ {{ isViewingSystemDefault ? 'Close' : 'Cancel' }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Default Team Groups Footer -->
+        <div class="panel-footer blue-footer" *ngIf="expanded">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="count-label">System:</span>
+                    <span class="count-value">{{ systemGroupsCount }}</span>
+                </div>
+                <div class="footer-right">
+                    <span class="count-label">Organization:</span>
+                    <span class="count-value">{{ organizationalGroupsCount }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

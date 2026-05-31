@@ -1,0 +1,52 @@
+// Selected Node State Toolbar Component Styles
+// Import common toolbar base styles
+@use "../../../styles/components/toolbar-base";
+
+// Component-specific styles nested within .status-panel
+.status-panel {
+  // Ensure proper clipping of header/footer gradients
+  overflow: hidden;
+
+  // Ensure panel-header is properly clipped
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Dark mode specific overrides (if needed)
+  &.dark-mode {
+    .panel-header {
+      border-radius: 0;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
+  }
+
+  // Component-specific content styles
+  .status-info {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    margin: 8px 0;
+
+    strong {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+  }
+
+  // Dark mode adjustments for component-specific elements
+  &.dark-mode {
+    .status-info {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-white);
+
+      strong {
+        color: var(--color-primary-light);
+      }
+    }
+  }
+}

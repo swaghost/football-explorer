@@ -1,0 +1,480 @@
+<!-- Datasets Panel (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="datasets-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Decision Flows List -->
+        <div class="datasets-list">
+            <!-- Tabbed Filter Controls -->
+            <div class="form-group tabs-group">
+                <div class="tabs">
+                    <button class="tab" [class.active]="activeTab === 'system'" (click)="setActiveTab('system')"
+                        [disabled]="!isSystemTabEnabled">System</button>
+                    <button class="tab" [class.active]="activeTab === 'personal'" (click)="setActiveTab('personal')"
+                        [disabled]="!isPersonalTabEnabled">Personal</button>
+                    <button class="tab" [class.active]="activeTab === 'tenant'" (click)="setActiveTab('tenant')"
+                        [disabled]="!isTenantTabEnabled">Tenant</button>
+                    <button class="tab" [class.active]="activeTab === 'team'" (click)="setActiveTab('team')"
+                        [disabled]="!isTeamTabEnabled">Team</button>
+                    <button class="tab" [class.active]="activeTab === 'teamgroup'" (click)="setActiveTab('teamgroup')"
+                        [disabled]="!isTeamGroupTabEnabled">Groups</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="datasets-container">
+                    <div *ngFor="let flow of getFilteredDecisionFlows(); trackBy: trackByFlowId" class="dataset-item"
+                        [class.selected]="isFlowSelected(flow)" (click)="onSelectDecisionFlow(flow)">
+                        <div class="dataset-info">
+                            <div class="dataset-header">
+                                <div class="dataset-name">
+                                    {{ flow.FlowName || 'Unnamed Dataset' }}
+                                </div>
+                                <button class="edit-button" (click)="onEditDataset($event, flow)"
+                                    [disabled]="!canEdit(flow)" [title]="getEditButtonTitle(flow)"
+                                    *ngIf="canEdit(flow)">
+                                    ✏️
+                                </button>
+                            </div>
+                            <div class="dataset-description" *ngIf="flow.FlowDesc">
+                                {{ flow.FlowDesc }}
+                            </div>
+                            <div class="dataset-ownership">
+                                <span class="ownership-badge" [class.system]="getOwnershipLabel(flow) === 'System'"
+                                    [class.organization]="getOwnershipLabel(flow) === 'Organization'"
+                                    [class.team]="getOwnershipLabel(flow) === 'Team'"
+                                    [class.personal]="getOwnershipLabel(flow) === 'Personal'">
+                                    {{ getOwnershipLabel(flow) }}
+                                </span>
+                                <span class="flow-id" *ngIf="flow.FlowID !== undefined">
+                                    ID: {{ flow.FlowID }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div *ngIf="getFilteredDecisionFlows().length === 0" class="empty-state">
+                        <p>No datasets available for current tenant selection.</p>
+                        <p class="help-text">
+                            <strong>Showing flows from:</strong> {{ getFilteringSummary() }}
+                        </p>
+                        <p class="help-text">
+                            Select an organization or team to see additional decision flows.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-group">
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary icon-button" (click)="onCreateNewChart()"
+                        title="Create a new decision flow with just a root node">
+                        ➕
+                    </button>
+                    <button type="button" class="btn btn-secondary icon-button" (click)="onBreakoutToNew()"
+                        [disabled]="!selectedContextDataset" title="Copy selected node and its children to a new dataset">
+                        🎯
+                    </button>
+                    <button type="button" class="btn btn-info icon-button" (click)="onCombineDatasets()"
+                        [disabled]="!selectedContextDataset" title="Combine multiple datasets into a new dataset">
+                        🔗
+                    </button>
+                    <button type="button" class="btn btn-warning icon-button" (click)="onPromoteDataset()"
+                        [disabled]="!selectedContextDataset" [title]="getPromoteButtonTitle()">
+                        ⬆️
+                    </button>
+                    <button type="button" class="btn btn-danger icon-button" (click)="onDemoteDataset()"
+                        [disabled]="!selectedContextDataset" [title]="getDemoteButtonTitle()">
+                        ⬇️
+                    </button>
+                    <button type="button" class="btn btn-danger-outline icon-button" (click)="onDeleteDataset()"
+                        [disabled]="!selectedContextDataset" title="Delete dataset permanently">
+                        🗑️
+                    </button>
+                    <button type="button" class="btn btn-sm btn-info" (click)="debugDatasets()"
+                        title="Log dataset filtering debug info">
+                        🐛 Debug
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom styles for datasets panel -->
+<style>
+    .datasets-panel {
+        width: 350px;
+        min-height: 200px;
+    }
+
+    .filter-checkboxes {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .checkbox-label span {
+        user-select: none;
+    }
+
+    .dark-mode .checkbox-label {
+        color: #ffffff;
+    }
+
+    .datasets-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .dataset-item {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #f9f9f9;
+    }
+
+    .dataset-item:hover {
+        background: #f0f0f0;
+        border-color: #007bff;
+    }
+
+    .dataset-item.selected {
+        background: #e3f2fd;
+        border-color: #2196f3;
+        box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+    }
+
+    .dataset-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .dataset-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .dataset-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        flex: 1;
+    }
+
+    .edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.2s ease;
+        opacity: 0.7;
+        flex-shrink: 0;
+
+        &:hover {
+            opacity: 1;
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        &:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    }
+
+    .dataset-description {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.3;
+    }
+
+    .dataset-ownership {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .ownership-badge {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .ownership-badge.system {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
+
+    .ownership-badge.organization {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .ownership-badge.team {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .ownership-badge.personal {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .flow-id {
+        font-size: 11px;
+        color: #999;
+        font-family: monospace;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 24px 16px;
+        color: #666;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .tenant-info {
+        padding: 8px;
+        background: rgba(0, 123, 255, 0.1);
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .filtering-info {
+        color: #0056b3;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .icon-button {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: #545b62;
+        border-color: #545b62;
+    }
+
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+        border-color: #17a2b8;
+    }
+
+    .btn-info:hover:not(:disabled) {
+        background: #138496;
+        border-color: #117a8b;
+    }
+
+    .btn-warning {
+        background: #ffc107;
+        color: #212529;
+        border-color: #ffc107;
+    }
+
+    .btn-warning:hover:not(:disabled) {
+        background: #e0a800;
+        border-color: #d39e00;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background: #c82333;
+        border-color: #bd2130;
+    }
+
+    .btn-danger-outline {
+        background: transparent;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger-outline:hover:not(:disabled) {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: #e9ecef !important;
+        color: #6c757d !important;
+        border-color: #dee2e6 !important;
+    }
+
+    /* Dark mode styles */
+    .dark-mode .dataset-item {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+
+    .dark-mode .dataset-item:hover {
+        background: #3a3a3a;
+        border-color: #64b5f6;
+    }
+
+    .dark-mode .dataset-item.selected {
+        background: #1e3a5f;
+        border-color: #64b5f6;
+    }
+
+    .dark-mode .dataset-name {
+        color: #e0e0e0;
+    }
+
+    .dark-mode .edit-button:hover {
+        background: rgba(100, 181, 246, 0.2);
+    }
+
+    .dark-mode .dataset-description {
+        color: #bbb;
+    }
+
+    .dark-mode .empty-state {
+        color: #bbb;
+    }
+
+    .dark-mode .help-text {
+        color: #888;
+    }
+
+    .dark-mode .btn-primary {
+        background: #0d47a1;
+        border-color: #0d47a1;
+    }
+
+    .dark-mode .btn-primary:hover {
+        background: #1565c0;
+        border-color: #1565c0;
+    }
+
+    .dark-mode .btn-info {
+        background: #0c5460;
+        border-color: #0c5460;
+    }
+
+    .dark-mode .btn-info:hover:not(:disabled) {
+        background: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    .dark-mode .tenant-info {
+        background: rgba(100, 181, 246, 0.2);
+    }
+
+    .dark-mode .filtering-info {
+        color: #64b5f6;
+    }
+</style>

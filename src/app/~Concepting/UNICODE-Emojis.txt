@@ -1,0 +1,924 @@
+═══════════════════════════════════════════════════════════════════
+UNICODE EMOJI & SYMBOL REFERENCE
+Complete list organized by category for UI development
+═══════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. NAVIGATION & CONTROLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Menu & Options:
+☰ ≡ ⋮ ⋯ - Menu icons (hamburger, vertical dots, horizontal dots)
+
+Arrows - Simple:
+← → ↑ ↓ ↖ ↗ ↘ ↙ - Basic arrows (8 directions)
+↔ ↕ - Bidirectional arrows
+
+Arrows - Filled:
+◄ ► ▲ ▼ ◀ ▶ ▴ ▾ - Filled triangular arrows
+
+Arrows - Bold:
+⬅ ➡ ⬆ ⬇ ⬅️ ➡️ ⬆️ ⬇️ - Bold arrows
+
+Arrows - Special:
+↩ ↪ ⤴ ⤵ - Return/undo arrows
+⟲ ⟳ ↻ ↺ - Circular arrows (refresh/reload)
+⇄ ⇅ ⇆ - Double arrows
+➔ ➜ ➙ ➛ ➝ - Decorative arrows
+⮕ ⮜ ⮝ ⮟ - Heavy arrows
+
+Carets & Chevrons:
+‹ › « » - Single/double angle brackets
+⌃ ⌄ - Up/down carets
+˄ ˅ - Small carets
+∧ ∨ - Logic symbols (up/down)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. ACTIONS & COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Close/Remove:
+✕ ✖ ✗ × ╳ ⨯ - Various X symbols
+🗙 - Heavy X
+⊗ - Circled X
+
+Check/Confirm:
+✓ ✔ ☑ ✅ - Check marks
+🗸 - Heavy check mark
+
+Add/Plus:
++ ➕ ⊕ ⨁ - Plus symbols
+＋ - Full-width plus
+
+Remove/Minus:
+− ➖ ⊖ ⨂ - Minus symbols
+－ - Full-width minus
+
+Edit/Modify:
+✏ ✎ ✍ 🖊 🖋 ✒ - Pencil/pen symbols
+📝 - Memo/note
+
+Delete/Trash:
+🗑 🗑️ - Wastebasket
+⌫ ⌦ - Delete keys
+🚮 - Litter bin
+
+Save/Download:
+💾 - Floppy disk (save)
+📥 📤 - Download/upload trays
+⬇️ ⬆️ - Download/upload arrows
+
+Copy/Paste:
+📋 - Clipboard
+📑 - Bookmark tabs
+🗐 - Pages
+
+Undo/Redo:
+↶ ↷ - Curved arrows
+⎌ - Command/undo symbol
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. STATUS & NOTIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Information:
+ℹ ℹ️ 🛈 - Information symbols
+💡 - Light bulb (idea/tip)
+💬 - Speech bubble
+
+Help/Question:
+❓ ❔ ❕ ❗ - Question/exclamation marks
+? ! - Basic punctuation
+⍰ - Question mark box
+
+Warnings & Alerts:
+⚠ ⚠️ - Warning triangle
+⛔ 🚫 - Prohibited
+⚡ - Lightning bolt (danger)
+☢ ☣ - Radioactive/biohazard
+
+Success/Error:
+✅ ☑ - Success checkmark
+❌ ⛔ - Error/blocked
+🔴 🟢 🟡 🟠 - Status dots (red, green, yellow, orange)
+🔵 ⚪ ⚫ - Blue, white, black dots
+
+Stars & Favorites:
+⭐ ★ ☆ - Star symbols
+🌟 ✨ - Glowing stars
+⛤ ⛥ ⛦ - Star variants
+
+Notifications:
+🔔 🔕 - Bell (on/off)
+📢 📣 - Megaphone/loudspeaker
+🚨 - Police siren
+
+Progress:
+⏳ ⌛ - Hourglass (loading)
+⏱ ⏲ - Stopwatch/timer
+⟳ ⟲ - Refresh/reload
+⌚ - Watch
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. SECURITY & PRIVACY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Lock/Unlock:
+🔒 🔓 - Padlock (locked/unlocked)
+🔐 - Locked with key
+🗝 🔑 - Keys
+
+Visibility:
+👁 👁️ 👀 - Eye symbols
+🙈 🙉 🙊 - See/hear/speak no evil
+🕶 - Sunglasses (hidden)
+
+Permissions:
+🛡 🛡️ - Shield (protection)
+🚫 ⛔ - Blocked/prohibited
+✋ 🖐 🤚 - Stop hand
+
+Security:
+🔐 - Secure lock
+🔏 - Lock with pen
+🛂 - Passport control
+👮 - Security officer
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. FILES & ORGANIZATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Folders:
+📁 📂 - Folder (closed/open)
+🗀 🗁 - Folder outline
+🗂 🗂️ - Card index dividers
+🗄 🗄️ - Filing cabinet
+
+Documents:
+📄 📃 📜 - Document pages
+📑 - Bookmark tabs
+📋 - Clipboard
+🗎 - Document outline
+
+Files:
+📝 - Memo
+📓 📔 📕 📖 📗 📘 📙 - Notebooks (various colors)
+📚 - Books stack
+
+Organization:
+📌 📍 - Pushpins
+🔖 - Bookmark
+🏷 🏷️ - Label/tag
+📎 🖇 - Paperclips
+
+Archives:
+📦 - Package/box
+🗜 - Compression
+💿 📀 - CD/DVD discs
+💾 💽 - Floppy/minidisc
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. TOOLS & SETTINGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Settings:
+⚙ ⚙️ - Gear/cog
+🔧 - Wrench
+🔨 - Hammer
+⚒ - Hammer and pick
+🛠 🛠️ - Hammer and wrench
+
+Configuration:
+⚡ - Power/settings
+🔌 - Plug
+🎛 🎛️ - Control knobs
+🎚 🎚️ - Level sliders
+
+Tools:
+✂ ✂️ - Scissors
+📏 - Ruler
+📐 - Triangular ruler
+🖊 🖋 ✒ - Pens
+✏ ✏️ - Pencil
+
+Design & Art:
+🎨 - Artist palette
+🖌 🖌️ - Paintbrush
+🖍 🖍️ - Crayon
+✏️ - Pencil
+
+Magnification:
+🔍 🔎 - Magnifying glass (left/right)
+🔬 🔭 - Microscope/telescope
+👓 - Glasses
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. COMMUNICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Messages:
+💬 - Speech bubble
+💭 - Thought bubble
+🗨 🗨️ - Left speech bubble
+🗩 - Speech bubble outline
+
+Mail:
+✉ ✉️ 📧 - Envelope/email
+📨 📩 - Incoming mail
+📮 📪 📫 📬 - Mailboxes
+📭 - Open mailbox
+
+Phone:
+📞 - Phone
+📱 - Mobile phone
+☎ ☎️ - Telephone
+📲 - Phone with arrow
+
+Social:
+💌 - Love letter
+🗣 🗣️ - Speaking head
+👥 - Silhouettes (group)
+👤 - Bust in silhouette (user)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. DATA & ANALYTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Charts & Graphs:
+📊 - Bar chart
+📈 - Chart increasing
+📉 - Chart decreasing
+📶 - Signal bars
+💹 - Chart with yen
+
+Data:
+🗂 🗂️ - Database/index
+🗃 🗃️ - Card file box
+📇 - Card index
+💾 💿 📀 - Storage media
+🗄️ - File cabinet
+📁 📂 - Folder (closed/open)
+📋 - Clipboard
+📄 📃 - Document pages
+📊 - Data visualization
+
+Database & Storage:
+🗄️ - File cabinet/database server
+💽 - Minidisc/database
+🗃️ - Card file/database records
+🗂️ - Card index dividers/database tables
+💾 - Save/persistent storage
+🪣 - Bucket (data bucket)
+📦 - Package/container
+
+Tables & Lists:
+☰ - List menu
+▤ - Grid/table
+⊞ - Plus in box
+⊟ - Minus in box
+⬚ - Square/cell
+▭ - Rectangle/row
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. MEDIA & PLAYBACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Playback Controls:
+▶ ▶️ - Play
+⏸ ⏸️ - Pause
+⏹ ⏹️ - Stop
+⏺ ⏺️ - Record
+⏭ ⏮ - Next/previous track
+⏩ ⏪ - Fast forward/rewind
+⏏ ⏏️ - Eject
+
+Volume:
+🔇 - Mute
+🔈 🔉 🔊 - Volume (low/medium/high)
+
+Media:
+🎬 - Clapper board
+🎞 🎞️ - Film frames
+📹 📷 📸 - Cameras
+🎥 - Movie camera
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. SHAPES & GEOMETRY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Circles:
+● ○ ◉ ◯ ⦿ - Filled/empty circles
+◐ ◑ ◒ ◓ - Half-filled circles
+⊙ ⊚ ⊛ - Circled dots
+
+Squares:
+■ □ ▪ ▫ - Filled/empty squares
+◼ ◻ ◾ ◽ - Various squares
+⊞ ⊟ ⊠ ⊡ - Boxed symbols
+
+Triangles:
+▲ △ ▴ ▵ - Up triangles
+▼ ▽ ▾ ▿ - Down triangles
+◄ ◀ ◅ - Left triangles
+► ▶ ▷ - Right triangles
+
+Diamonds:
+◆ ◇ ◈ - Diamonds
+⬥ ⬦ - Diamond variants
+
+Polygons:
+⬟ ⬢ ⬡ - Hexagons
+⬠ ⬡ - Pentagon variants
+
+Lines & Dividers:
+─ ━ ═ - Horizontal lines
+│ ┃ ║ - Vertical lines
+╌ ╍ ┄ ┅ - Dashed lines
+╴ ╵ ╶ ╷ - Line segments
+
+Box Drawing:
+┌ ┐ └ ┘ - Box corners
+├ ┤ ┬ ┴ ┼ - Box connectors
+╔ ╗ ╚ ╝ - Double box corners
+╠ ╣ ╦ ╩ ╬ - Double box connectors
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. TIME & CALENDAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Time:
+⌚ - Watch
+⏰ - Alarm clock
+⏱ - Stopwatch
+⏲ - Timer clock
+🕐 🕑 🕒 🕓 🕔 🕕 - Clock faces 1-6
+🕖 🕗 🕘 🕙 🕚 🕛 - Clock faces 7-12
+
+Calendar:
+📅 - Calendar
+📆 - Tear-off calendar
+🗓 🗓️ - Spiral calendar
+
+Duration:
+⌛ ⏳ - Hourglass
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. PEOPLE & GESTURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Users:
+👤 - User silhouette
+👥 - Users/group
+👨 👩 - Man/woman
+👶 - Baby
+👴 👵 - Old man/woman
+👨‍💼 👩‍💼 - Business person
+👨‍💻 👩‍💻 - Developer/technologist
+
+Hands:
+👋 - Waving hand
+🤚 ✋ 🖐 - Raised hand
+👌 - OK hand
+✌ - Victory hand
+🤞 - Crossed fingers
+🤝 - Handshake
+👏 - Clapping hands
+🙏 - Folded hands
+👐 - Open hands
+
+Pointing:
+☝ 👆 - Pointing up
+👇 - Pointing down
+👈 - Pointing left
+👉 - Pointing right
+🖕 - Middle finger
+
+Gestures:
+👍 👎 - Thumbs up/down
+✊ 👊 - Fist
+🤛 🤜 - Fist bump (left/right)
+✍ - Writing hand
+🤲 - Palms up together
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13. TECHNOLOGY & DEVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Computers:
+💻 - Laptop
+🖥 - Desktop computer
+⌨ ⌨️ - Keyboard
+🖱 🖱️ - Computer mouse
+🖲 🖲️ - Trackball
+
+Mobile:
+📱 - Smartphone
+📲 - Phone with arrow
+📟 - Pager
+
+Storage:
+💾 - Floppy disk
+💿 - CD
+📀 - DVD
+💽 - Minidisc
+
+Connectivity & Network:
+📡 - Satellite antenna/broadcast
+📶 - Signal bars/network strength
+🔌 - Electric plug/connection
+🔋 - Battery/power
+🪫 - Low battery
+🌐 - Globe with meridians/internet
+🌍 🌎 🌏 - Earth globes/worldwide
+🔗 - Link/connection
+⛓️ - Chain/blockchain
+📞 - Telephone receiver
+☎️ - Telephone
+📠 - Fax machine
+📧 - Email
+✉️ - Envelope/message
+📨 - Incoming message
+📮 - Postbox
+📬 📭 - Mailbox with/without mail
+
+Software & Development:
+💻 - Programming/development
+👨‍💻 👩‍💻 - Developer
+⚙️ - Settings/configuration
+🔧 - Tool/maintenance
+🔨 - Hammer/build
+🛠️ - Tools
+⚡ - Fast/performance
+🐛 - Bug
+🔍 - Search/debug
+🔬 - Microscope/testing
+⚗️ - Test tube/experiments
+🧪 - Lab/testing
+� - Code/notes
+📋 - Clipboard/logs
+🖥️ - Terminal/console
+⌨️ - Input/coding
+</> - Code tags (HTML entity: &lt;/&gt;)
+{ } - Curly braces/JSON
+[ ] - Brackets/arrays
+< > - Angle brackets/generic types
+
+Cloud & Servers:
+☁️ - Cloud/cloud computing
+⛈️ - Cloud with lightning/storm
+🌩️ - Cloud with lightning
+💨 - Wind/fast processing
+🗄️ - Server/data center
+🏢 - Building/datacenter
+🏗️ - Construction/infrastructure
+🌐 - Internet/global network
+
+Security & Access:
+🔒 - Locked/secure
+🔓 - Unlocked/public
+🔐 - Locked with key/encrypted
+🔑 - Key/authentication
+🗝️ - Old key/legacy auth
+🛡️ - Shield/protection
+🔰 - Green shield/beginner safe
+⚠️ - Warning/alert
+🚨 - Alarm/critical
+🚦 - Traffic light/status
+👁️ - Eye/visibility
+🕵️ - Detective/monitoring
+🔎 - Magnifying glass tilted right/audit
+
+Other Tech:
+🖨 🖨️ - Printer
+🖩 - Calculator
+⚡ - High voltage/fast
+🔦 - Flashlight
+💡 - Light bulb (idea)
+🔬 - Microscope/analysis
+🧬 - DNA/code structure
+🤖 - Robot/automation/AI
+🦾 - Mechanical arm/robotics
+🦿 - Mechanical leg/automation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+14. WEATHER & NATURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Weather:
+☀ ☀️ - Sun
+🌤 ⛅ - Sun with clouds
+☁ ☁️ - Cloud
+🌧 - Rain cloud
+⛈ - Storm
+❄ ❄️ - Snowflake
+⛄ - Snowman
+🌡 🌡️ - Thermometer
+🌪 - Tornado
+🌈 - Rainbow
+
+Celestial:
+🌙 - Crescent moon
+🌛 🌜 - Moon faces
+🌕 🌖 🌗 🌘 - Moon phases
+⭐ - Star
+✨ - Sparkles
+🌟 - Glowing star
+
+Nature:
+🌲 🌳 🌴 - Trees
+🌱 - Seedling
+🌿 - Herb
+🍀 - Four-leaf clover
+🌹 🌺 🌻 🌷 - Flowers
+
+Animals:
+🐶 🐱 🐭 🐹 🐰 - Common pets
+🦊 🐻 🐼 🐨 - Wild animals
+🦁 🐯 🐮 🐷 🐸 - Farm/zoo animals
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+15. FOOD & DRINK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fruits:
+🍎 🍏 - Apples
+🍊 🍋 🍌 - Citrus & banana
+🍉 🍇 🍓 - Berries & melons
+🍑 🍒 🥝 - Stone fruits
+
+Vegetables:
+🥕 🌽 🥒 🥔 🍅 - Common vegetables
+🥦 🥬 🥗 - Greens & salad
+
+Meals:
+🍕 🍔 🌭 🌮 🌯 - Fast food
+🍝 🍜 🍲 🍱 - Prepared meals
+🍰 🎂 🧁 🍪 - Desserts
+
+Drinks:
+☕ - Coffee
+🍵 - Tea
+🥤 - Soft drink
+🍺 🍻 🍷 🍸 🍹 - Alcoholic drinks
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+16. TRAVEL & PLACES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Vehicles:
+🚗 🚕 🚙 - Cars
+🚌 🚎 - Buses
+🚑 🚒 🚓 - Emergency vehicles
+🚚 🚛 - Trucks
+🏍 🚲 🛴 - Two-wheelers
+✈ 🚁 🚂 🚆 🚇 - Transport
+
+Places:
+🏠 🏡 🏢 🏣 - Buildings
+🏥 🏦 🏪 🏫 - Facilities
+🏨 🏩 🏭 🏯 - Specialized buildings
+🗽 🗼 🏰 - Landmarks
+
+Maps:
+🗺 🗺️ - World map
+📍 📌 - Location pins
+🧭 - Compass
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+17. ACTIVITIES & SPORTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sports:
+⚽ - Soccer
+🏀 - Basketball
+🏈 - American football
+⚾ 🥎 - Baseball/softball
+🎾 - Tennis
+🏐 - Volleyball
+🏓 - Table tennis
+🏸 - Badminton
+🥊 🥋 - Combat sports
+
+Activities:
+🎯 - Target/goal
+🎮 🕹 - Gaming
+🎲 🎰 - Gambling
+🎨 - Art
+🎭 - Theater
+🎪 - Circus
+
+Warfare & Combat:
+⚔️ - Crossed swords
+🗡️ - Dagger
+🔪 - Knife
+🏹 - Bow and arrow
+🪓 - Axe
+🔫 - Pistol/gun
+🛡️ - Shield
+💣 - Bomb
+💥 - Explosion/collision
+⚡ - Lightning bolt (attack)
+🔥 - Fire
+☠️ - Skull and crossbones
+💀 - Skull
+🏴‍☠️ - Pirate flag
+🏴 - Black flag
+⚓ - Anchor
+🦜 - Parrot (pirate theme)
+🪝 - Hook (pirate hook)
+🧨 - Firecracker/dynamite
+🚀 - Rocket
+🛸 - Flying saucer/UFO
+
+Fighting & Martial Arts:
+🥊 - Boxing glove
+🥋 - Martial arts uniform
+🤺 - Fencing
+🤼 - Wrestling
+🤜 🤛 - Punching fists
+👊 - Fist bump/punch
+✊ - Raised fist
+🦾 - Mechanical arm
+⚡ - Power/energy
+
+Military & Defense:
+🪖 - Military helmet
+🎖️ - Military medal
+🏅 - Medal
+🛩️ - Small airplane
+✈️ - Airplane
+🚁 - Helicopter
+🛡️ - Shield
+🏰 - Castle/fortress
+🏯 - Japanese castle
+⛩️ - Shinto shrine/gate
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+18. OBJECTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Household:
+💡 - Light bulb
+🔦 - Flashlight
+🕯 - Candle
+🪔 - Lamp
+🔑 - Key
+🚪 - Door
+🪟 - Window
+🛋 - Couch
+🛏 - Bed
+
+Office:
+📎 🖇 - Paperclips
+✂ - Scissors
+📌 📍 - Pins
+📏 - Ruler
+📐 - Set square
+🖊 🖋 ✒ - Pens
+✏ - Pencil
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+19. SYMBOLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Hearts:
+❤ 🧡 💛 💚 💙 💜 - Colored hearts
+🖤 🤍 🤎 - Black/white/brown hearts
+💔 ❣ 💕 💞 💓 - Heart variations
+
+Mathematical:
+± ∓ - Plus-minus
+× ÷ - Multiply/divide
+∑ ∏ - Sum/product
+∞ - Infinity
+≈ ≠ ≡ - Approximately/not equal/identical
+≤ ≥ - Less/greater than or equal
+⊂ ⊃ ⊆ ⊇ - Subset/superset
+∈ ∉ - Element of
+∅ - Empty set
+
+Currency:
+$ - Dollar
+€ - Euro
+£ - Pound
+¥ - Yen
+₹ - Rupee
+₽ - Ruble
+₩ - Won
+₪ - Shekel
+¢ - Cent
+
+Punctuation:
+• ‣ ⁃ - Bullets
+… - Ellipsis
+" " ' ' - Smart quotes
+— – - Em dash/en dash
+¡ ¿ - Inverted punctuation
+
+Miscellaneous:
+© ® ™ - Copyright/registered/trademark
+℃ ℉ - Celsius/Fahrenheit
+№ - Number sign
+§ ¶ - Section/paragraph
+† ‡ - Dagger/double dagger
+@ - At sign
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+20. GAMING & ENTERTAINMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cards:
+♠ ♣ ♥ ♦ - Card suits
+🃏 - Joker
+🎴 - Playing cards
+
+Chess:
+♔ ♕ ♖ ♗ ♘ ♙ - White pieces (king, queen, rook, bishop, knight, pawn)
+♚ ♛ ♜ ♝ ♞ ♟ - Black pieces
+
+Gaming:
+🎮 🕹 - Game controllers
+🎯 - Dart/target
+🎲 - Dice
+🎰 - Slot machine
+🏆 - Trophy
+🥇 🥈 🥉 - Medals
+
+Music:
+♩ ♪ ♫ ♬ - Musical notes
+♭ ♮ ♯ - Flat/natural/sharp
+🎵 🎶 - Musical notes (emoji)
+🎼 - Musical score
+🎹 🎸 🎺 🎷 - Instruments
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+21. FACES & EMOTIONS (SMILEYS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Happy:
+😀 😃 😄 😁 - Smiling faces
+😆 😅 🤣 😂 - Laughing faces
+☺ 😊 😇 - Content/blessed faces
+🙂 🙃 - Slightly smiling/upside down
+😉 - Winking face
+
+Love/Affection:
+😍 🥰 😘 - Love faces
+😗 😙 😚 - Kissing faces
+
+Neutral:
+😐 😑 😶 - Neutral faces
+🤐 🤨 🤔 - Thoughtful faces
+
+Negative:
+😕 🙁 ☹ - Sad faces
+😟 😢 😭 - Crying faces
+😠 😡 🤬 - Angry faces
+😱 😨 😰 - Fearful faces
+
+Special:
+🤗 - Hugging face
+🤭 - Face with hand over mouth
+🤫 - Shushing face
+🤯 - Exploding head
+🥳 - Partying face
+🤓 - Nerd face
+😎 - Cool face with sunglasses
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+22. SPECIAL CHARACTERS FOR UI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keyboard Symbols:
+⌘ - Command (Mac)
+⌃ - Control
+⌥ - Option/Alt
+⇧ - Shift
+⎋ - Escape
+⌫ - Delete/backspace
+⌦ - Forward delete
+⏎ - Return/enter
+↵ - Return arrow
+⇥ - Tab
+⇤ - Backtab
+⇪ - Caps lock
+⎵ - Space
+⏏ - Eject
+
+Branded/Technical:
+⚛ - Atom (React/science)
+⚡ - Lightning (fast/power)
+🔥 - Fire (hot/trending)
+💥 - Collision/explosion
+💪 - Strength/power
+🎯 - Target/goal
+🏆 - Trophy/achievement
+🔑 - Key (authentication)
+🎁 - Gift/feature
+🚀 - Rocket (launch/speed)
+🌐 - Globe/web
+🔗 - Link
+📡 - Broadcast/API
+
+Development:
+🐛 - Bug
+🔧 - Fix/tools
+⚙ - Settings/config
+📦 - Package/module
+🗃 - Database
+🔌 - Plugin
+⚠ - Warning
+✅ - Success/approved
+❌ - Failed/rejected
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+23. FLAGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Generic:
+🏁 - Checkered flag (finish/complete)
+🚩 - Red flag (warning/mark)
+🏳 - White flag
+🏴 - Black flag
+🎌 - Crossed flags
+
+Popular Country Flags:
+🇺🇸 - United States
+🇬🇧 - United Kingdom
+🇨🇦 - Canada
+🇦🇺 - Australia
+🇩🇪 - Germany
+🇫🇷 - France
+🇪🇸 - Spain
+🇮🇹 - Italy
+🇯🇵 - Japan
+🇨🇳 - China
+🇰🇷 - South Korea
+🇮🇳 - India
+🇧🇷 - Brazil
+🇲🇽 - Mexico
+
+Note: Two-letter country codes (ISO 3166-1 alpha-2) can be used for all country flags
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+24. COMMONLY USED IN THIS APP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Current Icons in Use:
+❓ - Help button (question mark)
+✕ - Close button (multiplication X)
+✖️ - Close button (heavy X with emoji variant)
+☰ - Menu/hamburger icon
+👁️ - Visibility toggle (eye)
+🗑️ - Delete/clear (wastebasket)
+🔒 - Locked toolbar
+🔓 - Unlocked toolbar
+⭐ - Favorites/bookmarks (star)
+📊 - Display/stats (bar chart)
+🔍 - Search/zoom (magnifying glass)
+
+═══════════════════════════════════════════════════════════════════
+USAGE TIPS
+═══════════════════════════════════════════════════════════════════
+
+1. Copy-paste directly into HTML templates - they're just text!
+
+2. Some symbols may render differently across fonts/platforms
+   - Emoji (🎨) are colorful and platform-specific
+   - Unicode symbols (☰) are monochrome and more consistent
+
+3. Use emoji variants (add ️ variation selector) for consistent rendering
+   Example: 👁 vs 👁️
+
+4. Test across browsers - most modern browsers support all these
+
+5. For web development:
+   - Direct use: <button>✓</button>
+   - HTML entity: <button>&#x2713;</button>
+   - Unicode escape in CSS/JS: "\u2713"
+
+6. Some symbols are wider than others - test in your UI
+
+7. Accessibility: Add aria-label or title for screen readers
+   Example: <button aria-label="Close">✕</button>
+
+═══════════════════════════════════════════════════════════════════
+REFERENCE URLS
+═══════════════════════════════════════════════════════════════════
+
+Best Resources:
+• unicode-table.com - Interactive character browser (BEST FOR DEVELOPMENT)
+• emojipedia.org - Emoji reference with platform previews
+• unicode.org/emoji/charts/full-emoji-list.html - Official Unicode list
+• symbl.cc/en/ - Symbol reference with categories
+• www.fileformat.info/info/unicode/ - Technical Unicode details
+
+Character Ranges (for reference):
+• Basic Latin: U+0000 to U+007F
+• Geometric Shapes: U+25A0 to U+25FF
+• Miscellaneous Symbols: U+2600 to U+26FF
+• Dingbats: U+2700 to U+27BF
+• Emoticons: U+1F600 to U+1F64F
+• Miscellaneous Symbols and Pictographs: U+1F300 to U+1F5FF
+
+═══════════════════════════════════════════════════════════════════

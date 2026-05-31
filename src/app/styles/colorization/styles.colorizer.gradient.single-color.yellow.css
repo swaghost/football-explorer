@@ -1,0 +1,112 @@
+
+/* Channel-based color styles */
+/* Format: .channelX = base color for channel */
+/* Format: .channelX-Y = depth-based color for channel */
+
+.channelA    { fill: #FFFF00; }
+.channelA-0  { fill: rgb(255, 255, 229); }
+.channelA-1  { fill: rgb(255, 248, 196); }
+.channelA-2  { fill: rgb(254, 234, 161); }
+.channelA-3  { fill: rgb(254, 214, 118); }
+.channelA-4  { fill: rgb(254, 186, 74); }
+.channelA-5  { fill: rgb(251, 153, 44); }
+.channelA-6  { fill: rgb(238, 121, 24); }
+.channelA-7  { fill: rgb(216, 91, 10); }
+.channelA-8  { fill: rgb(183, 67, 4); }
+.channelA-9  { fill: rgb(143, 50, 4); }
+.channelA-10 { fill: rgb(102, 37, 6); }
+
+.channelB    { fill: #FFFF00; }
+.channelB-0  { fill: rgb(255, 255, 229); }
+.channelB-1  { fill: rgb(255, 248, 196); }
+.channelB-2  { fill: rgb(254, 234, 161); }
+.channelB-3  { fill: rgb(254, 214, 118); }
+.channelB-4  { fill: rgb(254, 186, 74); }
+.channelB-5  { fill: rgb(251, 153, 44); }
+.channelB-6  { fill: rgb(238, 121, 24); }
+.channelB-7  { fill: rgb(216, 91, 10); }
+.channelB-8  { fill: rgb(183, 67, 4); }
+.channelB-9  { fill: rgb(143, 50, 4); }
+.channelB-10 { fill: rgb(102, 37, 6); }
+
+.channelC    { fill: #FFFF00; }
+.channelC-0  { fill: rgb(255, 255, 229); }
+.channelC-1  { fill: rgb(255, 248, 196); }
+.channelC-2  { fill: rgb(254, 234, 161); }
+.channelC-3  { fill: rgb(254, 214, 118); }
+.channelC-4  { fill: rgb(254, 186, 74); }
+.channelC-5  { fill: rgb(251, 153, 44); }
+.channelC-6  { fill: rgb(238, 121, 24); }
+.channelC-7  { fill: rgb(216, 91, 10); }
+.channelC-8  { fill: rgb(183, 67, 4); }
+.channelC-9  { fill: rgb(143, 50, 4); }
+.channelC-10 { fill: rgb(102, 37, 6); }
+
+.channelD    { fill: #FFFF00; }
+.channelD-0  { fill: rgb(255, 255, 229); }
+.channelD-1  { fill: rgb(255, 248, 196); }
+.channelD-2  { fill: rgb(254, 234, 161); }
+.channelD-3  { fill: rgb(254, 214, 118); }
+.channelD-4  { fill: rgb(254, 186, 74); }
+.channelD-5  { fill: rgb(251, 153, 44); }
+.channelD-6  { fill: rgb(238, 121, 24); }
+.channelD-7  { fill: rgb(216, 91, 10); }
+.channelD-8  { fill: rgb(183, 67, 4); }
+.channelD-9  { fill: rgb(143, 50, 4); }
+.channelD-10 { fill: rgb(102, 37, 6); }
+
+.channelE    { fill: #FFFF00; }
+.channelE-0  { fill: rgb(255, 255, 229); }
+.channelE-1  { fill: rgb(255, 248, 196); }
+.channelE-2  { fill: rgb(254, 234, 161); }
+.channelE-3  { fill: rgb(254, 214, 118); }
+.channelE-4  { fill: rgb(254, 186, 74); }
+.channelE-5  { fill: rgb(251, 153, 44); }
+.channelE-6  { fill: rgb(238, 121, 24); }
+.channelE-7  { fill: rgb(216, 91, 10); }
+.channelE-8  { fill: rgb(183, 67, 4); }
+.channelE-9  { fill: rgb(143, 50, 4); }
+.channelE-10 { fill: rgb(102, 37, 6); }
+
+.channelF    { fill: #FFFF00; }
+.channelF-0  { fill: rgb(255, 255, 229); }
+.channelF-1  { fill: rgb(255, 248, 196); }
+.channelF-2  { fill: rgb(254, 234, 161); }
+.channelF-3  { fill: rgb(254, 214, 118); }
+.channelF-4  { fill: rgb(254, 186, 74); }
+.channelF-5  { fill: rgb(251, 153, 44); }
+.channelF-6  { fill: rgb(238, 121, 24); }
+.channelF-7  { fill: rgb(216, 91, 10); }
+.channelF-8  { fill: rgb(183, 67, 4); }
+.channelF-9  { fill: rgb(143, 50, 4); }
+.channelF-10 { fill: rgb(102, 37, 6); }
+
+.channelG    { fill: #FFFF00; }
+.channelG-0  { fill: rgb(255, 255, 229); }
+.channelG-1  { fill: rgb(255, 248, 196); }
+.channelG-2  { fill: rgb(254, 234, 161); }
+.channelG-3  { fill: rgb(254, 214, 118); }
+.channelG-4  { fill: rgb(254, 186, 74); }
+.channelG-5  { fill: rgb(251, 153, 44); }
+.channelG-6  { fill: rgb(238, 121, 24); }
+.channelG-7  { fill: rgb(216, 91, 10); }
+.channelG-8  { fill: rgb(183, 67, 4); }
+.channelG-9  { fill: rgb(143, 50, 4); }
+.channelG-10 { fill: rgb(102, 37, 6); }
+
+.channelH    { fill: #FFFF00; }
+.channelH-0  { fill: rgb(255, 255, 229); }
+.channelH-1  { fill: rgb(255, 248, 196); }
+.channelH-2  { fill: rgb(254, 234, 161); }
+.channelH-3  { fill: rgb(254, 214, 118); }
+.channelH-4  { fill: rgb(254, 186, 74); }
+.channelH-5  { fill: rgb(251, 153, 44); }
+.channelH-6  { fill: rgb(238, 121, 24); }
+.channelH-7  { fill: rgb(216, 91, 10); }
+.channelH-8  { fill: rgb(183, 67, 4); }
+.channelH-9  { fill: rgb(143, 50, 4); }
+.channelH-10 { fill: rgb(102, 37, 6); }
+
+/* Helper classes */
+.channel-default { fill: #CCCCCC; }
+.channel-highlight { stroke-width: 2; stroke: #333333; }

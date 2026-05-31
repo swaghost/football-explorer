@@ -1,0 +1,38 @@
+<app-base-dialog [visible]="visible" [title]="'Confirm Team Group Deletion'" [icon]="'⚠️'" [maxWidth]="'500px'"
+    (close)="onCancel()">
+    <div class="warning-icon">⚠️</div>
+    <p>
+        <strong>Are you sure you want to delete the team group "{{
+            teamGroupToDelete?.TeamGroupName
+            }}"?</strong>
+    </p>
+    <div class="deletion-details">
+        <p>This action will:</p>
+        <ul>
+            <li>
+                Delete the team group "{{ teamGroupToDelete?.TeamGroupName }}"
+            </li>
+            <li>
+                Remove {{ teamGroupToDelete?.Players?.length || 0 }} player(s)
+                from this group
+            </li>
+            <li>
+                <strong>Keep all players on the team</strong> (players will not
+                be deleted)
+            </li>
+        </ul>
+    </div>
+    <div class="info-text">
+        <strong>Note:</strong> Players will remain on the team and can be
+        assigned to other groups.
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="dialog-btn cancel-btn" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="button" class="dialog-btn delete-btn" (click)="onConfirm()">
+            Delete Team Group
+        </button>
+    </div>
+</app-base-dialog>

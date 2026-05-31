@@ -1,0 +1,86 @@
+<app-base-dialog [visible]="visible" [title]="'Create New Team Group'" [icon]="'👥'" [maxWidth]="'600px'"
+    (close)="onCancel()">
+    <div class="form-group">
+        <label for="newTeamGroupName">Team Group Name:</label>
+        <input type="text" id="newTeamGroupName" [(ngModel)]="newTeamGroupName" placeholder="Enter team group name"
+            class="text-input" maxlength="50" />
+    </div>
+
+    <!-- Position Selection Section -->
+    <div class="form-group position-selection-section">
+        <label>Position Abbreviations:</label>
+        <div class="position-chips">
+            <button *ngFor="let abbrev of availablePositionAbbreviations" type="button" class="position-chip"
+                [class.selected]="isPositionAbbrevSelected(abbrev)" (click)="togglePositionAbbrev(abbrev)">
+                {{ abbrev }}
+            </button>
+        </div>
+    </div>
+
+    <div class="form-group position-selection-section">
+        <label>Position Numbers:</label>
+        <div class="position-chips">
+            <button *ngFor="let num of availablePositionNumbers" type="button" class="position-chip"
+                [class.selected]="isPositionNumberSelected(num)" (click)="togglePositionNumber(num)">
+                {{ num }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Auto-Match Button -->
+    <div class="auto-match-section"
+        *ngIf="matchingPositionAbbreviations.length > 0 || matchingPositionNumbers.length > 0">
+        <button type="button" class="auto-match-button" (click)="autoMatchPlayers()"
+            [disabled]="getAutoMatchCount() === 0"
+            [title]="getAutoMatchCount() === 0 ? 'No players match the selected positions (players need PossiblePositionAbbreviations or PossiblePositionNumbers data)' : 'Click to select all players matching the position criteria'">
+            🎯 AUTO-MATCH ({{ getAutoMatchCount() }} players)
+        </button>
+        <p class="auto-match-hint" *ngIf="getAutoMatchCount() === 0">
+            No players match the selected positions. Players need position data to use auto-match.
+        </p>
+    </div>
+
+    <p>Select players for this team group:</p>
+
+    <!-- Sort dropdown for create dialog -->
+    <div class="sort-controls" *ngIf="selectedTeam">
+        <label for="createPlayerSort">Sort by:</label>
+        <select id="createPlayerSort" [value]="playerSortBy" (change)="onPlayerSortChange($event)" class="sort-select">
+            <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                {{ option.label }}
+            </option>
+        </select>
+    </div>
+
+    <div class="create-players-list" *ngIf="selectedTeam">
+        <div *ngFor="
+            let player of getSelectedTeamPlayers();
+            trackBy: trackByPlayerId
+          " class="create-player-item" [class.matched-player]="isPlayerMatched(player)">
+            <label class="player-checkbox">
+                <input type="checkbox" [checked]="isPlayerSelected(player.PlayerID)" (change)="
+                onPlayerCheckboxChange(
+                  player.PlayerID,
+                  $event.target.checked
+                )
+              " />
+                <span class="player-name">{{ getPlayerFullName(player) }}</span>
+                <span class="match-indicator" *ngIf="isPlayerMatched(player)" title="Matches position criteria">✓</span>
+            </label>
+            <span class="player-id">(ID: {{ player.PlayerID }})</span>
+        </div>
+    </div>
+
+    <div class="selected-count">
+        Selected: {{ newTeamGroupPlayerIds.length }} players
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button class="dialog-button cancel-button" (click)="onCancel()">
+            Cancel
+        </button>
+        <button class="dialog-button confirm-button" (click)="onSave()" [disabled]="!newTeamGroupName.trim()">
+            Create Team Group
+        </button>
+    </div>
+</app-base-dialog>

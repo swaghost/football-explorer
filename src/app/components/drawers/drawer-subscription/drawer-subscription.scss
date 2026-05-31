@@ -1,0 +1,412 @@
+.subscription-drawer-content {
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #666;
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.7;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .error-message {
+      font-weight: 600;
+      color: #d32f2f;
+      margin-bottom: 8px;
+    }
+
+    .error-details {
+      font-size: 14px;
+      color: #757575;
+    }
+  }
+
+  .subscription-details {
+    .subscription-header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e0e0e0;
+
+      h3 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .tier-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+    }
+
+    .add-ons-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+
+      h4 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .add-on-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .add-on-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        background-color: white;
+        border-radius: 4px;
+        border-left: 3px solid #2196f3;
+
+        .add-on-icon {
+          font-size: 16px;
+        }
+
+        .add-on-name {
+          font-size: 14px;
+          color: #555;
+        }
+      }
+    }
+
+    .assets-section,
+    .limits-section {
+      h4 {
+        margin: 0 0 16px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .asset-category,
+      .limit-category {
+        margin-bottom: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+
+        .category-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 16px;
+          background-color: #f9f9f9;
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+
+          .expand-icon {
+            font-size: 12px;
+            color: #666;
+            transition: transform 0.2s;
+          }
+
+          .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+          }
+        }
+
+        .asset-list {
+          padding: 8px;
+          background-color: white;
+
+          .asset-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #f9f9f9;
+            }
+
+            .asset-checkbox {
+              cursor: not-allowed;
+              pointer-events: none;
+              margin: 0;
+            }
+
+            .asset-label {
+              flex: 1;
+              font-size: 13px;
+              color: #333;
+
+              &.disabled {
+                color: #999;
+                text-decoration: line-through;
+              }
+            }
+
+            .visibility-badge {
+              padding: 2px 8px;
+              background-color: #ff9800;
+              color: white;
+              border-radius: 10px;
+              font-size: 11px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    .limits-section {
+      margin-top: 24px;
+
+      .limit-groups {
+        padding: 8px;
+        background-color: white;
+      }
+
+      .limit-group {
+        margin-bottom: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+
+        .group-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 12px;
+          background-color: #fafafa;
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #f5f5f5;
+          }
+
+          .expand-icon {
+            font-size: 10px;
+            color: #666;
+            transition: transform 0.2s;
+          }
+
+          .group-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+          }
+        }
+
+        .limit-list {
+          padding: 8px;
+          background-color: white;
+
+          .limit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #f9f9f9;
+            }
+
+            .limit-name {
+              font-size: 13px;
+              color: #333;
+              font-weight: 500;
+            }
+
+            .limit-values {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .limit-current {
+                font-size: 14px;
+                font-weight: 600;
+                color: #2196f3;
+                font-family: "Courier New", monospace;
+              }
+
+              .warning-indicator {
+                font-size: 16px;
+                animation: pulse 2s infinite;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Dark mode support
+:host-context(.dark-mode) .subscription-drawer-content {
+  .empty-state {
+    color: #999;
+
+    .error-message {
+      color: #ef5350;
+    }
+
+    .error-details {
+      color: #bdbdbd;
+    }
+  }
+
+  .subscription-details {
+    .subscription-header {
+      border-bottom-color: #444;
+
+      h3 {
+        color: #e0e0e0;
+      }
+    }
+
+    .add-ons-section {
+      background-color: #2a2a2a;
+
+      h4 {
+        color: #e0e0e0;
+      }
+
+      .add-on-item {
+        background-color: #333;
+
+        .add-on-name {
+          color: #ccc;
+        }
+      }
+    }
+
+    .assets-section,
+    .limits-section {
+      h4 {
+        color: #e0e0e0;
+      }
+
+      .asset-category,
+      .limit-category {
+        border-color: #444;
+
+        .category-header {
+          background-color: #2a2a2a;
+
+          &:hover {
+            background-color: #333;
+          }
+
+          .category-title {
+            color: #e0e0e0;
+          }
+        }
+
+        .asset-list {
+          background-color: #1e1e1e;
+
+          .asset-item {
+            &:hover {
+              background-color: #2a2a2a;
+            }
+
+            .asset-label {
+              color: #ccc;
+
+              &.disabled {
+                color: #666;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .limits-section {
+      .limit-groups {
+        background-color: #1e1e1e;
+      }
+
+      .limit-group {
+        border-color: #444;
+
+        .group-header {
+          background-color: #2a2a2a;
+
+          &:hover {
+            background-color: #333;
+          }
+
+          .group-title {
+            color: #ccc;
+          }
+        }
+
+        .limit-list {
+          background-color: #1e1e1e;
+
+          .limit-item {
+            &:hover {
+              background-color: #2a2a2a;
+            }
+
+            .limit-name {
+              color: #ccc;
+            }
+
+            .limit-values {
+              .limit-current {
+                color: #64b5f6;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

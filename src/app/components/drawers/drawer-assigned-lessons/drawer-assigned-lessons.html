@@ -1,0 +1,140 @@
+<app-base-sliding-drawer [isOpen]="isOpen" [title]="'Assigned Lessons'" [drawerId]="'assigned-lessons-drawer'"
+    [position]="'right'" [width]="'600px'" [drawerHelp]="drawerHelp" (close)="onClose()">
+    <div class="assigned-lessons-drawer-content">
+        <!-- Current Selected Lesson Display -->
+        <div class="current-lesson-section">
+            <h4>Selected Lesson</h4>
+            <div class="current-lesson-display" *ngIf="selectedLesson; else noSelectedLesson">
+                <div class="lesson-icon">📖</div>
+                <div class="lesson-info">
+                    <div class="lesson-name">{{ selectedLesson.lessonName }}</div>
+                    <div class="lesson-id">Lesson ID: {{ selectedLesson.lessonId }}</div>
+                    <div class="lesson-meta">
+                        <span class="status-badge" [ngClass]="getStatusClass(selectedLesson.status)">
+                            {{ getStatusText(selectedLesson.status) }}
+                        </span>
+                        <span class="lesson-separator">•</span>
+                        <span class="lesson-nodes">{{ selectedLesson.nodeIds.length }} nodes</span>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noSelectedLesson>
+                <div class="no-lesson-display">
+                    <div class="no-lesson-icon">📚</div>
+                    <div class="no-lesson-text">No lesson selected</div>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Toggle for including completed lessons -->
+        <div class="filter-controls">
+            <label class="toggle-label">
+                <input type="checkbox" [(ngModel)]="includeCompletedLessons" class="toggle-checkbox" />
+                <span class="toggle-text">Include Completed Lessons</span>
+            </label>
+        </div>
+
+        <div *ngIf="filteredAssignedLessons.length === 0" class="empty-state">
+            <div class="empty-icon">📚</div>
+            <p *ngIf="!includeCompletedLessons && assignedLessons.length > 0">
+                No active lessons. Toggle "Include Completed Lessons" to see all.
+            </p>
+            <p *ngIf="assignedLessons.length === 0">No lessons assigned yet...</p>
+        </div>
+
+        <div *ngIf="filteredAssignedLessons.length > 0" class="assigned-lessons-list">
+            <div *ngFor="let assignment of filteredAssignedLessons; let i = index" class="assignment-card"
+                [class.selected]="assignment.lessonId === selectedLessonId"
+                [class.completed]="assignment.status === 'COMPLETED'" [class.overdue]="isDueOrOverdue(assignment)"
+                (click)="onSelectLesson(assignment)" (mouseenter)="onHoverLesson(assignment)" role="button"
+                tabindex="0">
+
+                <!-- Header with team/group info -->
+                <div class="assignment-blue-header" [class.selected-header]="assignment.lessonId === selectedLessonId">
+                    <span class="header-icon">👥</span>
+                    <div class="header-content">
+                        <span class="header-team">
+                            {{ assignment.assignedTo.type === 'team' ? assignment.assignedTo.name :
+                            assignment.assignedTo.teamName }}
+                        </span>
+                        <span *ngIf="assignment.assignedTo.type === 'teamGroup'" class="header-teamgroup">
+                            {{ assignment.assignedTo.name }}
+                        </span>
+                    </div>
+
+                    <!-- Review button for completed lessons (icon only) -->
+                    <button *ngIf="assignment.status === 'COMPLETED'" class="review-icon-button"
+                        (click)="markForReview(assignment, $event)" title="Mark this lesson for review">
+                        🔄
+                    </button>
+
+                    <div class="assignment-status">
+                        <span class="status-badge" [ngClass]="getStatusClass(assignment.status)">
+                            {{ getStatusText(assignment.status) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Main content area -->
+                <div class="assignment-header">
+                    <div class="assignment-number">{{ i + 1 }}</div>
+                    <div class="assignment-title-wrapper">
+                        <div class="assignment-title">{{ assignment.lessonName }}</div>
+                        <div class="assignment-lesson-id">Lesson ID: {{ assignment.lessonId }}</div>
+                    </div>
+                </div>
+
+                <!-- Combined details row (Est Time + Due Date) -->
+                <div class="assignment-details">
+                    <div class="detail-row combined-row">
+                        <span class="detail-group">
+                            <span class="detail-label">Est Time:</span>
+                            <span class="detail-value">{{ assignment.nodeIds.length * 2}} Min.</span>
+                        </span>
+                        <span class="detail-separator">|</span>
+                        <span class="detail-group">
+                            <span class="detail-label">Due:</span>
+                            <span class="detail-value">{{ assignment.dueDate | date:'mediumDate' }}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Expandable section toggle button -->
+                <div class="expand-toggle" (click)="toggleExpanded(assignment.lessonId, $event)">
+                    <span class="expand-icon">{{ isExpanded(assignment.lessonId) ? '▼' : '▶' }}</span>
+                    <span class="expand-text">{{ isExpanded(assignment.lessonId) ? 'Hide' : 'Show' }} Details</span>
+                </div>
+
+                <!-- Expandable details section -->
+                <div class="expandable-section" *ngIf="isExpanded(assignment.lessonId)"
+                    (click)="$event.stopPropagation()">
+                    <div class="expandable-content">
+                        <!-- Description pane -->
+                        <div class="detail-pane description-pane">
+                            <div class="pane-header">Description</div>
+                            <div class="pane-content">
+                                {{ getLessonDescription(assignment.lessonId) }}
+                            </div>
+                        </div>
+
+                        <!-- Nodes list pane -->
+                        <div class="detail-pane nodes-pane">
+                            <div class="pane-header">Nodes ({{ assignment.nodeIds.length }})</div>
+                            <div class="pane-content">
+                                <div class="node-list">
+                                    <div *ngFor="let nodeId of assignment.nodeIds; let idx = index" class="node-item">
+                                        <span class="node-number">{{ idx + 1 }}.</span>
+                                        <span class="node-id">{{ getNodeName(nodeId) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-base-sliding-drawer>

@@ -1,0 +1,114 @@
+
+
+
+/* Channel-based color styles */
+/* Format: .channelX = base color for channel */
+/* Format: .channelX-Y = depth-based color for channel */
+
+.channelA { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelA-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelA-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelA-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelA-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelA-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelA-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelA-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelA-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelA-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelA-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelA-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelB { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelB-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelB-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelB-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelB-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelB-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelB-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelB-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelB-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelB-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelB-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelB-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelC { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelC-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelC-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelC-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelC-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelC-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelC-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelC-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelC-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelC-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelC-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelC-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelD { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelD-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelD-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelD-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelD-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelD-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelD-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelD-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelD-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelD-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelD-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelD-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelE { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelE-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelE-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelE-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelE-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelE-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelE-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelE-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelE-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelE-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelE-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelE-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelF { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelF-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelF-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelF-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelF-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelF-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelF-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelF-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelF-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelF-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelF-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelF-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelG { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelG-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelG-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelG-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelG-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelG-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelG-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelG-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelG-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelG-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelG-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelG-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+.channelH { fill: rgb(77, 45, 20); } /* Chocolate */
+.channelH-0 { fill: rgb(245, 222, 179); } /* Beige */
+.channelH-1 { fill: rgb(222, 184, 135); } /* Burlywood */
+.channelH-2 { fill: rgb(205, 133, 63); }  /* Peru */
+.channelH-3 { fill: rgb(181, 101, 29); }  /* Cinnamon */
+.channelH-4 { fill: rgb(160, 82, 45); }   /* Chestnut */
+.channelH-5 { fill: rgb(139, 69, 19); }   /* Sienna */
+.channelH-6 { fill: rgb(123, 63, 0); }    /* Raw Umber */
+.channelH-7 { fill: rgb(101, 67, 33); }   /* Saddle Brown */
+.channelH-8 { fill: rgb(77, 45, 20); }    /* Chocolate */
+.channelH-9 { fill: rgb(60, 36, 18); }    /* Dark Walnut */
+.channelH-10 { fill: rgb(43, 28, 14); }   /* Espresso */
+
+/* Helper classes */
+.channel-default { fill: #CCCCCC; }
+.channel-highlight { stroke-width: 2; stroke: #333333; }

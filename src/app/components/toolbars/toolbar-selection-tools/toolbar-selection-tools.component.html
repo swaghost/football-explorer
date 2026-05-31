@@ -1,0 +1,146 @@
+<!-- Selection Tools Toolbar (Using Base Draggable Toolbar) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" *ngIf="visible" [attr.data-toolbar-type]="toolbarId"
+    class="selection-tools-panel">
+
+    <!-- Toolbar Header (from BaseToolbarComponent) -->
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()"><button class="help-close"
+            (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <!-- Toolbar Content -->
+    <div class="panel-content" *ngIf="expanded">
+        <!-- Selection Tools Section -->
+        <div class="tool-section">
+            <h4>Selection Tools</h4>
+            <div class="mode-buttons">
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'pan'" (click)="onSetDrawingMode('pan')" title="Pan Mode">
+                        🤚
+                    </button>
+                    <button [class.active]="drawingMode === 'select'" (click)="onSetDrawingMode('select')"
+                        title="Select Mode">
+                        👆
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'lasso'" (click)="onSetDrawingMode('lasso')"
+                        title="Lasso Select Mode">
+                        🎯
+                    </button>
+                    <button [class.active]="drawingMode === 'relatedNodes'" (click)="onSetDrawingMode('relatedNodes')"
+                        title="Related Node Selection Mode">
+                        🌳
+                    </button>
+                </div>
+                <div class="button-pair">
+                    <button [class.active]="drawingMode === 'zoomDrag'" (click)="onSetDrawingMode('zoomDrag')"
+                        title="Zoom Drag - Draw rectangle to zoom and center">
+                        🔍
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blue Separator for Modifiers Section -->
+        <div class="modifiers-separator" *ngIf="
+          drawingMode === 'lasso' ||
+          drawingMode === 'relatedNodes'
+        "></div>
+
+        <!-- Modifiers Section -->
+        <div class="modifiers-section" *ngIf="
+          drawingMode === 'lasso' ||
+          drawingMode === 'relatedNodes'
+        ">
+
+            <!-- Lasso Mode Options -->
+            <div class="tool-section" *ngIf="drawingMode === 'lasso'">
+                <div class="lasso-mode-buttons">
+                    <button [class.active]="lassoMode === 'select'" (click)="onSetLassoMode('select')"
+                        title="Select Mode - Add nodes to selection">
+                        ➕
+                    </button>
+                    <button [class.active]="lassoMode === 'deselect'" (click)="onSetLassoMode('deselect')"
+                        title="Deselect Mode - Remove nodes from selection">
+                        ➖
+                    </button>
+                </div>
+            </div>
+
+            <!-- Related Node Selection Options -->
+            <div class="tool-section" *ngIf="drawingMode === 'relatedNodes'">
+                <!-- Direction and Mode Controls - Compact Layout -->
+                <div class="related-node-controls">
+                    <!-- Headers Row -->
+                    <div class="headers-row">
+                        <h5>Direction</h5>
+                        <h5>Action</h5>
+                    </div>
+
+                    <!-- Buttons Row -->
+                    <div class="buttons-row">
+                        <div class="direction-buttons">
+                            <button [class.active]="relatedNodeDirection === 'descendants'"
+                                (click)="onToggleRelatedNodeDirection()"
+                                title="Select descendants (children and their children)">
+                                ⬇️
+                            </button>
+                            <button [class.active]="relatedNodeDirection === 'ancestors'"
+                                (click)="onToggleRelatedNodeDirection()"
+                                title="Select ancestors (parents and their parents)">
+                                ⬆️
+                            </button>
+                        </div>
+
+                        <div class="mode-buttons">
+                            <button [class.active]="relatedNodeMode === 'selection'" (click)="onToggleRelatedNodeMode()"
+                                title="Selection Mode - Add nodes to selected list">
+                                ✅
+                            </button>
+                            <button [class.active]="relatedNodeMode === 'highlight'" (click)="onToggleRelatedNodeMode()"
+                                title="Highlight Mode - Temporarily highlight without selecting">
+                                ✨
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar Footer -->
+    <div class="panel-footer" *ngIf="expanded">
+        &nbsp;
+    </div>
+
+    <!-- Vertical Resize Handle (from BaseToolbarComponent) -->
+    <div class="resize-handle" *ngIf="resizable" (mousedown)="onResizeStart($event)" title="Drag to resize vertically">
+        <div class="resize-grip"></div>
+    </div>
+</div>

@@ -1,0 +1,122 @@
+<app-base-dialog [visible]="visible" [title]="'Create New Dataset'" [icon]="'📊'" [maxWidth]="'600px'"
+    (close)="onCancel()">
+    <!-- Dataset Name -->
+    <div class="form-group">
+        <label for="newDatasetName">Dataset Name:</label>
+        <input #nameInput type="text" id="newDatasetName" [(ngModel)]="newDatasetName" (ngModelChange)="onNameChange()"
+            placeholder="Enter dataset name" class="text-input" maxlength="100" />
+    </div>
+
+    <!-- Dataset Description -->
+    <div class="form-group">
+        <label for="newDatasetDescription">Description (Optional):</label>
+        <textarea id="newDatasetDescription" [(ngModel)]="newDatasetDescription" (ngModelChange)="onDescriptionChange()"
+            placeholder="Enter dataset description" class="text-input textarea-input" maxlength="500"
+            rows="3"></textarea>
+    </div>
+
+    <!-- Ownership Context -->
+    <div class="form-group">
+        <label>Ownership Context:</label>
+        <div class="radio-group">
+            <!-- Personal Dataset - Always Available -->
+            <div class="radio-option">
+                <input type="radio" id="contextPersonal" name="ownershipContext" value="PERSONAL"
+                    [(ngModel)]="ownershipContext" (change)="onOwnershipContextChange()">
+                <label for="contextPersonal">
+                    <div class="radio-content">
+                        <div class="radio-header">
+                            <span class="radio-id">0</span>
+                            <span class="radio-separator"> - </span>
+                            <span class="radio-label">Personal Dataset</span>
+                        </div>
+                        <div class="radio-description">Available only to you</div>
+                        <div class="radio-key-info" title="Ownership: Personal ({ID: 0)}">Ownership: Personal
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- System Dataset - Only for Developer (99) and Administrator (1) -->
+            <div class="radio-option" *ngIf="canCreateSystemLevel()">
+                <input type="radio" id="contextSystem" name="ownershipContext" value="SYSTEM"
+                    [(ngModel)]="ownershipContext" (change)="onOwnershipContextChange()">
+                <label for="contextSystem">
+                    <div class="radio-content">
+                        <div class="radio-header">
+                            <span class="radio-id">-1</span>
+                            <span class="radio-separator"> - </span>
+                            <span class="radio-label">System Dataset</span>
+                        </div>
+                        <div class="radio-description">Available to all users across all tenants and
+                            teams</div>
+                        <div class="radio-key-info" title="Ownership: Tenant (ID: {{ selectedTenantId }})">
+                            Ownership: System</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Tenant Dataset - Only if tenant is selected and user can create tenant level -->
+            <div class="radio-option" *ngIf="selectedTenantId !== null && canCreateTenantLevel()">
+                <input type="radio" id="contextTenant" name="ownershipContext" value="TENANT"
+                    [(ngModel)]="ownershipContext" (change)="onOwnershipContextChange()">
+                <label for="contextTenant">
+                    <div class="radio-content">
+                        <div class="radio-header">
+                            <span class="radio-id">{{ selectedTenantId }}</span>
+                            <span class="radio-separator"> -</span>
+                            <span class="radio-label">{{ selectedTenantName || 'Tenant' }} Dataset</span>
+                        </div>
+                        <div class="radio-description">Available to all teams within this tenant</div>
+                        <div class="radio-key-info" title="Ownership: Tenant (ID: {{ selectedTenantId }})">
+                            Ownership: Tenant</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Team Dataset - Only if team is selected and user can create team level -->
+            <div class="radio-option" *ngIf="selectedTeamId !== null && canCreateTeamLevel()">
+                <input type="radio" id="contextTeam" name="ownershipContext" value="TEAM" [(ngModel)]="ownershipContext"
+                    (change)="onOwnershipContextChange()">
+                <label for="contextTeam">
+                    <div class="radio-content">
+                        <div class="radio-header">
+                            <span class="radio-id">{{ selectedTeamId }}</span>
+                            <span class="radio-separator"> - </span>
+                            <span class="radio-label">{{ selectedTeamName || 'Team' }} Dataset</span>
+                        </div>
+                        <div class="radio-description">Available only to members of this specific team</div>
+                        <div class="radio-key-info">Context: Team (ID: {{ selectedTeamId }})</div>
+
+                        <div class="radio-key-info"
+                            title="Ownership: Tenant ID {{ selectedTenantId }}, Team (ID: {{ selectedTeamId }})">
+                            Ownership: Team</div>
+
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Information -->
+    <div class="form-group">
+        <div class="info-text">
+            <p>This dataset will be created with a single root node and will be available for:</p>
+            <p><strong>{{ getContextDescription() }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Help Text -->
+    <div class="info-text">
+        <p><kbd>Enter</kbd> to create • <kbd>Esc</kbd> to cancel</p>
+    </div>
+
+    <div slot="footer" class="dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onCreate()" [disabled]="!canCreateDataset()">
+            Create Dataset
+        </button>
+    </div>
+</app-base-dialog>

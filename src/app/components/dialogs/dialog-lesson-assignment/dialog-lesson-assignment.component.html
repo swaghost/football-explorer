@@ -1,0 +1,30 @@
+<div class="dialog-overlay" [class.dark-mode]="isDarkMode" (click)="onCancel()">
+    <div class="dialog-container" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+            <h2>Assign Lesson</h2>
+            <button class="close-btn" (click)="onCancel()" title="Close">✖️</button>
+        </div>
+
+        <div class="dialog-body">
+            <div class="lesson-info" *ngIf="lesson">
+                <h3>{{ lesson.LessonName }}</h3>
+                <p *ngIf="lesson.LessonDesc">{{ lesson.LessonDesc }}</p>
+            </div>
+
+            <!-- Due Date Field -->
+            <div class="due-date-section">
+                <label for="dueDate">Due Date (Optional):</label>
+                <input type="date" id="dueDate" [(ngModel)]="dueDate" class="date-input" />
+            </div>
+
+            <div class="tree-view">
+                <div #treeContainer class="tree-container"></div>
+            </div>
+        </div>
+
+        <div class="dialog-footer">
+            <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+            <button class="btn btn-primary" (click)="onOk()">OK</button>
+        </div>
+    </div>
+</div>

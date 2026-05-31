@@ -1,0 +1,79 @@
+<!-- Example Toolbar Template -->
+<div class="draggable-toolbar" [class.dark-mode]="isDarkMode" [class.locked]="locked" [class.collapsed]="!expanded"
+    [class.dragging]="isDragging" [style.left.px]="position.x" [style.top.px]="position.y"
+    [style.display]="visible ? 'block' : 'none'">
+
+    <!-- Use the base header -->
+    <ng-container *ngTemplateOutlet="baseHeader"></ng-container>
+
+    <!-- Example toolbar content -->
+    <div class="panel-content" *ngIf="expanded">
+        <h4>Example Toolbar</h4>
+        <p>This demonstrates how to use the BaseToolbarComponent.</p>
+
+        <!-- Search section -->
+        <div class="form-group">
+            <label for="searchInput">Search:</label>
+            <input id="searchInput" type="text" [(ngModel)]="searchText" (input)="onSearch()"
+                placeholder="Type to search..." class="form-control">
+        </div>
+
+        <!-- Options section -->
+        <div class="form-group">
+            <label for="optionSelect">Select Option:</label>
+            <select id="optionSelect" [(ngModel)]="selectedOption" (change)="onOptionChange()" class="form-control">
+                <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option>
+            </select>
+        </div>
+
+        <!-- Filtered items display -->
+        <div class="form-group" *ngIf="filteredItems().length > 0">
+            <div class="item-list-label">Filtered Items:</div>
+            <ul class="item-list" role="list" aria-label="Filtered search results">
+                <li *ngFor="let item of filteredItems()" role="listitem">{{ item }}</li>
+            </ul>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="button-container">
+            <button class="btn btn-primary" (click)="onProcess()" [disabled]="isProcessing">
+                {{ isProcessing ? 'Processing...' : 'Process' }}
+            </button>
+            <button class="btn" (click)="onReset()" [disabled]="isProcessing">
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Optional footer -->
+    <div class="panel-footer" *ngIf="expanded">
+        <small>Example footer content - Search: "{{ searchText }}" | Option: {{ selectedOption }}</small>
+    </div>
+</div>
+
+<!-- Include the base template for the header -->
+<ng-template #baseHeader>
+    <div class="panel-header drag-handle" (mousedown)="onMouseDown($event)" (touchstart)="onTouchStart($event)">
+        <h3 (click)="onTitleClick($event)" (keydown.enter)="onTitleClick($event)" (keydown.space)="onTitleClick($event)"
+            tabindex="0" role="button" [attr.aria-label]="'Control-click to reset ' + toolbarTitle + ' position'">
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button (click)="toggleDarkMode()" [title]="isDarkMode() ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                {{ isDarkMode() ? '☀️' : '🌙' }}
+            </button>
+            <button (click)="toggleLocked()" [title]="isLocked() ? 'Unlock Toolbar' : 'Lock Toolbar'">
+                {{ isLocked() ? '🔒' : '🔓' }}
+            </button>
+            <button (click)="toggleCollapsed()" [title]="isCollapsed() ? 'Expand Toolbar' : 'Collapse Toolbar'">
+                {{ isCollapsed() ? '📂' : '📁' }}
+            </button>
+            <span class="drag-icon" [title]="isLocked() ? 'Toolbar is locked' : 'Drag to move'" *ngIf="!isLocked()">
+                ⋮⋮
+            </span>
+        </div>
+    </div>
+</ng-template>

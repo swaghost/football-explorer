@@ -1,0 +1,68 @@
+{
+  "modes": [        
+    {
+      "id": "explorer-mode",
+      "name": "Explorer",
+      "icon": "🔍",
+      "tooltip": "Free exploration and navigation tools",
+      "description": "Explore content freely with drawing and navigation tools",
+      "visibleToolbars": [        
+        "quickNav",
+        "techniqueExplorer",
+        "search"
+      ]
+    },
+    {
+      "id": "team-builder",
+      "name": "Team Builder",
+      "icon": "👥",
+      "tooltip": "Team and roster management tools",
+      "description": "Manage teams, team groups, rosters, and team members",
+      "visibleToolbars": [
+        "teams",
+        "defaultTeamGroups", 
+        "teamRoster",
+        "teamGroupMembers"
+      ]
+    },
+    {
+      "id": "dataset-builder",
+      "name": "Dataset Builder", 
+      "icon": "🗃️",
+      "tooltip": "Dataset creation and management tools",
+      "description": "Create and manage datasets with navigation and node painting tools",
+      "visibleToolbars": [
+        "quickNav",
+        "nodesList",
+        "nodePainter"
+      ]
+    },
+    {
+      "id": "lesson-builder",
+      "name": "Lesson Builder",
+      "icon": "📚",
+      "tooltip": "Lesson creation and design tools",
+      "description": "Create lessons with drawing tools and node selection",
+      "visibleToolbars": [
+        "selectionTools",
+        "lessons",
+        "lessonBuilderV2",
+        "techniqueExplorer",
+        "quickNav"
+      ]
+    },
+    {
+      "id": "lesson-mode",
+      "name": "Player Lesson",
+      "icon": "🎓",
+      "tooltip": "Lesson execution and learning mode",
+      "description": "Run lessons and track learning progress",
+      "visibleToolbars": [
+        "lessons",
+        "lessonRunnerV2"
+      ]
+    }
+  ],
+  "defaultMode": "default-view",
+  "rememberLastMode": true
+}

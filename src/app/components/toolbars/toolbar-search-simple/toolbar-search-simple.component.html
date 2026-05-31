@@ -1,0 +1,28 @@
+<div *ngIf="visible" style="position: fixed !important; 
+         top: 100px !important; 
+         left: 100px !important; 
+         width: 400px !important; 
+         height: 300px !important; 
+         background: red !important; 
+         border: 5px solid yellow !important; 
+         z-index: 99999 !important;
+         color: white !important;
+         padding: 20px !important;
+         font-size: 18px !important;
+         font-weight: bold !important;
+         display: block !important;">
+    <div>🔍🔍🔍 SEARCH TOOLBAR IS HERE! 🔍🔍🔍</div>
+    <div>Visible: {{ visible }}</div>
+    <div>Position: {{ safePosition.x }}, {{ safePosition.y }}</div>
+    <button (click)="onClose()" style="background: white; color: black; padding: 10px; margin: 10px;">
+        CLOSE
+    </button>
+
+    <div style="margin-top: 20px;">
+        <input type="text" placeholder="Search by ID" style="width: 100%; padding: 5px; margin: 5px 0;" />
+        <input type="text" placeholder="Search by Terms" style="width: 100%; padding: 5px; margin: 5px 0;" />
+        <button style="background: green; color: white; padding: 10px; width: 100%;">
+            SEARCH
+        </button>
+    </div>
+</div>

@@ -1,0 +1,172 @@
+// Team Group Members Toolbar Component Styles
+// Import common toolbar base styles
+@use "../../../styles/components/toolbar-base";
+
+// Component-specific styles nested within .team-group-members-panel
+.team-group-members-panel {
+  // Ensure proper clipping of header/footer gradients
+  overflow: hidden;
+
+  // Ensure panel-header is properly clipped
+  .panel-header {
+    border-radius: 0;
+    overflow: hidden;
+    background-clip: padding-box;
+  }
+
+  // Dark mode specific overrides (if needed)
+  &.dark-mode {
+    .panel-header {
+      border-radius: 0;
+      overflow: hidden;
+      background-clip: padding-box;
+    }
+  }
+
+  // Sort controls styling
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+
+    label {
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .sort-select {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fffae6;
+      font-size: 13px;
+      cursor: pointer;
+
+      .dark-mode & {
+        background: #2d2d2d;
+      }
+
+      &:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 1px;
+      }
+    }
+
+    .edit-btn {
+      margin-left: auto;
+    }
+  }
+
+  .players-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Allow flex child to shrink
+    flex: 1; // Take available space
+  }
+
+  .players-list {
+    min-height: 440px; // Ensure at least 11 rows are visible (~40px per row)
+    max-height: 440px; // Set same as min to create fixed scrollable area
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0; // Don't shrink below min-height
+  }
+
+  .player-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .player-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .player-name {
+    font-weight: 500;
+    font-size: 14px;
+
+    &.clickable {
+      cursor: pointer;
+      color: var(--color-primary);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .player-id {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .no-selection-message {
+    text-align: center;
+    padding: 32px 16px;
+    color: #666;
+
+    .no-selection-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+    }
+
+    .no-selection-text {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: #888;
+    }
+  }
+
+  // Dark mode adjustments for component-specific elements
+  &.dark-mode {
+    .sort-controls {
+      background: rgba(255, 255, 255, 0.1);
+
+      .sort-select {
+        background: #3c3c3c;
+        color: #fff;
+        border-color: #555;
+      }
+    }
+
+    .player-item {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    .player-id {
+      color: #aaa;
+    }
+
+    .no-selection-message {
+      color: #aaa;
+
+      .info-text {
+        color: #888;
+      }
+    }
+  }
+}

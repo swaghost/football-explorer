@@ -1,0 +1,98 @@
+<!-- Team Group Members Panel (Draggable) -->
+<div [ngClass]="getToolbarClasses()" [ngStyle]="getToolbarStyles()" [attr.data-toolbar-type]="toolbarId"
+    class="team-group-members-panel" *ngIf="visible">
+    <div [ngClass]="getHeaderClasses()" (mousedown)="onDragStart($event)">
+        <h3>
+            <span class="toolbar-icon">{{ toolbarIcon }}</span>
+            {{ toolbarTitle }}
+        </h3>
+        <div class="header-actions">
+            <button class="help-toggle" (click)="onToggleHelp()" title="Show help">
+                ❓
+            </button>
+            <button class="expand-toggle" (click)="onToggleExpanded()" [title]="getExpandButtonTitle()">
+                {{ expanded ? '🔼' : '🔽' }}
+            </button>
+            <button class="close-button" (click)="onClose()" title="Close toolbar">
+                ✖️
+            </button>
+            <button class="lock-toggle" (click)="onToggleLock()" [title]="getLockButtonTitle()">
+                {{ locked ? '🔒' : '🔓' }}
+            </button>
+            <span class="drag-icon" (mousedown)="onDragStart($event)">⋮⋮</span>
+        </div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div class="help-overlay" *ngIf="showHelpOverlay" (click)="onCloseHelp()">
+        <button class="help-close" (click)="onCloseHelp()" title="Close help">✖️</button>
+        <div class="help-content" (click)="$event.stopPropagation()">
+            <p [innerHTML]="toolbarHelp"></p>
+        </div>
+    </div>
+
+    <div class="panel-content" *ngIf="expanded">
+
+
+        <!-- Team Group Members List -->
+        <div class="players-section" *ngIf="selectedTeamGroup && teamGroupPlayers.length > 0">
+
+
+            <!-- Sort Controls and Edit Button -->
+            <div class="sort-controls">
+                <label for="player-sort">Sort by:</label>
+                <select id="player-sort" class="sort-select" [value]="playerSortBy"
+                    (change)="onPlayerSortChange($event)">
+                    <option *ngFor="let option of playerSortOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+                <button class="action-btn edit-btn" (click)="onEditTeamGroup()" [title]="
+            'Edit team group: ' + (selectedTeamGroup.TeamGroupName || '')
+          ">
+                    Edit Group Members
+                </button>
+            </div>
+
+            <!-- Players List -->
+            <div class="players-list">
+                <div *ngFor="let player of teamGroupPlayers" class="player-item" [class.group-player]="true">
+                    <div class="player-info">
+                        <span class="player-name clickable" (click)="onPlayerEdit(player)"
+                            [title]="'Edit ' + player.FirstName + ' ' + player.LastName">
+                            {{ player.FirstName }} {{ player.LastName }}
+                        </span>
+                        <span class="player-id">(ID: {{ player.PlayerID }})</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- No Group Members Message -->
+        <div class="no-selection-message" *ngIf="selectedTeamGroup && teamGroupPlayers.length === 0">
+            <div class="no-selection-icon">👤</div>
+            <div class="no-selection-text">Empty Team Group Selected</div>
+            <div class="info-text">Edit the member list from the populated team roster.</div>
+        </div>
+
+        <!-- No Group Selected Message -->
+        <div class="no-selection-message" *ngIf="!selectedTeamGroup">
+            <div class="no-selection-icon">🏷️</div>
+            <div class="no-selection-text">No Team Group Selected</div>
+            <div class="info-text">
+                Select a team and team group from the Teams toolbar to view its members.
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with team group info -->
+    <div class="panel-footer" *ngIf="selectedTeamGroup && expanded">
+        <div class="footer-stats">
+            <span class="stat-item group-name">{{ selectedTeamGroup.TeamGroupName }}</span>
+            <span class="stat-separator">|</span>
+            <span class="stat-item member-count">Members: <strong>{{ teamGroupPlayers.length }}</strong></span>
+        </div>
+    </div>
+</div>

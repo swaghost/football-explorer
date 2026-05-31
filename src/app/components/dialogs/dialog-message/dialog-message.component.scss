@@ -1,0 +1,65 @@
+.dialog-message-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 400px;
+
+  .message-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  p {
+    margin: 0 0 2rem 0;
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.btn-primary {
+      background-color: #4caf50;
+      color: white;
+
+      &:hover {
+        background-color: #45a049;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+// Dark mode support
+:host-context(.dark-mode) {
+  .dialog-message-content {
+    h2 {
+      color: #e0e0e0;
+    }
+
+    p {
+      color: #b0b0b0;
+    }
+  }
+}

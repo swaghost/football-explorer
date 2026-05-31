@@ -1,0 +1,284 @@
+{
+  "users": [
+        {
+      "UserId": 0,
+      "FirstName": "Free Mode",
+      "MiddleName": "",
+      "LastName": "",
+      "Address1": "",
+      "Address2": "",
+      "City": "",
+      "State": "",
+      "ZipCode": "",
+      "NationCode": "",
+      "EmailAddress": "",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [
+        { "tenantId": 1, "tenantRoles": [3], "tenantRelatives": [], "TierID": "FREE", "AddOns": [] }  
+      ]
+    },
+
+    {
+      "UserId": 1,
+      "FirstName": "Super",
+      "MiddleName": "",
+      "LastName": "Admin",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "admin@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "Tenants": [],
+      "IsAssumable": true,
+      "mockTenantConfig": [
+        { "tenantId": 1, "tenantRoles": [1], "tenantRelatives": [], "TierID": "FREE", "AddOns": [] },
+        { "tenantId": 3, "tenantRoles": [1], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 5, "tenantRoles": [1], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 8, "tenantRoles": [1], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 9, "tenantRoles": [1], "tenantRelatives": [], "TierID": "", "AddOns": [] }
+      ]
+    },
+    {
+      "UserId": 2,
+      "FirstName": "Super",
+      "MiddleName": "",
+      "LastName": "Dev",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "dev@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],      
+      "mockTenantConfig": [
+        { "tenantId": 1, "tenantRoles": [99], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 3, "tenantRoles": [99], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 5, "tenantRoles": [99], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 8, "tenantRoles": [99], "tenantRelatives": [], "TierID": "", "AddOns": [] },
+        { "tenantId": 9, "tenantRoles": [99], "tenantRelatives": [], "TierID": "", "AddOns": [] }
+      ]
+    },
+    {
+      "UserId": 3,
+      "FirstName": "Quinn",
+      "MiddleName": "",
+      "LastName": "Assenheimer",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "q@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [        
+        { "tenantId": 8, "tenantRoles": [3], "tenantRelatives": [{ "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }], "TierID": "", "AddOns": [] }
+      ]
+    },
+    {
+      "UserId": 4,
+      "FirstName": "Chase",
+      "MiddleName": "",
+      "LastName": "Assenheimer",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "c@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [        
+        { "tenantId": 3, "tenantRoles": [3], "tenantRelatives": [       
+        { "tenantId": 5, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 9, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 10, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []}
+      ] },
+        { "tenantId": 5, "tenantRoles": [3], "tenantRelatives": [       
+        { "tenantId": 5, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 9, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 10, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []}
+      ] }
+      ]
+    },
+    {
+      "UserId": 5,
+      "FirstName": "Archer",
+      "MiddleName": "",
+      "LastName": "Assenheimer",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "a@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [        
+        { "tenantId": 5, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 13, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []},
+        { "tenantId": 10, "tenantRoles": [3], "tenantRelatives": [  { "UserID": 7, "IsAssumable": false }, 
+          { "UserID": 6, "IsAssumable": false }] , "TierID": "", "AddOns": []}
+      ]
+    },
+    {
+      "UserId": 6,
+      "FirstName": "Kelly",
+      "MiddleName": "",
+      "LastName": "Assenheimer",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "k@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [
+        { "tenantId": 3, "tenantRoles": [4], "tenantRelatives": [
+          { "UserID": 3, "IsAssumable": true },
+          { "UserID": 4, "IsAssumable": true },
+          { "UserID": 5, "IsAssumable": true },
+          { "UserID": 7, "IsAssumable": false }
+        ] , "TierID": "", "AddOns": []},
+        { "tenantId": 5, "tenantRoles": [4], "tenantRelatives": [
+          { "UserID": 3, "IsAssumable": true },
+          { "UserID": 4, "IsAssumable": true },
+          { "UserID": 5, "IsAssumable": true },
+          { "UserID": 7, "IsAssumable": false }
+        ] , "TierID": "", "AddOns": []},
+        { "tenantId": 8, "tenantRoles": [4], "tenantRelatives": [
+          { "UserID": 3, "IsAssumable": true },
+          { "UserID": 4, "IsAssumable": true },
+          { "UserID": 5, "IsAssumable": true },
+          { "UserID": 7, "IsAssumable": false }
+        ] , "TierID": "", "AddOns": []},
+        { "tenantId": 13, "tenantRoles": [4], "tenantRelatives": [
+          { "UserID": 3, "IsAssumable": true },
+          { "UserID": 4, "IsAssumable": true },
+          { "UserID": 5, "IsAssumable": true },
+          { "UserID": 7, "IsAssumable": false }
+        ] , "TierID": "", "AddOns": []},
+        { "tenantId": 10, "tenantRoles": [4], "tenantRelatives": [
+          { "UserID": 5, "IsAssumable": true },
+          { "UserID": 7, "IsAssumable": false }
+        ] , "TierID": "", "AddOns": []}
+      ]
+    },
+    {
+      "UserId": 7,
+      "FirstName": "Scott",
+      "MiddleName": "",
+      "LastName": "Assenheimer",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "s@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [
+        { "tenantId": -1, "tenantRoles": [1], "tenantRelatives": [
+          { "UserID": 3, "IsAssumable": true }, 
+          { "UserID": 4, "IsAssumable": true }, 
+          { "UserID": 5, "IsAssumable": true }, 
+          { "UserID": 6, "IsAssumable": true }
+          ] , "TierID": "", "AddOns": []},
+        { "tenantId": 1, "tenantRoles": [99], "tenantRelatives": [] , "TierID": "", "AddOns": []},
+        { "tenantId": 3, "tenantRoles": [2, 99], "tenantRelatives": [{ "UserID": 3, "IsAssumable": true }, 
+          { "UserID": 4, "IsAssumable": true }, 
+          { "UserID": 5, "IsAssumable": true }, 
+          { "UserID": 6, "IsAssumable": true }] , "TierID": "", "AddOns": []},
+        { "tenantId": 5, "tenantRoles": [9, 2], "tenantRelatives": [{ "UserID": 3, "IsAssumable": true }, 
+          { "UserID": 4, "IsAssumable": true }, 
+          { "UserID": 5, "IsAssumable": true }, 
+          { "UserID": 6, "IsAssumable": true }] , "TierID": "", "AddOns": []},
+        { "tenantId": 8, "tenantRoles": [4], "tenantRelatives": [{ "UserID": 3, "IsAssumable": true }] , "TierID": "", "AddOns": []},
+        { "tenantId":13, "tenantRoles": [4], "tenantRelatives": [{ "UserID": 3, "IsAssumable": true }, 
+          { "UserID": 4, "IsAssumable": true }, 
+          { "UserID": 5, "IsAssumable": true }, 
+          { "UserID": 6, "IsAssumable": true }] , "TierID": "", "AddOns": []},
+        { "tenantId": 10, "tenantRoles": [4], "tenantRelatives": [{ "UserID": 4, "IsAssumable": true }, 
+          { "UserID": 5, "IsAssumable": true }, 
+          { "UserID": 6, "IsAssumable": true }] , "TierID": "", "AddOns": []}
+      ]
+    },
+    {
+      "UserId": 8,
+      "FirstName": "Tenant",
+      "MiddleName": "",
+      "LastName": "Architect",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "architect@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [
+        { "tenantId": 5, "tenantRoles": [1], "tenantRelatives": [] , "TierID": "", "AddOns": []}
+      ]
+    },
+    {
+      "UserId": 9,
+      "FirstName": "Tenant",
+      "MiddleName": "",
+      "LastName": "Coach",
+      "Address1": "1234 Soccer St",
+      "Address2": "",
+      "City": "Tosa",
+      "State": "WI",
+      "ZipCode": "5XXXXX",
+      "NationCode": "US",
+      "EmailAddress": "coach@soccr.org",
+      "PhoneNumber": "",
+      "BirthDate": "",
+      "IsAssumable": true,
+      "Tenants": [],
+      "mockTenantConfig": [
+        { "tenantId": 3, "tenantRoles": [2], "tenantRelatives": [] , "TierID": "", "AddOns": []}
+      ]
+    }
+  ]
+}
+
