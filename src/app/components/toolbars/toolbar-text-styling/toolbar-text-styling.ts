@@ -278,6 +278,8 @@ export class ToolbarTextStylingComponent
   @Output() updateNodeCount = new EventEmitter<Event>();
   @Output() regenerateNodes = new EventEmitter<void>();
   @Output() radiusChange = new EventEmitter<number>();
+  @Output() radiusMaxChange = new EventEmitter<number>();
+  @Output() useIdealRadius = new EventEmitter<void>();
   @Output() widthChange = new EventEmitter<number>();
   @Output() heightChange = new EventEmitter<number>();
   @Output() nodeSizeChange = new EventEmitter<string>();
@@ -1040,6 +1042,17 @@ export class ToolbarTextStylingComponent
     const value = +(event.target as HTMLInputElement).value;
     this.visualizationRadius = value;
     this.radiusChange.emit(value);
+  }
+
+  onRadiusMaxChange(event: Event): void {
+    const value = +(event.target as HTMLInputElement).value;
+    if (value >= 100) {
+      this.radiusMaxChange.emit(value);
+    }
+  }
+
+  onUseIdealRadius(): void {
+    this.useIdealRadius.emit();
   }
 
   onWidthChange(event: Event): void {

@@ -186,6 +186,7 @@ import {
   EditDatasetResult,
 } from '../../dialogs/dialog-edit-dataset/dialog-edit-dataset.component';
 import { DialogMessageComponent } from '../../dialogs/dialog-message/dialog-message.component';
+import { DecisionFlowService } from '@soccr.io/api';
 
 @Component({
   selector: 'app-visualization-tester',
@@ -287,6 +288,7 @@ export class VisualizationTester
   private colorizationApplicationService = inject(
     ColorizationApplicationService,
   );
+  private decisions = inject(DecisionFlowService);
   private destroy$ = new Subject<void>();
 
   public width = window.innerWidth;

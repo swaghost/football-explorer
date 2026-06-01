@@ -978,9 +978,12 @@
             <h4>Radius</h4>
             <div class="control-group">
                 <label for="viz-radius">Radius: {{ visualizationRadius }}px (Ideal: {{ visualizationRadiusIdeal
-                    }})</label><br />
-                <div class="slider-bounds"><span class="min-label">100</span><span class="max-label">{{
-                        visualizationRadiusMax }}</span></div>
+                    }})</label>
+                <button (click)="onUseIdealRadius()" class="ideal-btn" title="Set radius to ideal value">Use Ideal
+                    Radius</button><br />
+                <div class="slider-bounds"><span class="min-label">100</span><span class="max-label">Max: <input
+                            type="number" [value]="visualizationRadiusMax" (input)="onRadiusMaxChange($event)" min="100"
+                            step="100" style="width: 70px;" /></span></div>
                 <input id="viz-radius" type="range" min="100" [max]="visualizationRadiusMax" step="10"
                     [value]="visualizationRadius" (input)="onRadiusChange($event)" class="slider" />
             </div>

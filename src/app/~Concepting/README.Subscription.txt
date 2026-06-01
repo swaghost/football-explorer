@@ -1,21 +1,47 @@
 
 Personal 
-    Solo Explorer (Free)
+    Solo Explorer (Free, Anonymous User)
+        [ALLOWED]
         - System Datasets Access (System Only)
         - techniqueExplorer
         - zoomControls
         - rotationControl
         - search        
-    
+        - FREE
+    	[PROHIBITED]
+        - Creating Teams is prohibited.
+	    - Creating Flows is prohibited.
+	    - Screenshots and Dumps is prohibited.
+	    - Tasks are prohibited
+        - Saved Completion Status is Prohibited
+        
     Player ($10 per year)
         PLAYER WOULD HAVE FREE MODE, PLUS ASSIGNED LESSONS
         JOINS VIA EMAIL/TEAM CODE
+        - You can join any team using the team code.
+	    - N favorites
+	    - N bookmark
+	    - N open tasks.
         - System Datasets
         - Receive Lessons
         - Lesson Runner
         - Save Completion Status              
         - favorites - Favorites management
         - bookmarks - Bookmarks management        
+	    [PRICING]
+        - N$ per year.
+	    - SPRING ONLY / FALL ONLY (3/5N)
+	    - SUMMER ONLY (2/5N)
+
+    Family Registration
+        [PRICING]
+        - N$ * 4 per year.
+        - INCLUDES 2 ADMINS (ADULTS)
+        - INCLUDES 4 PLAYERS
+        - Plus $2/3N for each additional player
+        - Plus $2/3N for each additional admin.	
+        [ALLOWED]
+        Access to Public Flows of Joined Teams
 
     Coach ($40)
         - System Datasets   
