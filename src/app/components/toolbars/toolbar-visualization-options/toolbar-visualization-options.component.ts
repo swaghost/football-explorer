@@ -51,7 +51,7 @@ export class ToolbarVisualizationOptionsComponent extends BaseToolbarComponent {
   @Input() blueDotScreenCenterEnabled = false; // Blue dot screen center toggle
   @Input() blueDotScreenCenterSize = 10; // Blue dot size in pixels
   @Input() showBackgroundCircle: boolean = false; // Show aqua background circle
-  @Input() nodeSize: 'xsmall' | 'small' | 'medium' | 'large' = 'medium'; // Node size
+  @Input() nodeSize: 'xxs' | 'xsmall' | 'small' | 'medium' | 'large' = 'medium'; // Node size
   @Input() textPosition = 'below'; // Text position
   @Input() textFontFamily = 'Arial'; // Text font family
   @Input() lineType: 'line' | 'step' | 'curve' = 'curve'; // Link line type
@@ -106,6 +106,8 @@ export class ToolbarVisualizationOptionsComponent extends BaseToolbarComponent {
   @Output() updateNodeCount = new EventEmitter<Event>();
   @Output() regenerateNodes = new EventEmitter<void>();
   @Output() radiusChange = new EventEmitter<number>();
+  @Output() radiusMaxChange = new EventEmitter<number>();
+  @Output() useIdealRadius = new EventEmitter<void>();
   @Output() widthChange = new EventEmitter<number>();
   @Output() heightChange = new EventEmitter<number>();
   @Output() quickNavFollowToggle = new EventEmitter<boolean>();
@@ -371,6 +373,17 @@ export class ToolbarVisualizationOptionsComponent extends BaseToolbarComponent {
   onRadiusChange(event: Event): void {
     const value = +(event.target as HTMLInputElement).value;
     this.radiusChange.emit(value);
+  }
+
+  onRadiusMaxChange(event: Event): void {
+    const value = +(event.target as HTMLInputElement).value;
+    if (value >= 100) {
+      this.radiusMaxChange.emit(value);
+    }
+  }
+
+  onUseIdealRadius(): void {
+    this.useIdealRadius.emit();
   }
 
   onWidthChange(event: Event): void {

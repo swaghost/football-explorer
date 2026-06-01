@@ -54,7 +54,8 @@ export class ToolbarColorizationOptionsComponent
   @Input() unqualifiedColor: string = '#CCCCCC'; // Color for unqualified nodes (branch-selection strategy)
   @Input() overrideRootNodeStyle: boolean = false; // Enable root node overrides
   @Input() rootNodeFont: string = 'Arial'; // Root node font override
-  @Input() rootNodeSize: 'xsmall' | 'small' | 'medium' | 'large' = 'medium'; // Root node size override
+  @Input() rootNodeSize: 'xxs' | 'xsmall' | 'small' | 'medium' | 'large' =
+    'medium'; // Root node size override
   @Input() rootNodeStyle: 'normal' | 'bold' | 'italic' = 'normal'; // Root node style override
   @Input() rootNodeStrokeColor: string = '#000000'; // Root node stroke color override
 
@@ -471,7 +472,7 @@ export class ToolbarColorizationOptionsComponent
     const strategies =
       this.categoryStrategyMap[this.colorizationCategory] || [];
     return this.colorStrategyOptions.filter((option) =>
-      strategies.includes(option.value)
+      strategies.includes(option.value),
     );
   }
 }

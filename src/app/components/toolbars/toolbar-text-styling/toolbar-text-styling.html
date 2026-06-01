@@ -631,15 +631,15 @@
                     <div class="form-group">
                         <label for="keyBorderColor">Border:</label>
                         <input type="color" id="keyBorderColor" [(ngModel)]="keyBorderColor"
-                            (change)="onKeyBorderColorChange(keyBorderColor)" class="color-input-compact color-picker-key"
-                            [disabled]="!includeColorKey" />
+                            (change)="onKeyBorderColorChange(keyBorderColor)"
+                            class="color-input-compact color-picker-key" [disabled]="!includeColorKey" />
                     </div>
 
                     <div class="form-group">
                         <label for="keyBackgroundColor">Background:</label>
                         <input type="color" id="keyBackgroundColor" [(ngModel)]="keyBackgroundColor"
-                            (change)="onKeyBackgroundColorChange(keyBackgroundColor)" class="color-input-compact color-picker-key"
-                            [disabled]="!includeColorKey" />
+                            (change)="onKeyBackgroundColorChange(keyBackgroundColor)"
+                            class="color-input-compact color-picker-key" [disabled]="!includeColorKey" />
                     </div>
 
                     <div class="form-group">
@@ -652,8 +652,8 @@
                     <div class="form-group">
                         <label for="keyTitleTextColor">Title Text:</label>
                         <input type="color" id="keyTitleTextColor" [(ngModel)]="keyTitleTextColor"
-                            (change)="onKeyTitleTextColorChange(keyTitleTextColor)" class="color-input-compact color-picker-key"
-                            [disabled]="!includeColorKey" />
+                            (change)="onKeyTitleTextColorChange(keyTitleTextColor)"
+                            class="color-input-compact color-picker-key" [disabled]="!includeColorKey" />
                     </div>
                 </div>
             </div>
@@ -829,7 +829,8 @@
                         <div class="form-group" style="flex: 0.4;">
                             <label for="titleBorderColor">Color:</label>
                             <input type="color" id="titleBorderColor" [(ngModel)]="titleBorderColor"
-                                (change)="onTitleBorderColorChange(titleBorderColor)" class="color-input-compact color-picker-small"
+                                (change)="onTitleBorderColorChange(titleBorderColor)"
+                                class="color-input-compact color-picker-small"
                                 [disabled]="!enableTitle || titleBorderType === 'none'" />
                         </div>
 
@@ -838,7 +839,8 @@
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <input type="range" id="titleBorderThickness" [(ngModel)]="titleBorderThickness"
                                     (change)="onTitleBorderThicknessChange(titleBorderThickness)" min="1" max="10"
-                                    [disabled]="!enableTitle || titleBorderType === 'none'" style="flex: 1; min-width: 60px;" />
+                                    [disabled]="!enableTitle || titleBorderType === 'none'"
+                                    style="flex: 1; min-width: 60px;" />
                                 <span style="font-size: 12px; white-space: nowrap;">{{ titleBorderThickness }}px</span>
                             </div>
                         </div>
@@ -916,6 +918,8 @@
             <h4>Node Size</h4>
             <div class="control-group">
                 <div class="size-buttons">
+                    <button class="size-btn" [class.active]="nodeSize === 'xxs'" (click)="onNodeSizeChange('xxs')"
+                        title="Extra extra small nodes">XXS</button>
                     <button class="size-btn" [class.active]="nodeSize === 'xsmall'" (click)="onNodeSizeChange('xsmall')"
                         title="Extra small nodes">XS</button>
                     <button class="size-btn" [class.active]="nodeSize === 'small'" (click)="onNodeSizeChange('small')"

@@ -302,7 +302,7 @@ export class VisualizationTester
   public redDotCenterSize = 10;
   public blueDotScreenCenterEnabled = false;
   public blueDotScreenCenterSize = 10;
-  public nodeSize: 'xsmall' | 'small' | 'medium' | 'large' = 'medium';
+  public nodeSize: 'xxs' | 'xsmall' | 'small' | 'medium' | 'large' = 'medium';
   public textPosition = 'radiating-all'; // Default for radial tree
   public textFontFamily = 'Arial'; // Text font family
   public lineType: 'line' | 'step' | 'curve' = 'curve'; // Link line type
@@ -8467,6 +8467,22 @@ export class VisualizationTester
     this.updateVisualization();
   }
 
+  public onVisualizationRadiusMaxChange(maxRadius: number): void {
+    this.visualizationRadiusMax = maxRadius;
+    // If current radius exceeds new max, adjust it
+    if (this.visualizationRadius > maxRadius) {
+      this.visualizationRadius = maxRadius;
+      this.initializeVisualizationLayouts();
+      this.updateVisualization();
+    }
+  }
+
+  public onUseIdealRadius(): void {
+    this.visualizationRadius = this.visualizationRadiusIdeal;
+    this.initializeVisualizationLayouts();
+    this.updateVisualization();
+  }
+
   public onVisualizationWidthChange(width: number): void {
     this.visualizationWidth = width;
     this.initializeVisualizationLayouts(); // Recreate layouts with new width
@@ -9649,6 +9665,8 @@ export class VisualizationTester
   private getNodeRadius(depth: number): number {
     const baseRadius = depth === 0 ? 16 : 12;
     switch (this.nodeSize) {
+      case 'xxs':
+        return baseRadius * 0.35;
       case 'xsmall':
         return baseRadius * 0.5;
       case 'small':
@@ -9751,7 +9769,7 @@ export class VisualizationTester
             const rotationRad = (this.rotationAngle * Math.PI) / 180;
             const xOffset = radiatingOffset * Math.cos(-rotationRad);
             const yOffset = radiatingOffset * Math.sin(-rotationRad);
-            
+
             return {
               x: d.x + xOffset,
               y: d.y + yOffset,

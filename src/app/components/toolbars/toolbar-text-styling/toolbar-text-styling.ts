@@ -185,7 +185,7 @@ export class ToolbarTextStylingComponent
   @Input() visualizationRadiusIdeal = 400;
   @Input() visualizationWidthIdeal = 800;
   @Input() visualizationHeightIdeal = 600;
-  @Input() nodeSize: 'xsmall' | 'small' | 'medium' | 'large' = 'medium';
+  @Input() nodeSize: 'xxs' | 'xsmall' | 'small' | 'medium' | 'large' = 'medium';
   @Input() textPosition = 'below'; // Text position
   @Input() lineType: 'line' | 'step' | 'curve' = 'curve'; // Link line type
   @Input() linkConnection: 'full' | 'short' = 'full'; // Link connection style

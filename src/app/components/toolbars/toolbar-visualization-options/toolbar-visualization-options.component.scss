@@ -103,12 +103,12 @@
 
     .size-btn {
       flex: 1;
-      padding: 8px 16px;
+      padding: 4px 8px;
       border: 2px solid #ddd;
-      border-radius: 6px;
+      border-radius: 4px;
       background: white;
       color: #333;
-      font-size: 14px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -139,6 +139,35 @@
           border-color: #ff8a65;
           color: #1a1a1a;
         }
+      }
+    }
+  }
+
+  .ideal-btn {
+    margin-left: 10px;
+    padding: 4px 12px;
+    border: 2px solid #4caf50;
+    border-radius: 4px;
+    background: white;
+    color: #4caf50;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #4caf50;
+      color: white;
+    }
+
+    .dark-mode & {
+      background: #2d2d2d;
+      border-color: #66bb6a;
+      color: #66bb6a;
+
+      &:hover {
+        background: #66bb6a;
+        color: #1a1a1a;
       }
     }
   }
