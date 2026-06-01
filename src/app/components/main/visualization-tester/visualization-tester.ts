@@ -281,11 +281,11 @@ export class VisualizationTester
   private toDoService = inject(ToDoService);
   private treeVisualizationService = inject(TreeVisualizationService);
   private visualizationInteractionService = inject(
-    VisualizationInteractionService
+    VisualizationInteractionService,
   );
   private visualizationRendererService = inject(VisualizationRendererService);
   private colorizationApplicationService = inject(
-    ColorizationApplicationService
+    ColorizationApplicationService,
   );
   private destroy$ = new Subject<void>();
 
@@ -357,14 +357,14 @@ export class VisualizationTester
         // No lesson selected - only technique explorer updates (selectedNode is already set above)
         console.log(
           '🔍 No lesson selected - only updating technique explorer with node:',
-          value
+          value,
         );
       }
     } else if (value) {
       // Selected node is NOT in selectedNodes list - only technique explorer updates
       console.log(
         '🔍 Node outside selectedNodes - only updating technique explorer with node:',
-        value
+        value,
       );
     }
 
@@ -373,6 +373,9 @@ export class VisualizationTester
     if (this.scrollToNodeEnabled && value && !this.suppressAutoPanToNode) {
       this.panToNodeById(value);
     }
+
+    // Update selected node text position information for toolbar
+    this.updateSelectedNodeTextInfo();
   }
 
   // Helper method to handle selectedNode changes from NGXS state without infinite loops
@@ -395,14 +398,14 @@ export class VisualizationTester
         // No lesson selected - only technique explorer updates (selectedNode is already set above)
         console.log(
           '🔍 No lesson selected - only updating technique explorer with node:',
-          value
+          value,
         );
       }
     } else if (value) {
       // Selected node is NOT in selectedNodes list - only technique explorer updates
       console.log(
         '🔍 Node outside selectedNodes - only updating technique explorer with node:',
-        value
+        value,
       );
     }
 
@@ -440,6 +443,20 @@ export class VisualizationTester
   public panY = 0;
   public nodeCount = 25;
   public rotationAngle = 0;
+
+  // Selected node text position information
+  public selectedNodeTextX: number | null = null;
+  public selectedNodeTextY: number | null = null;
+  public selectedNodeTextRotation: number | null = null;
+  public selectedNodeTextAnchor: string | null = null;
+  public selectedNodeText180Added: boolean = false;
+
+  // Current transform state for selected node display
+  public selectedNodeCurrentZoom: number = 1;
+  public selectedNodeCurrentPanX: number = 0;
+  public selectedNodeCurrentPanY: number = 0;
+  public selectedNodeCurrentRotation: number = 0;
+
   public drawingMode:
     | 'pencil'
     | 'eraser'
@@ -533,7 +550,7 @@ export class VisualizationTester
     // If a new node was added to selectedNodes (via shift-click), update lesson runner
     if (value.length > previousNodes.length) {
       const newNodes = value.filter(
-        (nodeId) => !previousNodes.includes(nodeId)
+        (nodeId) => !previousNodes.includes(nodeId),
       );
       if (newNodes.length > 0) {
         // Set the most recently added node as the lesson runner's selected node
@@ -676,26 +693,26 @@ export class VisualizationTester
   // NGXS State Observables for toolbar management
   public toolbarPositions$ = this.store.select(SketchState.getToolbarPositions);
   public toolbarVisibility$ = this.store.select(
-    SketchState.getToolbarVisibility
+    SketchState.getToolbarVisibility,
   );
   public toolbarLocks$ = this.store.select(SketchState.getToolbarLocks);
   public isDarkMode$ = this.store.select(SketchState.getIsDarkMode);
   public snapToolbarsOnResize$ = this.store.select(
-    SketchState.getSnapToolbarsOnResize
+    SketchState.getSnapToolbarsOnResize,
   );
   public bottomToolbarVisible$ = this.store.select(
-    SketchState.getBottomToolbarVisible
+    SketchState.getBottomToolbarVisible,
   );
 
   // DEBUG: Selected lesson observables for the debug panel
   public selectedContextLessonBuilderLesson$ = this.store.select(
-    GlobalContextState.selectedContextLessonBuilderLesson
+    GlobalContextState.selectedContextLessonBuilderLesson,
   );
   public selectedContextLessonRunnerLesson$ = this.store.select(
-    GlobalContextState.selectedContextLessonRunnerLesson
+    GlobalContextState.selectedContextLessonRunnerLesson,
   );
   public selectedNodeFromState$ = this.store.select(
-    GlobalContextState.selectedContextNode
+    GlobalContextState.selectedContextNode,
   );
 
   // DecisionFlows state observable
@@ -797,13 +814,13 @@ export class VisualizationTester
   // NGXS State Observables
   public currentLessons$: Observable<ILesson[]> = new Observable<ILesson[]>(); // Will be set dynamically based on FlowID
   public allLessons$: Observable<ILesson[]> = this.store.select(
-    LessonsState.getLessons
+    LessonsState.getLessons,
   ); // All lessons for dropdown
   public selectedLesson$: Observable<ILesson | null> = this.store.select(
-    LessonsState.getSelectedLesson
+    LessonsState.getSelectedLesson,
   );
   public selectedLessonNode$: Observable<string | null> = this.store.select(
-    GlobalContextState.selectedContextLessonBuilderNode
+    GlobalContextState.selectedContextLessonBuilderNode,
   );
   public selectedLessonRunnerNode$: Observable<string | null> =
     this.store.select(GlobalContextState.selectedContextLessonRunnerNode);
@@ -1131,21 +1148,21 @@ export class VisualizationTester
     return Math.max(
       0,
       Math.floor(this.virtualScrollTop / this.virtualItemHeight) -
-        this.virtualBuffer
+        this.virtualBuffer,
     );
   }
 
   public get visibleEndIndex(): number {
     return Math.min(
       this.currentNodesList.length - 1,
-      this.visibleStartIndex + this.visibleItemsCount + this.virtualBuffer * 2
+      this.visibleStartIndex + this.visibleItemsCount + this.virtualBuffer * 2,
     );
   }
 
   public get visibleNodes(): D3TreeNode[] {
     return this.currentNodesList.slice(
       this.visibleStartIndex,
-      this.visibleEndIndex + 1
+      this.visibleEndIndex + 1,
     );
   }
 
@@ -1157,7 +1174,7 @@ export class VisualizationTester
     return Math.max(
       0,
       (this.currentNodesList.length - this.visibleEndIndex - 1) *
-        this.virtualItemHeight
+        this.virtualItemHeight,
     );
   }
 
@@ -1448,36 +1465,36 @@ export class VisualizationTester
     private defaultTeamGroupsService: DefaultTeamGroupsService,
     private colorsService: ColorsService,
     public operationModeService: OperationModeService,
-    private mockPositionsService: MockPositionsService
+    private mockPositionsService: MockPositionsService,
   ) {}
 
   // Getter methods for selected objects
   public get loggedInUser(): User | null {
     return this.store.selectSnapshot(
-      (state) => state.globalContext?.loggedInUser || null
+      (state) => state.globalContext?.loggedInUser || null,
     );
   }
 
   public get availableTenants(): ITenant[] {
     return this.store.selectSnapshot(
-      (state) => state.globalContext?.availableTenants || []
+      (state) => state.globalContext?.availableTenants || [],
     );
   }
 
   public get selectedContextUser(): User | null {
     return this.store.selectSnapshot(
-      (state) => state.globalContext?.selectedContextUser || null
+      (state) => state.globalContext?.selectedContextUser || null,
     );
   }
 
   // Reactive property for selected tenant (updated via subscription)
   public selectedTenant: ITenant | null = this.store.selectSnapshot(
-    (state) => state.globalContext?.selectedContextTenant || null
+    (state) => state.globalContext?.selectedContextTenant || null,
   );
 
   // Reactive property for selected team (updated via subscription)
   public selectedTeam: ITeam | null = this.store.selectSnapshot(
-    (state) => state.globalContext?.selectedContextTeam || null
+    (state) => state.globalContext?.selectedContextTeam || null,
   );
 
   // Getter for teams from the selected tenant
@@ -1557,7 +1574,7 @@ export class VisualizationTester
   public get selectedTeamGroup(): ITeamGroup | null {
     // Get the selected team group from NGXS state
     return this.store.selectSnapshot(
-      (state) => state.globalContext?.selectedContextTeamGroup || null
+      (state) => state.globalContext?.selectedContextTeamGroup || null,
     );
   }
 
@@ -1692,7 +1709,7 @@ export class VisualizationTester
         this.nonClosedToDoCount = entries.filter(
           (e) =>
             e.status !== 'Closed - Complete' &&
-            e.status !== 'Closed - Incomplete'
+            e.status !== 'Closed - Incomplete',
         ).length;
       });
   }
@@ -1715,14 +1732,14 @@ export class VisualizationTester
 
     // Check #1: Validate logged-in user
     let loggedInUser = this.store.selectSnapshot(
-      GlobalContextState.loggedInUser
+      GlobalContextState.loggedInUser,
     );
     console.log('📝 Check #1: LoggedInUser from state:', loggedInUser?.UserId);
 
     if (!loggedInUser || loggedInUser.UserId === undefined) {
       // No logged-in user found - log in as Free Mode (UserID 0)
       console.log(
-        '🆓 No logged-in user found - logging in as Free Mode (UserID 0)'
+        '🆓 No logged-in user found - logging in as Free Mode (UserID 0)',
       );
       const freeUser = allUsers.find((u) => u.UserId === 0);
       if (freeUser) {
@@ -1732,13 +1749,13 @@ export class VisualizationTester
         if (populatedFreeUser && populatedFreeUser.Tenants) {
           // Set Free Mode user as logged-in and context user
           this.store.dispatch(
-            new SetLoggedInUser(populatedFreeUser, populatedFreeUser.Tenants)
+            new SetLoggedInUser(populatedFreeUser, populatedFreeUser.Tenants),
           );
           this.store.dispatch(new SetSelectedContextUser(populatedFreeUser));
 
           // Set Free Tenant (TenantID 1)
           const freeTenant = populatedFreeUser.Tenants.find(
-            (t) => t.TenantID === 1
+            (t) => t.TenantID === 1,
           );
           if (freeTenant) {
             this.store.dispatch(new SetSelectedContextTenant(freeTenant));
@@ -1771,7 +1788,7 @@ export class VisualizationTester
     const userExists = allUsers.some((u) => u.UserId === loggedInUser.UserId);
     if (!userExists) {
       console.warn(
-        '⚠️ Logged-in user not found in user list - logging in as Free Mode'
+        '⚠️ Logged-in user not found in user list - logging in as Free Mode',
       );
       // Follow same Free Mode logic as above
       const freeUser = allUsers.find((u) => u.UserId === 0);
@@ -1781,11 +1798,11 @@ export class VisualizationTester
 
         if (populatedFreeUser && populatedFreeUser.Tenants) {
           this.store.dispatch(
-            new SetLoggedInUser(populatedFreeUser, populatedFreeUser.Tenants)
+            new SetLoggedInUser(populatedFreeUser, populatedFreeUser.Tenants),
           );
           this.store.dispatch(new SetSelectedContextUser(populatedFreeUser));
           const freeTenant = populatedFreeUser.Tenants.find(
-            (t) => t.TenantID === 1
+            (t) => t.TenantID === 1,
           );
           if (freeTenant) {
             this.store.dispatch(new SetSelectedContextTenant(freeTenant));
@@ -1811,13 +1828,13 @@ export class VisualizationTester
     // Ensure logged-in user has tenants populated
     if (!loggedInUser.Tenants || loggedInUser.Tenants.length === 0) {
       const populatedUser$ = this.mockUserService.getUserWithTenants(
-        loggedInUser.UserId
+        loggedInUser.UserId,
       );
       const populatedUser = await populatedUser$.toPromise();
       if (populatedUser && populatedUser.Tenants) {
         loggedInUser = populatedUser;
         this.store.dispatch(
-          new SetLoggedInUser(populatedUser, populatedUser.Tenants)
+          new SetLoggedInUser(populatedUser, populatedUser.Tenants),
         );
         this.organizations = populatedUser.Tenants;
       }
@@ -1827,11 +1844,11 @@ export class VisualizationTester
 
     // Check #2: Validate selected tenant
     let selectedTenant = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTenant
+      GlobalContextState.selectedContextTenant,
     );
     console.log(
       '📝 Check #2: SelectedContextTenant from state:',
-      selectedTenant?.TenantID
+      selectedTenant?.TenantID,
     );
 
     if (
@@ -1841,7 +1858,7 @@ export class VisualizationTester
     ) {
       // Tenant not found or not part of user's tenants
       console.log(
-        '⚠️ Tenant not found or invalid - clearing and opening tenant drawer'
+        '⚠️ Tenant not found or invalid - clearing and opening tenant drawer',
       );
       this.store.dispatch(new SetSelectedContextTenant(null));
       this.store.dispatch(new SetSelectedContextTeam(null));
@@ -1864,7 +1881,7 @@ export class VisualizationTester
 
     console.log(
       '✅ Check #2 passed: Valid tenant found:',
-      selectedTenant.TenantID
+      selectedTenant.TenantID,
     );
 
     // Populate available context users for the drawer
@@ -1872,13 +1889,13 @@ export class VisualizationTester
     const eligibleRelatives =
       FilterNonParentRelativesDirective.filterNonParentRelatives(
         selectedTenant.Relatives || [],
-        selectedTenant
+        selectedTenant,
       );
     this.availableContextUsers = eligibleRelatives;
 
     // Determine if user can select themselves based on their roles
     const userHasNonParentRole = selectedTenant.Roles?.some(
-      (role) => role.RoleID !== 4
+      (role) => role.RoleID !== 4,
     );
     this.canSelectSelfAsContext = userHasNonParentRole || false;
 
@@ -1889,11 +1906,11 @@ export class VisualizationTester
 
     // Check #3: Validate context user (assumability)
     let contextUser = this.store.selectSnapshot(
-      GlobalContextState.selectedContextUser
+      GlobalContextState.selectedContextUser,
     );
     console.log(
       '📝 Check #3: SelectedContextUser from state:',
-      contextUser?.UserId
+      contextUser?.UserId,
     );
 
     if (contextUser && contextUser.IsAssumable === false) {
@@ -1907,7 +1924,7 @@ export class VisualizationTester
     if (contextUser) {
       const isUserAvailable =
         this.availableContextUsers.some(
-          (u) => u.UserId === contextUser.UserId
+          (u) => u.UserId === contextUser.UserId,
         ) ||
         (this.canSelectSelfAsContext &&
           contextUser.UserId === loggedInUser.UserId);
@@ -1927,10 +1944,10 @@ export class VisualizationTester
       } else if (this.availableContextUsers.length > 0) {
         // If can't select self, default to first available user
         console.log(
-          'ℹ️ No context user and cant select self - defaulting to first available user'
+          'ℹ️ No context user and cant select self - defaulting to first available user',
         );
         this.store.dispatch(
-          new SetSelectedContextUser(this.availableContextUsers[0])
+          new SetSelectedContextUser(this.availableContextUsers[0]),
         );
       } else {
         console.warn('⚠️ No available context users found');
@@ -1941,16 +1958,16 @@ export class VisualizationTester
 
     // Check #4: Validate selected team
     let selectedTeam = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTeam
+      GlobalContextState.selectedContextTeam,
     );
     console.log(
       '📝 Check #4: SelectedContextTeam from state:',
-      selectedTeam?.TeamID
+      selectedTeam?.TeamID,
     );
 
     if (selectedTeam && selectedTenant.Teams) {
       const teamExists = selectedTenant.Teams.find(
-        (t) => t.TeamID === selectedTeam.TeamID
+        (t) => t.TeamID === selectedTeam.TeamID,
       );
       if (!teamExists) {
         console.log('⚠️ Team not found in tenant - clearing');
@@ -1959,7 +1976,7 @@ export class VisualizationTester
       } else {
         console.log(
           '✅ Check #4 passed: Valid team found:',
-          selectedTeam.TeamID
+          selectedTeam.TeamID,
         );
       }
     } else if (selectedTeam) {
@@ -1970,16 +1987,16 @@ export class VisualizationTester
 
     // Check #5: Validate selected team group
     let selectedTeamGroup = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTeamGroup
+      GlobalContextState.selectedContextTeamGroup,
     );
     console.log(
       '📝 Check #5: SelectedContextTeamGroup from state:',
-      selectedTeamGroup?.TeamGroupID
+      selectedTeamGroup?.TeamGroupID,
     );
 
     if (selectedTeamGroup && selectedTeam && selectedTeam.TeamGroups) {
       const teamGroupExists = selectedTeam.TeamGroups.find(
-        (tg) => tg.TeamGroupID === selectedTeamGroup.TeamGroupID
+        (tg) => tg.TeamGroupID === selectedTeamGroup.TeamGroupID,
       );
       if (!teamGroupExists) {
         console.log('⚠️ TeamGroup not found in team - clearing');
@@ -1988,7 +2005,7 @@ export class VisualizationTester
       } else {
         console.log(
           '✅ Check #5 passed: Valid team group found:',
-          selectedTeamGroup.TeamGroupID
+          selectedTeamGroup.TeamGroupID,
         );
       }
     } else if (selectedTeamGroup) {
@@ -1999,17 +2016,17 @@ export class VisualizationTester
 
     // Check #6: Validate selected dataset
     const selectedDataset = this.store.selectSnapshot(
-      GlobalContextState.selectedContextDataset
+      GlobalContextState.selectedContextDataset,
     );
     console.log(
       '📝 Check #6: SelectedContextDataset from state:',
-      selectedDataset?.FlowID
+      selectedDataset?.FlowID,
     );
 
     if (selectedDataset) {
       const flows = this.store.selectSnapshot(SketchState.getDecisionFlows);
       const datasetExists = flows.find(
-        (f) => f.FlowID === selectedDataset.FlowID
+        (f) => f.FlowID === selectedDataset.FlowID,
       );
       if (!datasetExists) {
         console.log('⚠️ Dataset not available in current context - clearing');
@@ -2017,7 +2034,7 @@ export class VisualizationTester
       } else {
         console.log(
           '✅ Check #6 passed: Valid dataset found:',
-          selectedDataset.FlowID
+          selectedDataset.FlowID,
         );
       }
     }
@@ -2029,17 +2046,17 @@ export class VisualizationTester
   ngOnInit(): void {
     console.log('=== NGONINIT START ===');
     const initialVisibility = this.store.selectSnapshot(
-      SketchState.getToolbarVisibility
+      SketchState.getToolbarVisibility,
     );
     console.log(
       '🔄 [ngOnInit] Initial toolbar visibility from NGXS:',
-      initialVisibility
+      initialVisibility,
     );
     console.log(
       '  lessonBuilderV2:',
       initialVisibility.lessonBuilderV2,
       ', lessonRunnerV2:',
-      initialVisibility.lessonRunnerV2
+      initialVisibility.lessonRunnerV2,
     );
 
     // Register all drawers with the drawer manager
@@ -2061,11 +2078,11 @@ export class VisualizationTester
       const flowID = this.selectedContextDataset?.FlowID;
       if (this.selectedLesson && lessons.length > 0 && flowID !== undefined) {
         const selectedLessonExists = lessons.some(
-          (l) => l.LessonName === this.selectedLesson?.LessonName
+          (l) => l.LessonName === this.selectedLesson?.LessonName,
         );
         if (!selectedLessonExists) {
           console.log(
-            `Selected lesson does not belong to current FlowID ${flowID}, clearing Builder selection`
+            `Selected lesson does not belong to current FlowID ${flowID}, clearing Builder selection`,
           );
           this.store.dispatch(new SetSelectedContextLessonBuilderLesson(null));
           // DO NOT clear Runner lesson here - it's independent of FlowID
@@ -2117,13 +2134,13 @@ export class VisualizationTester
       .subscribe((visibility) => {
         console.log(
           '📌 [toolbarVisibility$ subscription] New visibility:',
-          visibility
+          visibility,
         );
         console.log(
           '  lessonBuilderV2:',
           visibility.lessonBuilderV2,
           ', lessonRunnerV2:',
-          visibility.lessonRunnerV2
+          visibility.lessonRunnerV2,
         );
         this.toolbarVisibility = visibility;
         this.updateSelectedNodesPanelVisibility();
@@ -2189,7 +2206,7 @@ export class VisualizationTester
           '🏀 Selected team changed from state:',
           team?.TeamName,
           'ID:',
-          team?.TeamID
+          team?.TeamID,
         );
         this.selectedTeam = team;
         this.cdr.markForCheck();
@@ -2204,7 +2221,7 @@ export class VisualizationTester
           '🏢 Selected tenant changed from state:',
           tenant?.TenantName,
           'ID:',
-          tenant?.TenantID
+          tenant?.TenantID,
         );
         this.selectedTenant = tenant;
         this.cdr.markForCheck();
@@ -2228,7 +2245,7 @@ export class VisualizationTester
               if (populatedUser && populatedUser.Tenants) {
                 this.organizations = populatedUser.Tenants;
                 console.log(
-                  `Restored ${this.organizations.length} tenants for logged-in user ${populatedUser.UserId}`
+                  `Restored ${this.organizations.length} tenants for logged-in user ${populatedUser.UserId}`,
                 );
               }
             });
@@ -2267,7 +2284,7 @@ export class VisualizationTester
           console.log(
             `🔄 Dataset ${
               shouldAlwaysRegenerate ? 'regeneration triggered' : 'changed'
-            } from FlowID ${previousFlowID} to ${currentFlowID}`
+            } from FlowID ${previousFlowID} to ${currentFlowID}`,
           );
           previousFlowID = currentFlowID;
 
@@ -2290,18 +2307,18 @@ export class VisualizationTester
 
     // Initialize state selectors for team management
     this.selectedTenantId$ = this.store.select(
-      GlobalContextState.contextTenantId
+      GlobalContextState.contextTenantId,
     );
     this.selectedTeamId$ = this.store.select(GlobalContextState.contextTeamId);
     this.selectedTeamGroupId$ = this.store.select(
-      GlobalContextState.contextTeamGroupId
+      GlobalContextState.contextTeamGroupId,
     );
 
     // Check initial state snapshot immediately
     console.log('Initial state snapshot:', this.store.snapshot());
     console.log(
       'Initial org from snapshot:',
-      this.store.selectSnapshot(GlobalContextState.contextTenantId)
+      this.store.selectSnapshot(GlobalContextState.contextTenantId),
     );
 
     // Set up state subscriptions with enhanced persistence handling
@@ -2313,7 +2330,7 @@ export class VisualizationTester
       this.currentSelectedTenantId = id;
       console.log(
         '📊 Component property updated - currentSelectedTenantId:',
-        this.currentSelectedTenantId
+        this.currentSelectedTenantId,
       );
 
       // Only check for default organization on the first subscription trigger
@@ -2324,12 +2341,12 @@ export class VisualizationTester
         // then we can set a default
         if (id === null && this.organizations.length > 0) {
           console.log(
-            'No persisted organization found after state load, setting default'
+            'No persisted organization found after state load, setting default',
           );
           // Use a small delay to ensure the subscription has fully processed
           setTimeout(() => {
             this.store.dispatch(
-              new SetSelectedTenant(this.organizations[0].TenantID)
+              new SetSelectedTenant(this.organizations[0].TenantID),
             );
           }, 50);
         } else {
@@ -2343,28 +2360,28 @@ export class VisualizationTester
           // Update GlobalContextState with the full Tenant object (with Teams)
           if (id !== null) {
             const selectedTenantObj = this.organizations.find(
-              (org) => org.TenantID === id
+              (org) => org.TenantID === id,
             );
             if (selectedTenantObj) {
               console.log(
                 '📦 Updating GlobalContext with full Tenant object:',
-                selectedTenantObj.TenantName
+                selectedTenantObj.TenantName,
               );
               this.store.dispatch(
-                new SetSelectedContextTenant(selectedTenantObj)
+                new SetSelectedContextTenant(selectedTenantObj),
               );
 
               // Populate available context users for the drawer
               const eligibleRelatives =
                 FilterNonParentRelativesDirective.filterNonParentRelatives(
                   selectedTenantObj.Relatives || [],
-                  selectedTenantObj
+                  selectedTenantObj,
                 );
               this.availableContextUsers = eligibleRelatives;
 
               // Determine if user can select themselves based on their roles
               const userHasNonParentRole = selectedTenantObj.Roles?.some(
-                (role) => role.RoleID !== 4
+                (role) => role.RoleID !== 4,
               );
               this.canSelectSelfAsContext = userHasNonParentRole || false;
 
@@ -2373,7 +2390,7 @@ export class VisualizationTester
                 {
                   count: this.availableContextUsers.length,
                   canSelectSelf: this.canSelectSelfAsContext,
-                }
+                },
               );
             } else {
               console.warn('⚠️ Tenant not found in organizations array:', id);
@@ -2393,11 +2410,11 @@ export class VisualizationTester
           this.store.dispatch(
             new SketchActions.RefreshDatasetsByContext(
               id,
-              this.currentSelectedTeamId
-            )
+              this.currentSelectedTeamId,
+            ),
           );
           this.store.dispatch(
-            new RefreshLessonsByContext(id, this.currentSelectedTeamId)
+            new RefreshLessonsByContext(id, this.currentSelectedTeamId),
           );
 
           // Validate and clear selected dataset if no longer available in new context
@@ -2415,7 +2432,7 @@ export class VisualizationTester
       .subscribe((contextUser) => {
         console.log(
           'Context User state subscription triggered:',
-          contextUser?.UserId
+          contextUser?.UserId,
         );
 
         // Whenever context user changes (either auto-set or user selection),
@@ -2423,7 +2440,7 @@ export class VisualizationTester
         if (this.currentSelectedTenantId !== null) {
           console.log('🔄 Context User changed - refreshing teams from tenant');
           this.store.dispatch(
-            new RefreshTeamsByContext(this.currentSelectedTenantId)
+            new RefreshTeamsByContext(this.currentSelectedTenantId),
           );
         }
       });
@@ -2434,7 +2451,7 @@ export class VisualizationTester
       this.currentSelectedTeamId = id;
       console.log(
         '📊 Component property updated - currentSelectedTeamId:',
-        this.currentSelectedTeamId
+        this.currentSelectedTeamId,
       );
 
       // Team changed - refresh context-dependent data (datasets and lessons)
@@ -2448,11 +2465,11 @@ export class VisualizationTester
         this.store.dispatch(
           new SketchActions.RefreshDatasetsByContext(
             this.currentSelectedTenantId,
-            id
-          )
+            id,
+          ),
         );
         this.store.dispatch(
-          new RefreshLessonsByContext(this.currentSelectedTenantId, id)
+          new RefreshLessonsByContext(this.currentSelectedTenantId, id),
         );
 
         // Validate and clear selected dataset if no longer available in new context
@@ -2512,13 +2529,13 @@ export class VisualizationTester
       this.currentSelectedTeamGroupId = id;
       console.log(
         '📊 Component property updated - currentSelectedTeamGroupId:',
-        this.currentSelectedTeamGroupId
+        this.currentSelectedTeamGroupId,
       );
 
       // Team group changed - refresh filtered datasets
       if (previousTeamGroupId !== id) {
         console.log(
-          '🔄 TeamGroup context changed - refreshing filtered datasets'
+          '🔄 TeamGroup context changed - refreshing filtered datasets',
         );
         this.reloadFilteredDecisionFlows();
       }
@@ -2563,11 +2580,11 @@ export class VisualizationTester
     // This runs AFTER all subscriptions are set up to ensure proper state initialization
     setTimeout(() => {
       const currentDataset = this.store.selectSnapshot(
-        GlobalContextState.selectedContextDataset
+        GlobalContextState.selectedContextDataset,
       );
       console.log(
         '🔍 Checking for auto-selection. Current dataset:',
-        currentDataset
+        currentDataset,
       );
 
       if (!currentDataset) {
@@ -2579,7 +2596,7 @@ export class VisualizationTester
           if (defaultFlow) {
             console.log(
               '✅ Auto-selecting DecisionFlow ID -1 (SYSTEM dataset):',
-              defaultFlow
+              defaultFlow,
             );
             this.selectDecisionFlow(defaultFlow);
           } else {
@@ -2591,7 +2608,7 @@ export class VisualizationTester
       } else {
         console.log(
           'ℹ️ Dataset already selected from state, loading tree data:',
-          currentDataset.FlowID
+          currentDataset.FlowID,
         );
         // Dataset was restored from localStorage, but we need to load its tree data
         this.selectDecisionFlow(currentDataset, true);
@@ -2639,14 +2656,14 @@ export class VisualizationTester
           if (lesson.LessonNodes && lesson.LessonNodes.length > 0) {
             const lessonNodeIds = lesson.LessonNodes.map((node) => node.NodeID);
             const nodesAlreadySelected = lessonNodeIds.every((nodeId) =>
-              this.selectedNodes.includes(nodeId)
+              this.selectedNodes.includes(nodeId),
             );
 
             // Only update selectedNodes if lesson nodes aren't already selected
             if (!nodesAlreadySelected) {
               console.log(
                 'Loading lesson nodes into selectedNodes:',
-                lessonNodeIds
+                lessonNodeIds,
               );
               this.selectedNodes = [...lessonNodeIds];
               this.updateNodeSelectionVisuals();
@@ -2657,11 +2674,11 @@ export class VisualizationTester
             const firstNodeId = lessonNodeIds[0];
             console.log(
               '📚 Lesson selected - setting up first node:',
-              firstNodeId
+              firstNodeId,
             );
             console.log(
               '📚 selectedNodes after lesson setup:',
-              this.selectedNodes
+              this.selectedNodes,
             );
 
             // Set selectedNode - this will trigger the setter which should dispatch SetSelectedLessonNode
@@ -2669,7 +2686,7 @@ export class VisualizationTester
 
             // Note: Removed duplicate dispatch since selectedNode setter handles it
             console.log(
-              '📚 After setting selectedNode, lesson runner should update'
+              '📚 After setting selectedNode, lesson runner should update',
             );
 
             // Pan to the first node
@@ -2716,7 +2733,7 @@ export class VisualizationTester
             const lessonNodeIds = lesson.LessonNodes.map((node) => node.NodeID);
             console.log(
               '📚 Loading lesson nodes into selectedNodes:',
-              lessonNodeIds
+              lessonNodeIds,
             );
             this.selectedNodes = [...lessonNodeIds];
 
@@ -2764,7 +2781,7 @@ export class VisualizationTester
 
             // Set the first node as selected RUNNER lesson node
             this.store.dispatch(
-              new SetSelectedContextLessonRunnerNode(firstNodeId)
+              new SetSelectedContextLessonRunnerNode(firstNodeId),
             );
 
             // Pan to the first node in next frame to avoid blocking
@@ -2802,11 +2819,11 @@ export class VisualizationTester
 
           console.log(
             '🎓 Current selectedLesson:',
-            this.selectedLesson?.LessonName
+            this.selectedLesson?.LessonName,
           );
           console.log(
             '🎓 Updated selectedLessonNodeData:',
-            this.selectedLessonNodeData
+            this.selectedLessonNodeData,
           );
 
           // Mark for check to schedule change detection without forcing immediate cycle
@@ -2820,7 +2837,7 @@ export class VisualizationTester
       .subscribe((nodeId) => {
         console.log(
           '🏃 Selected lesson runner node updated from state:',
-          nodeId
+          nodeId,
         );
 
         // Defer the update to avoid change detection cycle issues
@@ -2835,7 +2852,7 @@ export class VisualizationTester
 
           console.log(
             '🏃 Updated selectedLessonRunnerNodeData:',
-            this.selectedLessonRunnerNodeData
+            this.selectedLessonRunnerNodeData,
           );
 
           // Mark for check to schedule change detection
@@ -2853,7 +2870,7 @@ export class VisualizationTester
           if (nodeIndex >= 0 && nodeIndex < this.selectedNodes.length) {
             const nodeId = this.selectedNodes[nodeIndex];
             console.log(
-              `Tour navigation: Moving to node ${nodeId} at index ${nodeIndex} of ${this.selectedNodes.length} total nodes`
+              `Tour navigation: Moving to node ${nodeId} at index ${nodeIndex} of ${this.selectedNodes.length} total nodes`,
             );
 
             // Only update if this is a different node than currently selected
@@ -2866,21 +2883,21 @@ export class VisualizationTester
               this.panToNodeById(nodeId);
 
               console.log(
-                `Tour navigation completed: Selected node is now ${this.selectedNode}`
+                `Tour navigation completed: Selected node is now ${this.selectedNode}`,
               );
             } else {
               console.log(
-                `Tour navigation: Node ${nodeId} is already selected, skipping update`
+                `Tour navigation: Node ${nodeId} is already selected, skipping update`,
               );
             }
           } else {
             console.warn(
-              `Tour navigation: Invalid node index ${nodeIndex} for ${this.selectedNodes.length} nodes`
+              `Tour navigation: Invalid node index ${nodeIndex} for ${this.selectedNodes.length} nodes`,
             );
           }
         } else if (currentLesson) {
           console.log(
-            `Tour state changed but selectedNodes not ready: lesson=${currentLesson.lessonId}, selectedNodes.length=${this.selectedNodes.length}`
+            `Tour state changed but selectedNodes not ready: lesson=${currentLesson.lessonId}, selectedNodes.length=${this.selectedNodes.length}`,
           );
         }
       });
@@ -2914,10 +2931,10 @@ export class VisualizationTester
 
   public updateToolbarPosition(
     toolbarType: string,
-    position: { x: number; y: number }
+    position: { x: number; y: number },
   ): void {
     this.store.dispatch(
-      new UpdateToolbarPosition(toolbarType as any, position)
+      new UpdateToolbarPosition(toolbarType as any, position),
     );
   }
 
@@ -2937,14 +2954,14 @@ export class VisualizationTester
   public applyToolbarConstraints = (
     x: number,
     y: number,
-    toolbarId: string
+    toolbarId: string,
   ): { x: number; y: number } => {
     // Convert toolbar component ID to internal state key
     const toolbarKey = this.convertToolbarIdToKey(toolbarId);
 
     if (this.debugCollisions) {
       console.log(
-        `[Collision] applyConstraints called for ${toolbarId} -> ${toolbarKey} at (${x}, ${y})`
+        `[Collision] applyConstraints called for ${toolbarId} -> ${toolbarKey} at (${x}, ${y})`,
       );
     }
 
@@ -3008,7 +3025,7 @@ export class VisualizationTester
   public toggleCollisionDebug(): void {
     this.debugCollisions = !this.debugCollisions;
     console.log(
-      `Collision debugging ${this.debugCollisions ? 'enabled' : 'disabled'}`
+      `Collision debugging ${this.debugCollisions ? 'enabled' : 'disabled'}`,
     );
     if (this.debugCollisions) {
       this.debugToolbarState();
@@ -3022,7 +3039,7 @@ export class VisualizationTester
       const visibility = this.getToolbarVisibility(toolbarKey);
       const toolbarId = this.convertToolbarKeyToId(toolbarKey);
       const domElement = document.querySelector(
-        `[data-toolbar-type="${toolbarId}"]`
+        `[data-toolbar-type="${toolbarId}"]`,
       );
       const dimensions = this.getActualToolbarDimensions(toolbarKey);
 
@@ -3044,7 +3061,7 @@ export class VisualizationTester
     // Convert internal key to toolbar ID for DOM query
     const toolbarId = this.convertToolbarKeyToId(toolbarType);
     const toolbarElement = document.querySelector(
-      `[data-toolbar-type="${toolbarId}"]`
+      `[data-toolbar-type="${toolbarId}"]`,
     ) as HTMLElement;
     if (toolbarElement) {
       const rect = toolbarElement.getBoundingClientRect();
@@ -3060,7 +3077,7 @@ export class VisualizationTester
   private wouldCollideWithOtherToolbars(
     newX: number,
     newY: number,
-    movedToolbarType: string
+    movedToolbarType: string,
   ): boolean {
     const movingDimensions = this.getActualToolbarDimensions(movedToolbarType);
 
@@ -3080,7 +3097,7 @@ export class VisualizationTester
       // Convert internal key to toolbar ID for DOM query
       const otherToolbarId = this.convertToolbarKeyToId(otherType);
       const otherElement = document.querySelector(
-        `[data-toolbar-type="${otherToolbarId}"]`
+        `[data-toolbar-type="${otherToolbarId}"]`,
       );
       if (!otherElement) {
         return false;
@@ -3115,7 +3132,7 @@ export class VisualizationTester
       const wouldCollide = horizontalCollision && verticalCollision;
       if (wouldCollide && this.debugCollisions) {
         console.log(
-          `Collision detected between ${movedToolbarType} and ${otherType}`
+          `Collision detected between ${movedToolbarType} and ${otherType}`,
         );
       }
 
@@ -3126,11 +3143,11 @@ export class VisualizationTester
   private applyBoundaryConstraints(
     newX: number,
     newY: number,
-    movedToolbarType: string
+    movedToolbarType: string,
   ): { x: number; y: number } {
     if (this.debugCollisions) {
       console.log(
-        `[applyBoundaryConstraints] Called for ${movedToolbarType} at (${newX}, ${newY})`
+        `[applyBoundaryConstraints] Called for ${movedToolbarType} at (${newX}, ${newY})`,
       );
     }
 
@@ -3142,7 +3159,7 @@ export class VisualizationTester
 
     if (!currentPosition) {
       console.warn(
-        `[applyBoundaryConstraints] No current position for ${movedToolbarType}!`
+        `[applyBoundaryConstraints] No current position for ${movedToolbarType}!`,
       );
       return { x: newX, y: newY };
     }
@@ -3150,11 +3167,11 @@ export class VisualizationTester
     if (this.debugCollisions) {
       console.log(
         `[applyBoundaryConstraints] Moving toolbar dimensions:`,
-        movingDimensions
+        movingDimensions,
       );
       console.log(
         `[applyBoundaryConstraints] Current position:`,
-        currentPosition
+        currentPosition,
       );
     }
 
@@ -3163,19 +3180,19 @@ export class VisualizationTester
     const bottomMargin = this.bottomToolbarVisible ? 80 : 20; // Dynamic margin based on bottom toolbar visibility
     let constrainedX = Math.max(
       0,
-      Math.min(newX, windowWidth - movingDimensions.width)
+      Math.min(newX, windowWidth - movingDimensions.width),
     );
     let constrainedY = Math.max(
       topMargin,
-      Math.min(newY, windowHeight - movingDimensions.height - bottomMargin)
+      Math.min(newY, windowHeight - movingDimensions.height - bottomMargin),
     );
 
     if (this.debugCollisions) {
       console.log(
-        `[applyBoundaryConstraints] After screen bounds: (${constrainedX}, ${constrainedY})`
+        `[applyBoundaryConstraints] After screen bounds: (${constrainedX}, ${constrainedY})`,
       );
       console.log(
-        `[applyBoundaryConstraints] Checking collision with other toolbars...`
+        `[applyBoundaryConstraints] Checking collision with other toolbars...`,
       );
     }
 
@@ -3195,12 +3212,12 @@ export class VisualizationTester
       // Convert the internal key to the toolbar ID format for DOM query
       const otherToolbarId = this.convertToolbarKeyToId(otherType);
       const otherElement = document.querySelector(
-        `[data-toolbar-type="${otherToolbarId}"]`
+        `[data-toolbar-type="${otherToolbarId}"]`,
       );
       if (!otherElement) {
         if (this.debugCollisions) {
           console.log(
-            `  - ${otherType} (${otherToolbarId}): SKIPPED (no DOM element)`
+            `  - ${otherType} (${otherToolbarId}): SKIPPED (no DOM element)`,
           );
         }
         return;
@@ -3240,13 +3257,13 @@ export class VisualizationTester
       if (this.debugCollisions) {
         console.log(`  - ${otherType}: checking collision`);
         console.log(
-          `    Other bounds: [${otherLeft}, ${otherTop}] to [${otherRight}, ${otherBottom}]`
+          `    Other bounds: [${otherLeft}, ${otherTop}] to [${otherRight}, ${otherBottom}]`,
         );
         console.log(
-          `    Moving bounds: [${movingLeft}, ${movingTop}] to [${movingRight}, ${movingBottom}]`
+          `    Moving bounds: [${movingLeft}, ${movingTop}] to [${movingRight}, ${movingBottom}]`,
         );
         console.log(
-          `    H-overlap: ${horizontalOverlap}, V-overlap: ${verticalOverlap}`
+          `    H-overlap: ${horizontalOverlap}, V-overlap: ${verticalOverlap}`,
         );
       }
 
@@ -3287,11 +3304,11 @@ export class VisualizationTester
         // Re-apply screen boundaries after collision adjustments
         constrainedX = Math.max(
           0,
-          Math.min(constrainedX, windowWidth - movingDimensions.width)
+          Math.min(constrainedX, windowWidth - movingDimensions.width),
         );
         constrainedY = Math.max(
           topMargin,
-          Math.min(constrainedY, windowHeight - movingDimensions.height)
+          Math.min(constrainedY, windowHeight - movingDimensions.height),
         );
       }
     });
@@ -3341,7 +3358,7 @@ export class VisualizationTester
       const constrainedPosition = this.applyBoundaryConstraints(
         newX,
         newY,
-        toolbarType as string
+        toolbarType as string,
       );
 
       // Update local state immediately for smooth dragging
@@ -3363,8 +3380,8 @@ export class VisualizationTester
         this.store.dispatch(
           new UpdateToolbarPosition(
             toolbarType as any,
-            this.toolbarPositions[toolbarType]
-          )
+            this.toolbarPositions[toolbarType],
+          ),
         );
       }
     };
@@ -3411,7 +3428,7 @@ export class VisualizationTester
     };
 
     console.log(
-      'Window resize - constraining toolbars using ToolbarSnapService.'
+      'Window resize - constraining toolbars using ToolbarSnapService.',
     );
     console.log('Previous size:', this.previousWidth, 'x', this.previousHeight);
     console.log('Current size:', this.width, 'x', this.height);
@@ -3432,7 +3449,7 @@ export class VisualizationTester
 
       // Check if DOM element actually exists
       const toolbarElement = document.querySelector(
-        `[data-toolbar-type="${toolbarKey}"]`
+        `[data-toolbar-type="${toolbarKey}"]`,
       );
       if (!toolbarElement) {
         return;
@@ -3463,7 +3480,7 @@ export class VisualizationTester
         windowHeight: this.height,
         previousWindowWidth: this.previousWidth,
         previousWindowHeight: this.previousHeight,
-      }
+      },
     );
 
     // Update the local toolbar positions object with the updated positions
@@ -3505,7 +3522,7 @@ export class VisualizationTester
       .attr('height', this.height)
       .style(
         'background',
-        this.colorsService.getBackgroundColor(this.isDarkMode)
+        this.colorsService.getBackgroundColor(this.isDarkMode),
       );
 
     // Create a group for pan/zoom (content will be transformed)
@@ -3584,7 +3601,7 @@ export class VisualizationTester
       .attr('cy', centerY)
       .attr(
         'r',
-        this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0
+        this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0,
       )
       .attr('fill', 'blue')
       .attr('opacity', 0.8)
@@ -3616,6 +3633,9 @@ export class VisualizationTester
           // Apply transform
           this.applyTransform();
 
+          // Update selected node text info to reflect any changes
+          this.updateSelectedNodeTextInfo();
+
           // Trigger change detection to update UI sliders
           this.cdr.detectChanges();
         },
@@ -3637,7 +3657,7 @@ export class VisualizationTester
             return event.type === 'wheel'; // Only allow scroll wheel zoom when drawing
           }
         },
-      }
+      },
     );
 
     // Keep zoom reference for legacy code that calls this.zoom.transform
@@ -3758,7 +3778,7 @@ export class VisualizationTester
         'fill:',
         shapeFill,
         'stroke:',
-        shapeStroke
+        shapeStroke,
       );
 
       this.currentShape = {
@@ -3775,7 +3795,7 @@ export class VisualizationTester
         fontSize: this.textFontSize || 16,
         textColor: this.textColor || '#000000',
         fontFamily: this.getFontFamilyWithFallback(
-          this.textFontFamily || 'Arial'
+          this.textFontFamily || 'Arial',
         ),
         textBold: this.textBold,
         textItalic: this.textItalic,
@@ -3880,7 +3900,7 @@ export class VisualizationTester
       // Dispatch the stroke to NGXS state (which will trigger history save)
       console.log(
         'endDrawing: Dispatching AddStroke with:',
-        this.currentStroke
+        this.currentStroke,
       );
       this.store.dispatch(new SketchActions.AddStroke(this.currentStroke));
       this.currentStroke = null;
@@ -4069,7 +4089,7 @@ export class VisualizationTester
           'shape.fill:',
           shape.fill,
           'shape.stroke:',
-          shape.stroke
+          shape.stroke,
         );
 
         this.drawingLayer
@@ -4210,12 +4230,15 @@ export class VisualizationTester
               this.wheelIndicator,
               this.wheelCenterX,
               this.wheelCenterY,
-              this.wheelRadius
+              this.wheelRadius,
             );
           }
 
           // Apply the transform
           this.applyTransform();
+
+          // Update selected node text info
+          this.updateSelectedNodeTextInfo();
         },
         complete: () => {
           this.isRotationDragging = false;
@@ -4267,12 +4290,15 @@ export class VisualizationTester
         this.wheelIndicator,
         this.wheelCenterX,
         this.wheelCenterY,
-        this.wheelRadius
+        this.wheelRadius,
       );
     }
 
     // Apply rotation to the tree
     this.applyTransform();
+
+    // Update selected node text info
+    this.updateSelectedNodeTextInfo();
   }
 
   private endRotationDrag() {
@@ -4338,10 +4364,10 @@ export class VisualizationTester
 
     console.log(
       `${this.eraserMode} eraser at point (${point.x.toFixed(
-        2
+        2,
       )}, ${point.y.toFixed(
-        2
-      )}) with radius ${eraserRadius}, checking ${initialStrokeCount} strokes and ${initialShapeCount} shapes`
+        2,
+      )}) with radius ${eraserRadius}, checking ${initialStrokeCount} strokes and ${initialShapeCount} shapes`,
     );
 
     // Check if eraser intersects any shapes
@@ -4349,7 +4375,7 @@ export class VisualizationTester
     this.shapes.forEach((shape) => {
       if (this.shapeIntersectsCircle(shape, point, eraserRadius)) {
         console.log(
-          `Eraser intersects shape ${shape.id} (${shape.type}), marking for deletion`
+          `Eraser intersects shape ${shape.id} (${shape.type}), marking for deletion`,
         );
         shapesToDelete.push(shape.id);
       }
@@ -4366,11 +4392,11 @@ export class VisualizationTester
         const intersects = this.strokeIntersectsCircle(
           stroke,
           point,
-          eraserRadius
+          eraserRadius,
         );
         if (intersects) {
           console.log(
-            `Magic erasing entire stroke ${stroke.id} with ${stroke.points.length} points`
+            `Magic erasing entire stroke ${stroke.id} with ${stroke.points.length} points`,
           );
         }
         return !intersects;
@@ -4385,7 +4411,7 @@ export class VisualizationTester
         const resultStrokes = this.partiallyEraseStroke(
           stroke,
           point,
-          eraserRadius
+          eraserRadius,
         );
         newStrokes.push(...resultStrokes);
       });
@@ -4397,7 +4423,7 @@ export class VisualizationTester
     const finalStrokeCount = this.strokes.length;
     if (finalStrokeCount !== initialStrokeCount || shapesToDelete.length > 0) {
       console.log(
-        `Erased operation: strokes ${initialStrokeCount} → ${finalStrokeCount}, shapes deleted: ${shapesToDelete.length}`
+        `Erased operation: strokes ${initialStrokeCount} → ${finalStrokeCount}, shapes deleted: ${shapesToDelete.length}`,
       );
       // Save history after erasing
       this.store.dispatch(new SketchActions.SaveHistory());
@@ -4411,7 +4437,7 @@ export class VisualizationTester
   private strokeIntersectsCircle(
     stroke: DrawingStroke,
     center: { x: number; y: number },
-    radius: number
+    radius: number,
   ): boolean {
     // Check if any point in the stroke is within the eraser circle
     return stroke.points.some((point) => {
@@ -4424,7 +4450,7 @@ export class VisualizationTester
   private shapeIntersectsCircle(
     shape: any,
     center: { x: number; y: number },
-    radius: number
+    radius: number,
   ): boolean {
     // Check if the eraser circle intersects with the shape
     if (shape.type === 'rectangle') {
@@ -4454,7 +4480,7 @@ export class VisualizationTester
 
       // Check if within ellipse or close to its perimeter
       const normalizedDist = Math.sqrt(
-        (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry)
+        (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry),
       );
       return normalizedDist <= 1 + radius / Math.max(rx, ry);
     } else if (shape.type === 'arrow') {
@@ -4479,13 +4505,13 @@ export class VisualizationTester
         0,
         Math.min(
           1,
-          ((center.x - x1) * dx + (center.y - y1) * dy) / lengthSquared
-        )
+          ((center.x - x1) * dx + (center.y - y1) * dy) / lengthSquared,
+        ),
       );
       const closestX = x1 + t * dx;
       const closestY = y1 + t * dy;
       const distance = Math.sqrt(
-        (center.x - closestX) ** 2 + (center.y - closestY) ** 2
+        (center.x - closestX) ** 2 + (center.y - closestY) ** 2,
       );
       return distance <= radius;
     } else if (shape.type === 'text') {
@@ -4513,7 +4539,7 @@ export class VisualizationTester
   private partiallyEraseStroke(
     stroke: DrawingStroke,
     center: { x: number; y: number },
-    radius: number
+    radius: number,
   ): DrawingStroke[] {
     // Split stroke into segments, keeping only points outside the eraser circle
     const segments: { x: number; y: number }[][] = [];
@@ -4558,7 +4584,7 @@ export class VisualizationTester
         };
         resultStrokes.push(newStroke);
         console.log(
-          `Created segment ${newStroke.id} with ${segment.length} points`
+          `Created segment ${newStroke.id} with ${segment.length} points`,
         );
       }
     });
@@ -4567,11 +4593,11 @@ export class VisualizationTester
       console.log(`Stroke ${stroke.id} completely erased`);
     } else if (resultStrokes.length > 1) {
       console.log(
-        `Stroke ${stroke.id} split into ${resultStrokes.length} segments`
+        `Stroke ${stroke.id} split into ${resultStrokes.length} segments`,
       );
     } else if (resultStrokes.length === 1) {
       console.log(
-        `Stroke ${stroke.id} partially erased, keeping ${resultStrokes[0].points.length} points`
+        `Stroke ${stroke.id} partially erased, keeping ${resultStrokes[0].points.length} points`,
       );
     }
 
@@ -4593,7 +4619,7 @@ export class VisualizationTester
       this.drawingLayer.selectAll('.current-stroke');
     console.log(`Removing ${existingStrokePaths.size()} existing stroke paths`);
     console.log(
-      `Removing ${existingCurrentStrokes.size()} existing current strokes`
+      `Removing ${existingCurrentStrokes.size()} existing current strokes`,
     );
 
     existingStrokePaths.remove();
@@ -4602,7 +4628,7 @@ export class VisualizationTester
     // Also clear any other paths that might be in the drawing layer
     const allPaths = this.drawingLayer.selectAll('path');
     console.log(
-      `Total paths in drawing layer before cleanup: ${allPaths.size()}`
+      `Total paths in drawing layer before cleanup: ${allPaths.size()}`,
     );
     allPaths.remove();
 
@@ -4610,7 +4636,7 @@ export class VisualizationTester
     let drawnCount = 0;
     this.strokes.forEach((stroke, index) => {
       console.log(
-        `Processing stroke ${index}: ${stroke.id} with ${stroke.points.length} points`
+        `Processing stroke ${index}: ${stroke.id} with ${stroke.points.length} points`,
       );
       const pathData = this.createPathData(stroke.points);
       if (pathData) {
@@ -4753,7 +4779,7 @@ export class VisualizationTester
       console.log(
         `\n=== Processing node ${index + 1}/${
           nodesToSelect.length
-        }: ${nodeId} (${this.lassoMode} mode) ===`
+        }: ${nodeId} (${this.lassoMode} mode) ===`,
       );
       console.log('Current selectedNodes array:', this.selectedNodes);
 
@@ -4767,7 +4793,7 @@ export class VisualizationTester
           this.toggleNodeSelection(nodeId);
           console.log(
             `After toggleNodeSelection, selectedNodes:`,
-            this.selectedNodes
+            this.selectedNodes,
           );
         } else {
           console.log(`Node ${nodeId} already selected, skipping duplicate`);
@@ -4779,7 +4805,7 @@ export class VisualizationTester
           this.toggleNodeSelection(nodeId);
           console.log(
             `After toggleNodeSelection, selectedNodes:`,
-            this.selectedNodes
+            this.selectedNodes,
           );
         } else {
           console.log(`Node ${nodeId} not selected, nothing to remove`);
@@ -4800,7 +4826,7 @@ export class VisualizationTester
 
   private isPointInPolygon(
     point: { x: number; y: number },
-    polygon: { x: number; y: number }[]
+    polygon: { x: number; y: number }[],
   ): boolean {
     let inside = false;
 
@@ -4853,7 +4879,7 @@ export class VisualizationTester
     if (isClick) {
       // Simple click - just zoom in/out at current center, don't pan
       console.log(
-        `Zoom click detected${isCtrlHeld ? ' (CTRL - zoom out)' : ' (zoom in)'}`
+        `Zoom click detected${isCtrlHeld ? ' (CTRL - zoom out)' : ' (zoom in)'}`,
       );
 
       // Zoom in by 0.30 or zoom out by 0.30 if CTRL is held
@@ -4869,7 +4895,7 @@ export class VisualizationTester
     } else {
       // Rectangle drag - pan to center and zoom
       console.log(
-        `Zoom drag detected${isCtrlHeld ? ' (CTRL - zoom out)' : ' (zoom in)'}`
+        `Zoom drag detected${isCtrlHeld ? ' (CTRL - zoom out)' : ' (zoom in)'}`,
       );
 
       // Calculate center of the rectangle
@@ -4959,14 +4985,14 @@ export class VisualizationTester
       | 'circle'
       | 'arrow'
       | 'text'
-      | 'zoomDrag'
+      | 'zoomDrag',
   ) {
     console.log(`Setting drawing mode from ${this.drawingMode} to ${mode}`);
 
     // Clear single node selection when switching away from pan mode
     if (this.drawingMode === 'pan' && mode !== 'pan' && this.selectedNode) {
       console.log(
-        `Clearing single node selection when switching from pan to ${mode}`
+        `Clearing single node selection when switching from pan to ${mode}`,
       );
       this.selectedNode = null;
       this.updateNodeSelectionVisuals();
@@ -5093,7 +5119,7 @@ export class VisualizationTester
       const existingCurrentStrokes =
         this.drawingLayer.selectAll('.current-stroke');
       console.log(
-        `Existing current strokes in DOM: ${existingCurrentStrokes.size()}`
+        `Existing current strokes in DOM: ${existingCurrentStrokes.size()}`,
       );
     }
 
@@ -5119,7 +5145,7 @@ export class VisualizationTester
         this.drawingLayer.selectAll('.current-stroke');
       console.log(`Remaining paths after clear: ${remainingPaths.size()}`);
       console.log(
-        `Remaining current strokes after clear: ${remainingCurrentStrokes.size()}`
+        `Remaining current strokes after clear: ${remainingCurrentStrokes.size()}`,
       );
     }
 
@@ -5142,13 +5168,13 @@ export class VisualizationTester
       // Remove from current lesson if exists
       if (this.selectedLesson) {
         const lessonNodeIndex = this.selectedLesson.LessonNodes.findIndex(
-          (ln) => ln.NodeID === nodeId
+          (ln) => ln.NodeID === nodeId,
         );
         if (lessonNodeIndex > -1) {
           const updatedLesson = {
             ...this.selectedLesson,
             LessonNodes: this.selectedLesson.LessonNodes.filter(
-              (ln) => ln.NodeID !== nodeId
+              (ln) => ln.NodeID !== nodeId,
             ),
           };
           this.store.dispatch(new UpdateLesson(updatedLesson));
@@ -5166,7 +5192,7 @@ export class VisualizationTester
       // Add to current lesson if exists
       if (this.selectedLesson) {
         const existsInLesson = this.selectedLesson.LessonNodes.some(
-          (ln) => ln.NodeID === nodeId
+          (ln) => ln.NodeID === nodeId,
         );
         if (!existsInLesson) {
           const updatedLesson = {
@@ -5188,7 +5214,7 @@ export class VisualizationTester
       }
     }
     console.log(
-      `selectedNodes after toggle: [${this.selectedNodes.join(', ')}]`
+      `selectedNodes after toggle: [${this.selectedNodes.join(', ')}]`,
     );
     console.log('--- toggleNodeSelection complete ---\n');
     this.updateNodeSelectionVisuals();
@@ -5210,7 +5236,7 @@ export class VisualizationTester
       // Add to current lesson if exists
       if (this.selectedLesson) {
         const existsInLesson = this.selectedLesson.LessonNodes.some(
-          (ln) => ln.NodeID === nodeId
+          (ln) => ln.NodeID === nodeId,
         );
         if (!existsInLesson) {
           const updatedLesson = {
@@ -5308,6 +5334,7 @@ export class VisualizationTester
             this.panX = transform.panX;
             this.panY = transform.panY;
             this.applyTransform();
+            this.updateSelectedNodeTextInfo();
             this.cdr.detectChanges();
           },
           complete: () => {
@@ -5422,7 +5449,7 @@ export class VisualizationTester
   selectRelatedNodes(nodeId: string) {
     console.log(`\n--- selectRelatedNodes called for: ${nodeId} ---`);
     console.log(
-      `Direction: ${this.relatedNodeDirection}, Mode: ${this.relatedNodeMode}`
+      `Direction: ${this.relatedNodeDirection}, Mode: ${this.relatedNodeMode}`,
     );
 
     if (this.relatedNodeMode === 'selection') {
@@ -5436,7 +5463,7 @@ export class VisualizationTester
     // Find related nodes based on direction
     const relatedIds = this.getRelatedNodeIds(
       nodeId,
-      this.relatedNodeDirection
+      this.relatedNodeDirection,
     );
     console.log(`Found ${relatedIds.length} related nodes:`, relatedIds);
 
@@ -5446,13 +5473,13 @@ export class VisualizationTester
 
     console.log(`Node ${nodeId} is currently selected: ${isNodeSelected}`);
     console.log(
-      `Will ${shouldSelect ? 'select' : 'deselect'} node and related nodes`
+      `Will ${shouldSelect ? 'select' : 'deselect'} node and related nodes`,
     );
 
     if (shouldSelect) {
       // SELECT: Add the clicked node and related nodes
       const nodesToAdd = [nodeId, ...relatedIds].filter(
-        (id) => !this.selectedNodes.includes(id)
+        (id) => !this.selectedNodes.includes(id),
       );
 
       if (nodesToAdd.length > 0) {
@@ -5465,7 +5492,7 @@ export class VisualizationTester
       // DESELECT: Remove the clicked node and related nodes
       const idsToRemove = [nodeId, ...relatedIds];
       this.selectedNodes = this.selectedNodes.filter(
-        (id) => !idsToRemove.includes(id)
+        (id) => !idsToRemove.includes(id),
       );
       idsToRemove.forEach((id) => {
         console.log(`Removed node ${id} from selection`);
@@ -5479,13 +5506,13 @@ export class VisualizationTester
     // Get related nodes based on direction
     const relatedIds = this.getRelatedNodeIds(
       nodeId,
-      this.relatedNodeDirection
+      this.relatedNodeDirection,
     );
     const allNodes = [nodeId, ...relatedIds];
 
     // Check if this group is currently highlighted
     const isHighlighted = allNodes.every((id) =>
-      this.highlightedNodes.includes(id)
+      this.highlightedNodes.includes(id),
     );
 
     if (isHighlighted) {
@@ -5508,7 +5535,7 @@ export class VisualizationTester
 
   private getRelatedNodeIds(
     nodeId: string,
-    direction: 'descendants' | 'ancestors'
+    direction: 'descendants' | 'ancestors',
   ): string[] {
     if (direction === 'descendants') {
       return this.getDescendantIds(nodeId);
@@ -5535,7 +5562,7 @@ export class VisualizationTester
   private findAncestors(
     node: TreeNode | null,
     targetId: string,
-    ancestors: string[]
+    ancestors: string[],
   ): boolean {
     if (!node) return false;
 
@@ -5601,7 +5628,7 @@ export class VisualizationTester
     this.relatedNodeDirection =
       this.relatedNodeDirection === 'descendants' ? 'ancestors' : 'descendants';
     console.log(
-      `Switched related node direction to: ${this.relatedNodeDirection}`
+      `Switched related node direction to: ${this.relatedNodeDirection}`,
     );
   }
 
@@ -5635,7 +5662,7 @@ export class VisualizationTester
 
   private findNodeInTree(
     node: TreeNode | null,
-    targetId: string
+    targetId: string,
   ): TreeNode | null {
     if (!node) return null;
     if (node.id === targetId) return node;
@@ -5758,7 +5785,7 @@ export class VisualizationTester
     this.selectedNodes = newSelectedNodes;
 
     console.log(
-      `Reordered nodes: moved "${movedItem}" from position ${fromIndex} to ${toIndex}`
+      `Reordered nodes: moved "${movedItem}" from position ${fromIndex} to ${toIndex}`,
     );
     console.log('New order:', this.selectedNodes);
 
@@ -5792,7 +5819,7 @@ export class VisualizationTester
           return '#ffa726';
         } else {
           return this.colorsService.getNodeColor(
-            d.depth === 0 ? 'root' : 'child'
+            d.depth === 0 ? 'root' : 'child',
           );
         }
       })
@@ -5845,7 +5872,7 @@ export class VisualizationTester
 
   updateSingleNodeSelection() {
     console.log(
-      `Updating visual for single selected node: ${this.selectedNode}`
+      `Updating visual for single selected node: ${this.selectedNode}`,
     );
     // Use the main visual update method which now handles both single and multiple selections
     this.updateNodeSelectionVisuals();
@@ -5918,7 +5945,7 @@ export class VisualizationTester
         newLesson.LessonDesc ? `Description: ${newLesson.LessonDesc}` : '',
         newLesson.LessonChips && newLesson.LessonChips.length > 0
           ? `Chips: ${newLesson.LessonChips.join(', ')}`
-          : ''
+          : '',
       );
     });
 
@@ -5964,7 +5991,7 @@ export class VisualizationTester
   onLessonSelect(lesson: ILesson | null) {
     console.log(
       '🎯 D3UIV6.onLessonSelect called (Lesson Builder):',
-      lesson?.LessonName || 'null'
+      lesson?.LessonName || 'null',
     );
 
     if (!lesson) {
@@ -5997,14 +6024,14 @@ export class VisualizationTester
     }
 
     const lessonNodeIds = this.selectedLesson.LessonNodes.map(
-      (node) => node.NodeID
+      (node) => node.NodeID,
     ).sort();
     const currentSelection = this.selectedNodes.slice().sort();
 
     this._selectionMatchesLesson =
       lessonNodeIds.length === currentSelection.length &&
       lessonNodeIds.every(
-        (nodeId, index) => nodeId === currentSelection[index]
+        (nodeId, index) => nodeId === currentSelection[index],
       );
   }
 
@@ -6016,7 +6043,7 @@ export class VisualizationTester
     this._hasUnsavedChanges =
       currentSelection.length !== lastSavedSelection.length ||
       !currentSelection.every(
-        (nodeId, index) => nodeId === lastSavedSelection[index]
+        (nodeId, index) => nodeId === lastSavedSelection[index],
       );
 
     // Update computed properties when unsaved changes state changes
@@ -6047,7 +6074,7 @@ export class VisualizationTester
       (nodeId) => {
         // Check if this node already exists in the lesson to preserve radar values
         const existingNode = this.selectedLesson!.LessonNodes.find(
-          (ln) => ln.NodeID === nodeId
+          (ln) => ln.NodeID === nodeId,
         );
 
         return {
@@ -6058,7 +6085,7 @@ export class VisualizationTester
           NodeDesiredValue: existingNode?.NodeDesiredValue ?? 3,
           NodeProValue: existingNode?.NodeProValue ?? 4,
         };
-      }
+      },
     );
 
     const updatedLesson: ILesson = {
@@ -6073,7 +6100,7 @@ export class VisualizationTester
     this.markSelectionAsSaved();
 
     console.log(
-      `Applied selection to lesson: ${updatedLesson.LessonName} with ${updatedLessonNodes.length} nodes`
+      `Applied selection to lesson: ${updatedLesson.LessonName} with ${updatedLessonNodes.length} nodes`,
     );
   }
 
@@ -6141,12 +6168,12 @@ export class VisualizationTester
     // If name changed, check if a lesson with this name already exists
     if (nameChanged) {
       const existingLesson = this.currentLessons.find(
-        (lesson) => lesson.LessonName === newName
+        (lesson) => lesson.LessonName === newName,
       );
 
       if (existingLesson) {
         alert(
-          `A lesson named "${newName}" already exists. Please choose a different name.`
+          `A lesson named "${newName}" already exists. Please choose a different name.`,
         );
         return;
       }
@@ -6168,7 +6195,7 @@ export class VisualizationTester
     console.log(
       `Updated lesson: "${currentName}" -> "${newName}"`,
       newDescription ? `Description: ${newDescription}` : '',
-      newChips.length > 0 ? `Chips: ${newChips.join(', ')}` : ''
+      newChips.length > 0 ? `Chips: ${newChips.join(', ')}` : '',
     );
     this.closeEditLessonDialog();
   }
@@ -6234,7 +6261,7 @@ export class VisualizationTester
     ) {
       if (!this.currentSelectedTeamId) {
         alert(
-          'To demote a TENANT lesson to a team, you must have a team selected.'
+          'To demote a TENANT lesson to a team, you must have a team selected.',
         );
         return;
       }
@@ -6250,7 +6277,7 @@ export class VisualizationTester
   runLesson() {
     // Get the lesson from the runner context, not the builder context
     const lessonToRun = this.store.selectSnapshot(
-      GlobalContextState.selectedContextLessonRunnerLesson
+      GlobalContextState.selectedContextLessonRunnerLesson,
     );
 
     if (!lessonToRun) {
@@ -6292,7 +6319,7 @@ export class VisualizationTester
     this.store.dispatch(new TourActions.StartLesson(lessonId));
 
     console.log(
-      `Lesson ${lessonToRun.LessonName} started with ${lessonNodes.length} nodes`
+      `Lesson ${lessonToRun.LessonName} started with ${lessonNodes.length} nodes`,
     );
   }
 
@@ -6300,7 +6327,7 @@ export class VisualizationTester
   autopilot() {
     // Get the lesson from the runner context, not the builder context
     const lessonToRun = this.store.selectSnapshot(
-      GlobalContextState.selectedContextLessonRunnerLesson
+      GlobalContextState.selectedContextLessonRunnerLesson,
     );
 
     if (!lessonToRun) {
@@ -6335,7 +6362,7 @@ export class VisualizationTester
     this.startAutopilotSequence(lessonNodes.length);
 
     console.log(
-      `Autopilot started for lesson ${lessonToRun.LessonName} with ${lessonNodes.length} nodes`
+      `Autopilot started for lesson ${lessonToRun.LessonName} with ${lessonNodes.length} nodes`,
     );
   }
 
@@ -6385,7 +6412,7 @@ export class VisualizationTester
 
       // Log current step
       console.log(
-        `Autopilot: Processing node ${currentNodeIndex + 1} of ${totalNodes}`
+        `Autopilot: Processing node ${currentNodeIndex + 1} of ${totalNodes}`,
       );
 
       if (currentNodeIndex === 0) {
@@ -6404,7 +6431,7 @@ export class VisualizationTester
       } else {
         // For subsequent nodes, they're already navigated by previous Next click
         console.log(
-          `Autopilot: On node ${currentNodeIndex + 1}, waiting 1 seconds...`
+          `Autopilot: On node ${currentNodeIndex + 1}, waiting 1 seconds...`,
         );
         const nodeTimeout = setTimeout(() => {
           if (!this.autopilotRunning) return; // Check if autopilot was stopped
@@ -6444,7 +6471,7 @@ export class VisualizationTester
       this.lessonRunnerV2Ref.finish();
 
       console.log(
-        'Autopilot: Lesson completed! Dialog should now be waiting on finish screen.'
+        'Autopilot: Lesson completed! Dialog should now be waiting on finish screen.',
       );
     } else {
       console.warn('Autopilot: Lesson runner component not found for finish');
@@ -6458,7 +6485,7 @@ export class VisualizationTester
 
     // For backwards compatibility, center the lesson viewer
     this.store.dispatch(
-      new UpdateToolbarPosition('lessonViewer', { x: centerX, y: centerY })
+      new UpdateToolbarPosition('lessonViewer', { x: centerX, y: centerY }),
     );
   }
 
@@ -6509,7 +6536,7 @@ export class VisualizationTester
 
       // Update position - use lesson viewer for backwards compatibility
       this.store.dispatch(
-        new UpdateToolbarPosition('lessonViewer', { x: currentX, y: currentY })
+        new UpdateToolbarPosition('lessonViewer', { x: currentX, y: currentY }),
       );
 
       if (t < 1) {
@@ -6533,7 +6560,7 @@ export class VisualizationTester
     const centerY = this.height / 2 - 200; // Assuming lesson viewer height is ~400px
 
     this.store.dispatch(
-      new UpdateToolbarPosition('lessonViewer', { x: centerX, y: centerY })
+      new UpdateToolbarPosition('lessonViewer', { x: centerX, y: centerY }),
     );
   }
 
@@ -6567,7 +6594,7 @@ export class VisualizationTester
 
       // Update position
       this.store.dispatch(
-        new UpdateToolbarPosition('lessonViewer', { x: currentX, y: currentY })
+        new UpdateToolbarPosition('lessonViewer', { x: currentX, y: currentY }),
       );
 
       if (t < 1) {
@@ -6743,7 +6770,7 @@ export class VisualizationTester
     console.log('Black background toggled:', this.blackBackgroundVisible);
 
     const blackBgElement = document.querySelector(
-      '.logo-black-background'
+      '.logo-black-background',
     ) as HTMLElement;
 
     if (this.blackBackgroundVisible) {
@@ -6784,7 +6811,7 @@ export class VisualizationTester
       console.log('Current toolbarVisibility object:', this.toolbarVisibility);
       console.log(
         'zoomControls (View toolbar) visibility:',
-        this.getToolbarVisibility('zoomControls')
+        this.getToolbarVisibility('zoomControls'),
       );
 
       // Close the VIEW toolbar (zoomControls) if it's open - this is where our logo fade toggles are
@@ -6793,12 +6820,12 @@ export class VisualizationTester
         !this.operationModeService.isAnyModeActive()
       ) {
         console.log(
-          'Closing VIEW toolbar (zoomControls) for auto-fade sequence'
+          'Closing VIEW toolbar (zoomControls) for auto-fade sequence',
         );
 
         // Try direct store dispatch
         this.store.dispatch(
-          new SetToolbarVisibility('zoomControls' as any, false)
+          new SetToolbarVisibility('zoomControls' as any, false),
         );
 
         // Also try the hideToolbar method
@@ -6808,12 +6835,12 @@ export class VisualizationTester
         setTimeout(() => {
           console.log(
             'After hideToolbar - zoomControls visibility:',
-            this.getToolbarVisibility('zoomControls')
+            this.getToolbarVisibility('zoomControls'),
           );
         }, 100);
       } else {
         console.log(
-          'VIEW toolbar (zoomControls) is already closed or not found'
+          'VIEW toolbar (zoomControls) is already closed or not found',
         );
       }
 
@@ -6838,7 +6865,7 @@ export class VisualizationTester
     const logoElement = document.querySelector('.logo-fade') as HTMLElement;
     const logoImage = document.querySelector('.logo-image') as HTMLElement;
     const blackBgElement = document.querySelector(
-      '.logo-black-background'
+      '.logo-black-background',
     ) as HTMLElement;
 
     if (logoElement && logoImage && blackBgElement) {
@@ -6922,12 +6949,12 @@ export class VisualizationTester
         !this.operationModeService.isAnyModeActive()
       ) {
         console.log(
-          'Closing VIEW toolbar (zoomControls) for auto-fade out sequence'
+          'Closing VIEW toolbar (zoomControls) for auto-fade out sequence',
         );
 
         // Try direct store dispatch
         this.store.dispatch(
-          new SetToolbarVisibility('zoomControls' as any, false)
+          new SetToolbarVisibility('zoomControls' as any, false),
         );
 
         // Also try the hideToolbar method
@@ -6949,7 +6976,7 @@ export class VisualizationTester
       this.blackBackgroundVisible = false;
 
       const logoElement = document.querySelector(
-        '.checkpoint-logo'
+        '.checkpoint-logo',
       ) as HTMLElement;
       if (logoElement) {
         logoElement.style.display = 'block';
@@ -6962,7 +6989,7 @@ export class VisualizationTester
         setTimeout(() => {
           this.blackBackgroundVisible = true;
           const blackBgElement = document.querySelector(
-            '.black-background'
+            '.black-background',
           ) as HTMLElement;
           if (blackBgElement) {
             blackBgElement.style.display = 'block';
@@ -7009,12 +7036,12 @@ export class VisualizationTester
         !this.operationModeService.isAnyModeActive()
       ) {
         console.log(
-          'Closing VIEW toolbar (zoomControls) for auto-fade diagram sequence'
+          'Closing VIEW toolbar (zoomControls) for auto-fade diagram sequence',
         );
 
         // Try direct store dispatch
         this.store.dispatch(
-          new SetToolbarVisibility('zoomControls' as any, false)
+          new SetToolbarVisibility('zoomControls' as any, false),
         );
 
         // Also try the hideToolbar method
@@ -7058,13 +7085,13 @@ export class VisualizationTester
     setTimeout(() => {
       this.blackBackgroundVisible = true;
       const blackBgElement = document.querySelector(
-        '.black-background'
+        '.black-background',
       ) as HTMLElement;
 
       if (blackBgElement) {
         console.log(
           'Step 1: Fading to background color',
-          options.backgroundColor
+          options.backgroundColor,
         );
         console.log('Options received:', JSON.stringify(options, null, 2));
 
@@ -7087,18 +7114,18 @@ export class VisualizationTester
         blackBgElement.setAttribute('style', styleString);
         console.log(
           'Applied style attribute:',
-          blackBgElement.getAttribute('style')
+          blackBgElement.getAttribute('style'),
         );
         console.log(
           'Computed background before fade:',
-          window.getComputedStyle(blackBgElement).backgroundColor
+          window.getComputedStyle(blackBgElement).backgroundColor,
         );
 
         setTimeout(() => {
           blackBgElement.style.opacity = '1';
           console.log(
             'Background faded in, computed background:',
-            window.getComputedStyle(blackBgElement).backgroundColor
+            window.getComputedStyle(blackBgElement).backgroundColor,
           );
           console.log('Background element:', blackBgElement);
         }, 50);
@@ -7106,7 +7133,7 @@ export class VisualizationTester
         // Step 2: Wait [wait delay] seconds
         setTimeout(() => {
           console.log(
-            'Step 2: Wait delay finished, starting logo/text sequence'
+            'Step 2: Wait delay finished, starting logo/text sequence',
           );
           this.executeLogoAndTextSequence(options, blackBgElement);
         }, options.waitDelaySeconds * 1000);
@@ -7116,7 +7143,7 @@ export class VisualizationTester
 
   private executeLogoAndTextSequence(
     options: any,
-    blackBgElement: HTMLElement
+    blackBgElement: HTMLElement,
   ) {
     let currentStep = 0;
     const steps: (() => void)[] = [];
@@ -7130,11 +7157,11 @@ export class VisualizationTester
 
         setTimeout(() => {
           const logoElement = document.querySelector(
-            '.logo-fade'
+            '.logo-fade',
           ) as HTMLElement;
           if (logoElement) {
             console.log(
-              'Logo element found, applying styles for Auto-Fade Options'
+              'Logo element found, applying styles for Auto-Fade Options',
             );
             logoElement.style.display = 'block';
             logoElement.style.opacity = '0';
@@ -7150,11 +7177,11 @@ export class VisualizationTester
 
             // Also control the logo image inside
             const logoImageElement = logoElement.querySelector(
-              '.logo-image'
+              '.logo-image',
             ) as HTMLElement;
             if (logoImageElement) {
               console.log(
-                'Found logo image element in Auto-Fade Options, setting opacity'
+                'Found logo image element in Auto-Fade Options, setting opacity',
               );
               logoImageElement.style.opacity = '0';
               // Slower, more majestic transition - 4 seconds with ease-in-out
@@ -7182,7 +7209,7 @@ export class VisualizationTester
               // Also fade in the logo image with zoom effect
               if (logoImageElement) {
                 console.log(
-                  'Setting logo image opacity to 1 for Auto-Fade Options'
+                  'Setting logo image opacity to 1 for Auto-Fade Options',
                 );
                 logoImageElement.style.opacity = '1';
 
@@ -7209,7 +7236,7 @@ export class VisualizationTester
       // Logo display stage
       steps.push(() => {
         console.log(
-          `Step: Logo display for ${options.displayStageSeconds} seconds`
+          `Step: Logo display for ${options.displayStageSeconds} seconds`,
         );
         setTimeout(() => {
           nextStep();
@@ -7225,7 +7252,7 @@ export class VisualizationTester
 
           // Also fade out the logo image
           const logoImageElement = logoElement.querySelector(
-            '.logo-image'
+            '.logo-image',
           ) as HTMLElement;
           if (logoImageElement) {
             console.log('Fading out logo image for Auto-Fade Options');
@@ -7245,7 +7272,7 @@ export class VisualizationTester
       // Wait delay after logo
       steps.push(() => {
         console.log(
-          `Step: Wait delay after logo for ${options.waitDelaySeconds} seconds`
+          `Step: Wait delay after logo for ${options.waitDelaySeconds} seconds`,
         );
         setTimeout(() => {
           nextStep();
@@ -7260,7 +7287,7 @@ export class VisualizationTester
 
         // Remove any existing text elements first
         const oldTextElements = document.querySelectorAll(
-          '.custom-auto-fade-text'
+          '.custom-auto-fade-text',
         );
         oldTextElements.forEach((el) => el.remove());
 
@@ -7270,12 +7297,12 @@ export class VisualizationTester
           document.body.appendChild(textElement);
           console.log(
             'Text element appended, parent:',
-            textElement.parentElement
+            textElement.parentElement,
           );
           console.log('Text element in DOM:', document.contains(textElement));
           console.log(
             'Text element computed style:',
-            window.getComputedStyle(textElement)
+            window.getComputedStyle(textElement),
           );
 
           setTimeout(() => {
@@ -7290,7 +7317,7 @@ export class VisualizationTester
               .replace('opacity: 0 !important', 'opacity: 1 !important')
               .replace(
                 /transform: translate\(-50%, -50%\) scale\([^)]+\) !important/,
-                `transform: translate(-50%, -50%) ${finalScale} !important`
+                `transform: translate(-50%, -50%) ${finalScale} !important`,
               );
             textElement.setAttribute('style', updatedStyle);
 
@@ -7319,7 +7346,7 @@ export class VisualizationTester
       // Text display stage
       steps.push(() => {
         console.log(
-          `Step: Text display for ${options.displayStageSeconds} seconds`
+          `Step: Text display for ${options.displayStageSeconds} seconds`,
         );
         setTimeout(() => {
           nextStep();
@@ -7330,7 +7357,7 @@ export class VisualizationTester
       steps.push(() => {
         console.log('Step: Text fade out');
         const textElement = document.querySelector(
-          '.custom-auto-fade-text'
+          '.custom-auto-fade-text',
         ) as HTMLElement;
         if (textElement) {
           textElement.style.opacity = '0';
@@ -7470,7 +7497,7 @@ export class VisualizationTester
       this.blackBackgroundVisible = true;
 
       const blackBgElement = document.querySelector(
-        '.black-background'
+        '.black-background',
       ) as HTMLElement;
 
       if (blackBgElement) {
@@ -7500,7 +7527,7 @@ export class VisualizationTester
           setTimeout(() => {
             console.log('Step 3: Fading out diagram');
             const diagramElement = document.querySelector(
-              '.training-diagram'
+              '.training-diagram',
             ) as HTMLElement;
             if (diagramElement) {
               diagramElement.style.opacity = '0';
@@ -7512,7 +7539,7 @@ export class VisualizationTester
 
                 // Keep black background at full opacity - logo should appear on top
                 console.log(
-                  'Step 4: Keeping black background at full opacity, logo should appear on top'
+                  'Step 4: Keeping black background at full opacity, logo should appear on top',
                 );
                 blackBgElement.style.opacity = '1.0'; // Keep full black background
 
@@ -7521,11 +7548,11 @@ export class VisualizationTester
                 // Use setTimeout to ensure Angular has processed the change
                 setTimeout(() => {
                   const logoElement = document.querySelector(
-                    '.logo-fade'
+                    '.logo-fade',
                   ) as HTMLElement;
                   if (logoElement) {
                     console.log(
-                      'Logo element (.logo-fade) found, applying styles'
+                      'Logo element (.logo-fade) found, applying styles',
                     );
                     logoElement.style.display = 'block';
                     logoElement.style.opacity = '0';
@@ -7540,16 +7567,16 @@ export class VisualizationTester
                     logoElement.style.pointerEvents = 'none';
 
                     console.log(
-                      'Logo element z-index set to 100000, should be above everything'
+                      'Logo element z-index set to 100000, should be above everything',
                     );
 
                     // Also control the logo image inside
                     const logoImageElement = logoElement.querySelector(
-                      '.logo-image'
+                      '.logo-image',
                     ) as HTMLElement;
                     if (logoImageElement) {
                       console.log(
-                        'Found logo image element, setting opacity to 0 and transition'
+                        'Found logo image element, setting opacity to 0 and transition',
                       );
                       logoImageElement.style.opacity = '0';
                       logoImageElement.style.transition =
@@ -7599,7 +7626,7 @@ export class VisualizationTester
               }, 1000); // 1 second for diagram fade out
             } else {
               console.error(
-                'Diagram element (.training-diagram) not found for fade out'
+                'Diagram element (.training-diagram) not found for fade out',
               );
             }
           }, 4000); // 4 seconds with diagram visible
@@ -7615,7 +7642,7 @@ export class VisualizationTester
 
     // Create diagram element if it doesn't exist
     let diagramElement = document.querySelector(
-      '.training-diagram'
+      '.training-diagram',
     ) as HTMLElement;
 
     if (!diagramElement) {
@@ -7680,7 +7707,9 @@ export class VisualizationTester
         .select('circle:first-child')
         .attr(
           'fill',
-          this.isDarkMode ? 'rgba(60, 60, 60, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+          this.isDarkMode
+            ? 'rgba(60, 60, 60, 0.9)'
+            : 'rgba(255, 255, 255, 0.9)',
         )
         .attr('stroke', this.isDarkMode ? '#555' : '#ccc');
 
@@ -7722,6 +7751,9 @@ export class VisualizationTester
 
     // Apply the transform
     this.applyTransform();
+
+    // Update selected node text info
+    this.updateSelectedNodeTextInfo();
   }
 
   // Helper methods for dynamic slider ranges
@@ -7750,6 +7782,9 @@ export class VisualizationTester
 
     // Apply the transform
     this.applyTransform();
+
+    // Update selected node text info
+    this.updateSelectedNodeTextInfo();
   }
 
   private applyTransform() {
@@ -7790,7 +7825,7 @@ export class VisualizationTester
 
   regenerateNodes() {
     console.log(
-      `Regenerating tree with ${this.nodeCount} nodes using random structure`
+      `Regenerating tree with ${this.nodeCount} nodes using random structure`,
     );
 
     // Clear current selection since nodes will change
@@ -7826,7 +7861,7 @@ export class VisualizationTester
     this.lessonContentQualitySurveyEnabled = enabled;
     console.log(
       'Lesson Content Quality Survey toggled:',
-      this.lessonContentQualitySurveyEnabled
+      this.lessonContentQualitySurveyEnabled,
     );
   }
 
@@ -7834,7 +7869,7 @@ export class VisualizationTester
     this.exploratoryContentQualitySurveyEnabled = enabled;
     console.log(
       'Exploratory Content Quality Survey toggled:',
-      this.exploratoryContentQualitySurveyEnabled
+      this.exploratoryContentQualitySurveyEnabled,
     );
   }
 
@@ -7883,7 +7918,7 @@ export class VisualizationTester
 
         // Dispatch action to update lesson status in state
         this.store.dispatch(
-          new UpdateAssignedLessonStatus(lessonId, 'COMPLETED')
+          new UpdateAssignedLessonStatus(lessonId, 'COMPLETED'),
         );
       } else {
         console.log('[MAIN] ⚠️ Not updating lesson status because:', {
@@ -7939,13 +7974,13 @@ export class VisualizationTester
     // Calculate tree structure parameters for better radial distribution
     const maxDepth = Math.max(
       2,
-      Math.min(4, Math.floor(Math.log2(nodeCount)) + 1)
+      Math.min(4, Math.floor(Math.log2(nodeCount)) + 1),
     );
     // For radial trees, we want more even distribution across levels
     // Ensure at least 2 branches for the root node
     const branching = Math.max(
       2,
-      Math.ceil(Math.pow(nodeCount - 1, 1 / maxDepth))
+      Math.ceil(Math.pow(nodeCount - 1, 1 / maxDepth)),
     );
 
     let nodeCounter = 1;
@@ -7954,7 +7989,7 @@ export class VisualizationTester
     const buildTree = (
       node: TreeNode,
       depth: number,
-      maxNodes: number
+      maxNodes: number,
     ): void => {
       if (depth >= maxDepth || nodeCounter >= nodeCount) return;
 
@@ -7970,7 +8005,7 @@ export class VisualizationTester
           // Last level - add all remaining nodes (but at least 2 for root)
           childrenCount = Math.max(
             minRootChildren,
-            Math.min(branching, remainingNodes)
+            Math.min(branching, remainingNodes),
           );
         } else {
           // Distribute nodes more evenly for radial layout, but ensure minimum 2 for root
@@ -7979,8 +8014,8 @@ export class VisualizationTester
             minRootChildren,
             Math.min(
               branching,
-              Math.ceil(remainingNodes / Math.pow(branching, remainingDepth))
-            )
+              Math.ceil(remainingNodes / Math.pow(branching, remainingDepth)),
+            ),
           );
         }
       } else if (remainingDepth === 0) {
@@ -7991,7 +8026,7 @@ export class VisualizationTester
         const nodesPerBranch = Math.ceil(remainingNodes / branching);
         childrenCount = Math.min(
           branching,
-          Math.ceil(remainingNodes / Math.pow(branching, remainingDepth))
+          Math.ceil(remainingNodes / Math.pow(branching, remainingDepth)),
         );
       }
 
@@ -8000,10 +8035,10 @@ export class VisualizationTester
           id: nodeCounter.toString(),
           name: `Node ${nodeCounter}`,
           description: this.mockDataService.generateNodeDescription(
-            nodeCounter.toString()
+            nodeCounter.toString(),
           ),
           videoUrl: this.mockDataService.generateNodeVideoUrl(
-            nodeCounter.toString()
+            nodeCounter.toString(),
           ),
           children: [],
         };
@@ -8111,10 +8146,10 @@ export class VisualizationTester
           id: nodeCounter.toString(),
           name: `Node ${nodeCounter}`,
           description: this.mockDataService.generateNodeDescription(
-            `${nodeCounter}_random`
+            `${nodeCounter}_random`,
           ),
           videoUrl: this.mockDataService.generateNodeVideoUrl(
-            nodeCounter.toString()
+            nodeCounter.toString(),
           ),
           children: [],
         };
@@ -8137,8 +8172,8 @@ export class VisualizationTester
 
     console.log(
       `Generated random tree: ${nodeCounter} nodes, max depth estimation: ${this.calculateTreeDepth(
-        root
-      )}`
+        root,
+      )}`,
     );
 
     // Calculate and apply ideal dimensions after tree structure is known
@@ -8202,7 +8237,7 @@ export class VisualizationTester
 
       if (index < 3) {
         console.log(
-          `[LAYOUT] Node ${index}: data.id="${d.data.id}" -> nodeId="${nodeId}", data.name="${d.data.name}"`
+          `[LAYOUT] Node ${index}: data.id="${d.data.id}" -> nodeId="${nodeId}", data.name="${d.data.name}"`,
         );
       }
 
@@ -8260,7 +8295,7 @@ export class VisualizationTester
     // Initialize the current visualization type with dimensions
     this.treeVisualizationService.setVisualizationType(
       this.selectedVisualization,
-      dimensions
+      dimensions,
     );
 
     // Legacy layout properties kept for compatibility with existing code
@@ -8344,7 +8379,7 @@ export class VisualizationTester
     // Update selectedVisualization based on combined format and layout
     this.selectedVisualization = this.getCombinedVisualizationType();
     console.log(
-      `Format changed to ${format}, visualization type updated to: ${this.selectedVisualization}`
+      `Format changed to ${format}, visualization type updated to: ${this.selectedVisualization}`,
     );
 
     // Recalculate ideal dimensions for new visualization type
@@ -8360,7 +8395,7 @@ export class VisualizationTester
     // Update selectedVisualization based on combined format and layout
     this.selectedVisualization = this.getCombinedVisualizationType();
     console.log(
-      `Layout style changed to ${style}, visualization type updated to: ${this.selectedVisualization}`
+      `Layout style changed to ${style}, visualization type updated to: ${this.selectedVisualization}`,
     );
 
     this.updateVisualization();
@@ -8829,7 +8864,7 @@ export class VisualizationTester
         .selectAll('circle.tree-node')
         .style(
           'stroke',
-          this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333')
+          this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333'),
         );
     } else {
       // Re-apply colorization to reflect new color
@@ -8886,7 +8921,7 @@ export class VisualizationTester
     this.colorGradientDirectionality = directionality as 'sunset' | 'sunrise';
     console.log(
       '📊 Gradient directionality changed to:',
-      this.colorGradientDirectionality
+      this.colorGradientDirectionality,
     );
     // Re-apply colorization with new directionality setting
     this.autoApplyColorization();
@@ -8904,10 +8939,10 @@ export class VisualizationTester
     this.colorGradientBrightnessEnd = Math.max(0, Math.min(100, brightnessEnd)); // Clamp to 0-100
     console.log(
       '📊 Gradient brightness end changed to:',
-      this.colorGradientBrightnessEnd
+      this.colorGradientBrightnessEnd,
     );
     this.store.dispatch(
-      new UpdateColorGradientBrightnessEnd(this.colorGradientBrightnessEnd)
+      new UpdateColorGradientBrightnessEnd(this.colorGradientBrightnessEnd),
     );
     // Re-apply colorization with new brightness end setting
     this.autoApplyColorization();
@@ -8922,7 +8957,7 @@ export class VisualizationTester
     console.log(
       '📊 Node opacity changed to:',
       this.nodeOpacity,
-      '(synced to all opacities)'
+      '(synced to all opacities)',
     );
     this.updateNodeOpacity();
   }
@@ -9013,7 +9048,7 @@ export class VisualizationTester
     this.showBackgroundCircle = show;
     console.log(
       '🎨 Background circle visibility changed to:',
-      this.showBackgroundCircle
+      this.showBackgroundCircle,
     );
     this.updateBackgroundCircleVisibility();
   }
@@ -9119,7 +9154,7 @@ export class VisualizationTester
       console.log('Calling strategy.qualify() for branch-selection');
       colorizationResult = strategy.qualify(
         { treeData: this.treeData },
-        JSON.stringify(colorizationArgs)
+        JSON.stringify(colorizationArgs),
       );
     } else if (this.colorStrategy === 'branch' && strategy.classify) {
       // For branch strategy, use classify
@@ -9138,7 +9173,7 @@ export class VisualizationTester
     console.log(
       'Result: ' +
         JSON.stringify(colorizationResult?.nodeData?.length ?? 0) +
-        ' nodes'
+        ' nodes',
     );
     console.log('Colorization result:', colorizationResult);
 
@@ -9215,15 +9250,15 @@ export class VisualizationTester
 
     // Update aqua circle visibility
     if (this.g) {
-      const aquaCircle = this.g
-        .select('circle[fill]')
-        .filter(function (this: SVGCircleElement) {
-          return d3.select(this).attr('opacity') === '0.25';
-        });
+      const aquaCircle = this.g.select('circle[fill]').filter(function (
+        this: SVGCircleElement,
+      ) {
+        return d3.select(this).attr('opacity') === '0.25';
+      });
 
       aquaCircle.style(
         'display',
-        this.backgroundStyle === 'aqua-circle' ? 'block' : 'none'
+        this.backgroundStyle === 'aqua-circle' ? 'block' : 'none',
       );
     }
   }
@@ -9722,6 +9757,101 @@ export class VisualizationTester
     return { x: d.x, y: d.y + belowOffset, anchor: 'middle', rotation: 0 };
   }
 
+  // Update selected node text position information for display in toolbar
+  private updateSelectedNodeTextInfo(): void {
+    if (!this.selectedNode || !this.treeNodes || this.treeNodes.length === 0) {
+      // Clear info if no node is selected
+      this.selectedNodeTextX = null;
+      this.selectedNodeTextY = null;
+      this.selectedNodeTextRotation = null;
+      this.selectedNodeTextAnchor = null;
+      this.selectedNodeText180Added = false;
+      
+      // Also clear transform state when no node selected
+      this.selectedNodeCurrentZoom = 1;
+      this.selectedNodeCurrentPanX = 0;
+      this.selectedNodeCurrentPanY = 0;
+      this.selectedNodeCurrentRotation = 0;
+      return;
+    }
+
+    // Find the D3 node data for the selected node
+    const selectedD3Node = this.treeNodes.find(
+      (node: any) =>
+        node.id === this.selectedNode || node.data?.id === this.selectedNode,
+    );
+
+    if (!selectedD3Node) {
+      // Node not found in tree nodes, clear info
+      this.selectedNodeTextX = null;
+      this.selectedNodeTextY = null;
+      this.selectedNodeTextRotation = null;
+      this.selectedNodeTextAnchor = null;
+      this.selectedNodeText180Added = false;
+      
+      // Also clear transform state
+      this.selectedNodeCurrentZoom = 1;
+      this.selectedNodeCurrentPanX = 0;
+      this.selectedNodeCurrentPanY = 0;
+      this.selectedNodeCurrentRotation = 0;
+      return;
+    }
+
+    // Calculate text position using the same method as rendering (layout coordinates)
+    const textPos = this.getTextPosition(selectedD3Node);
+
+    // Store the values
+    this.selectedNodeTextX = Math.round(textPos.x * 100) / 100; // Round to 2 decimals
+    this.selectedNodeTextY = Math.round(textPos.y * 100) / 100;
+    this.selectedNodeTextRotation = Math.round(textPos.rotation * 100) / 100;
+    this.selectedNodeTextAnchor = textPos.anchor;
+
+    // Store current transform state
+    this.selectedNodeCurrentZoom = Math.round(this.zoomLevel * 100) / 100;
+    this.selectedNodeCurrentPanX = Math.round(this.panX * 100) / 100;
+    this.selectedNodeCurrentPanY = Math.round(this.panY * 100) / 100;
+    this.selectedNodeCurrentRotation =
+      Math.round(this.rotationAngle * 100) / 100;
+
+    // Log for debugging
+    console.log('🔍 Selected Node Text Info Updated:', {
+      node: this.selectedNode,
+      x: this.selectedNodeTextX,
+      y: this.selectedNodeTextY,
+      rotation: this.selectedNodeTextRotation,
+      anchor: this.selectedNodeTextAnchor,
+      zoom: this.selectedNodeCurrentZoom,
+      panX: this.selectedNodeCurrentPanX,
+      panY: this.selectedNodeCurrentPanY,
+      rotationAngle: this.selectedNodeCurrentRotation,
+    });
+
+    // Check if 180 degrees was added (for radial layouts)
+    if (
+      this.selectedVisualization === 'radialTree' ||
+      this.selectedVisualization === 'radialCluster'
+    ) {
+      if (
+        this.textPosition === 'radiating-leaf' ||
+        this.textPosition === 'radiating-all'
+      ) {
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+        const angleFromCenter = Math.atan2(
+          selectedD3Node.y - centerY,
+          selectedD3Node.x - centerX,
+        );
+        const isLeftSide =
+          angleFromCenter > Math.PI / 2 || angleFromCenter < -Math.PI / 2;
+        this.selectedNodeText180Added = isLeftSide;
+      } else {
+        this.selectedNodeText180Added = false;
+      }
+    } else {
+      this.selectedNodeText180Added = false;
+    }
+  }
+
   // Generate optimized link path function based on line type and format
   // Get link color based on override or default setting
   private getLinkColor(): string {
@@ -9976,19 +10106,19 @@ export class VisualizationTester
             // Calculate angles and radii using adjusted endpoints
             const sourceAngle = Math.atan2(
               adjusted.source.y - centerY,
-              adjusted.source.x - centerX
+              adjusted.source.x - centerX,
             );
             const targetAngle = Math.atan2(
               adjusted.target.y - centerY,
-              adjusted.target.x - centerX
+              adjusted.target.x - centerX,
             );
             const sourceRadius = Math.sqrt(
               Math.pow(adjusted.source.x - centerX, 2) +
-                Math.pow(adjusted.source.y - centerY, 2)
+                Math.pow(adjusted.source.y - centerY, 2),
             );
             const targetRadius = Math.sqrt(
               Math.pow(adjusted.target.x - centerX, 2) +
-                Math.pow(adjusted.target.y - centerY, 2)
+                Math.pow(adjusted.target.y - centerY, 2),
             );
             const midRadius = (sourceRadius + targetRadius) / 2;
 
@@ -10024,22 +10154,22 @@ export class VisualizationTester
             const sourceAngle =
               Math.atan2(
                 adjusted.source.y - centerY,
-                adjusted.source.x - centerX
+                adjusted.source.x - centerX,
               ) +
               Math.PI / 2;
             const targetAngle =
               Math.atan2(
                 adjusted.target.y - centerY,
-                adjusted.target.x - centerX
+                adjusted.target.x - centerX,
               ) +
               Math.PI / 2;
             const sourceRadius = Math.sqrt(
               Math.pow(adjusted.source.x - centerX, 2) +
-                Math.pow(adjusted.source.y - centerY, 2)
+                Math.pow(adjusted.source.y - centerY, 2),
             );
             const targetRadius = Math.sqrt(
               Math.pow(adjusted.target.x - centerX, 2) +
-                Math.pow(adjusted.target.y - centerY, 2)
+                Math.pow(adjusted.target.y - centerY, 2),
             );
 
             // Use D3 linkRadial with polar coordinates and center point
@@ -10064,7 +10194,7 @@ export class VisualizationTester
                 const newX = parseFloat(x) + centerX;
                 const newY = parseFloat(y) + centerY;
                 return cmd ? `${cmd}${newX},${newY}` : `${newX},${newY}`;
-              }
+              },
             );
           };
         } else if (format === 'horizontal') {
@@ -10137,7 +10267,7 @@ export class VisualizationTester
     // Ensure layout functions are initialized before proceeding
     if (!this.radialTreeLayout || !this.radialClusterLayout) {
       console.warn(
-        '⚠️ Visualization layouts not initialized yet, initializing now...'
+        '⚠️ Visualization layouts not initialized yet, initializing now...',
       );
       this.initializeVisualizationLayouts();
     }
@@ -10154,11 +10284,11 @@ export class VisualizationTester
 
     this.treeVisualizationService.setVisualizationType(
       this.selectedVisualization,
-      dimensions
+      dimensions,
     );
 
     const layoutResult = this.treeVisualizationService.computeLayout(
-      this.treeData
+      this.treeData,
     );
 
     if (!layoutResult) {
@@ -10169,6 +10299,9 @@ export class VisualizationTester
     // Update tree nodes and links
     this.treeNodes = layoutResult.nodes;
     this.treeLinks = layoutResult.links;
+
+    // Update selected node text info immediately with new layout
+    this.updateSelectedNodeTextInfo();
 
     // Center the view (reset pan while preserving zoom)
     this.visualizationInteractionService.centerView();
@@ -10214,7 +10347,7 @@ export class VisualizationTester
       };
       colorizationResult = strategy.qualify(
         { treeData: this.treeData },
-        JSON.stringify(colorizationArgs)
+        JSON.stringify(colorizationArgs),
       );
     } else if (this.colorStrategy === 'branch' && strategy.classify) {
       colorizationResult = strategy.classify({ treeData: this.treeData });
@@ -10266,7 +10399,7 @@ export class VisualizationTester
     // Only clear what will be re-colored
     this.colorizationApplicationService.clearColorization(
       svgElement,
-      effectiveColorTarget
+      effectiveColorTarget,
     );
 
     console.log('Effective color target:', effectiveColorTarget);
@@ -10283,7 +10416,7 @@ export class VisualizationTester
       effectiveColorTarget,
       this.overrideRootNodeStyle, // Pass the override flag to skip root node coloring
       this.colorBrightness, // Pass brightness
-      this.colorGradientBrightnessEnd // Pass gradient brightness end
+      this.colorGradientBrightnessEnd, // Pass gradient brightness end
     );
 
     // Show or hide the color key based on includeColorKey flag
@@ -10300,7 +10433,7 @@ export class VisualizationTester
       console.log(
         'Showing color key with',
         colorizationResult.key.length,
-        'entries'
+        'entries',
       );
       this.showColorKey(colorizationResult);
     } else {
@@ -10329,7 +10462,7 @@ export class VisualizationTester
           hasForegroundLayer: !!this.foregroundLayer,
           hasKey: !!colorizationResult?.key,
           keyLength: colorizationResult?.key?.length || 0,
-        }
+        },
       );
       return;
     }
@@ -10348,7 +10481,7 @@ export class VisualizationTester
     const keyGroup = this.g.append('g').attr('class', 'color-key-group');
     (this as any)._colorKeyGroup = keyGroup;
     console.log(
-      '✅ Created color key group in main layer (will transform with diagram)'
+      '✅ Created color key group in main layer (will transform with diagram)',
     );
 
     // Calculate actual key dimensions first
@@ -10394,7 +10527,7 @@ export class VisualizationTester
       keyPadding * 2; // Left and right padding
     const keyWidth = Math.max(
       Math.max(contentWidth, maxTitleWidth + keyPadding * 2),
-      180
+      180,
     ); // Minimum 180px
 
     const keyHeight =
@@ -10475,7 +10608,7 @@ export class VisualizationTester
         shapeX,
         shapeCenter - shapeSize / 2,
         shapeSize,
-        keyEntry.color
+        keyEntry.color,
       );
 
       // Add label - vertically centered with the shape
@@ -10502,7 +10635,7 @@ export class VisualizationTester
     x: number,
     y: number,
     size: number,
-    color: string
+    color: string,
   ): void {
     console.log('🔷 Drawing key shape:', {
       shapeType: this.keyColorShape,
@@ -10551,7 +10684,7 @@ export class VisualizationTester
             'points',
             `${x + triangleSize / 2},${y} ${x + triangleSize},${
               y + triangleSize
-            } ${x},${y + triangleSize}`
+            } ${x},${y + triangleSize}`,
           )
           .attr('fill', color)
           .attr('stroke', 'rgba(0,0,0,0.2)')
@@ -10564,7 +10697,7 @@ export class VisualizationTester
             'points',
             `${x + size / 2},${y} ${x + size},${y + size / 2} ${x + size / 2},${
               y + size
-            } ${x},${y + size / 2}`
+            } ${x},${y + size / 2}`,
           )
           .attr('fill', color)
           .attr('stroke', 'rgba(0,0,0,0.2)')
@@ -10580,7 +10713,7 @@ export class VisualizationTester
               size / 2 +
               pentSize * Math.cos(angle) +
               ',' +
-              (y + size / 2 + pentSize * Math.sin(angle))
+              (y + size / 2 + pentSize * Math.sin(angle)),
           );
         }
         group
@@ -10600,7 +10733,7 @@ export class VisualizationTester
               size / 2 +
               hexSize * Math.cos(angle) +
               ',' +
-              (y + size / 2 + hexSize * Math.sin(angle))
+              (y + size / 2 + hexSize * Math.sin(angle)),
           );
         }
         group
@@ -10620,7 +10753,7 @@ export class VisualizationTester
               size / 2 +
               octSize * Math.cos(angle) +
               ',' +
-              (y + size / 2 + octSize * Math.sin(angle))
+              (y + size / 2 + octSize * Math.sin(angle)),
           );
         }
         group
@@ -10699,7 +10832,7 @@ export class VisualizationTester
    */
   private getKeyPositionRelativeToContent(
     keyWidth: number,
-    keyHeight: number
+    keyHeight: number,
   ): { x: number; y: number } {
     // Position the key relative to the tree content (not screen coordinates)
     const centerX = (this.width || 800) / 2;
@@ -10847,7 +10980,7 @@ export class VisualizationTester
       font: string,
       size: number,
       bold: boolean,
-      italic: boolean
+      italic: boolean,
     ) => {
       element
         .attr('font-family', this.getFontFamilyWithFallback(font))
@@ -10865,14 +10998,14 @@ export class VisualizationTester
         .text(
           this.titleLine1Uppercase
             ? this.titleLine1.toUpperCase()
-            : this.titleLine1
+            : this.titleLine1,
         );
       applyFontStyle(
         tempText1,
         this.titleLine1Font,
         this.titleLine1Size,
         this.titleLine1Bold,
-        this.titleLine1Italic
+        this.titleLine1Italic,
       );
       text1Width =
         (tempText1.node() as SVGTextElement)?.getComputedTextLength() || 0;
@@ -10887,14 +11020,14 @@ export class VisualizationTester
         .text(
           this.titleLine2Uppercase
             ? this.titleLine2.toUpperCase()
-            : this.titleLine2
+            : this.titleLine2,
         );
       applyFontStyle(
         tempText2,
         this.titleLine2Font,
         this.titleLine2Size,
         this.titleLine2Bold,
-        this.titleLine2Italic
+        this.titleLine2Italic,
       );
       text2Width =
         (tempText2.node() as SVGTextElement)?.getComputedTextLength() || 0;
@@ -10982,19 +11115,19 @@ export class VisualizationTester
           .attr('text-anchor', 'start')
           .attr(
             'text-decoration',
-            this.titleLine2Underline ? 'underline' : 'none'
+            this.titleLine2Underline ? 'underline' : 'none',
           )
           .text(
             this.titleLine2Uppercase
               ? this.titleLine2.toUpperCase()
-              : this.titleLine2
+              : this.titleLine2,
           );
         applyFontStyle(
           text2Element,
           this.titleLine2Font,
           this.titleLine2Size,
           this.titleLine2Bold,
-          this.titleLine2Italic
+          this.titleLine2Italic,
         );
       }
 
@@ -11013,19 +11146,19 @@ export class VisualizationTester
           .attr('text-anchor', 'start')
           .attr(
             'text-decoration',
-            this.titleLine1Underline ? 'underline' : 'none'
+            this.titleLine1Underline ? 'underline' : 'none',
           )
           .text(
             this.titleLine1Uppercase
               ? this.titleLine1.toUpperCase()
-              : this.titleLine1
+              : this.titleLine1,
           );
         applyFontStyle(
           text1Element,
           this.titleLine1Font,
           this.titleLine1Size,
           this.titleLine1Bold,
-          this.titleLine1Italic
+          this.titleLine1Italic,
         );
       }
     } else {
@@ -11043,19 +11176,19 @@ export class VisualizationTester
           .attr('text-anchor', 'start')
           .attr(
             'text-decoration',
-            this.titleLine1Underline ? 'underline' : 'none'
+            this.titleLine1Underline ? 'underline' : 'none',
           )
           .text(
             this.titleLine1Uppercase
               ? this.titleLine1.toUpperCase()
-              : this.titleLine1
+              : this.titleLine1,
           );
         applyFontStyle(
           text1Element,
           this.titleLine1Font,
           this.titleLine1Size,
           this.titleLine1Bold,
-          this.titleLine1Italic
+          this.titleLine1Italic,
         );
       }
 
@@ -11072,19 +11205,19 @@ export class VisualizationTester
           .attr('text-anchor', 'start')
           .attr(
             'text-decoration',
-            this.titleLine2Underline ? 'underline' : 'none'
+            this.titleLine2Underline ? 'underline' : 'none',
           )
           .text(
             this.titleLine2Uppercase
               ? this.titleLine2.toUpperCase()
-              : this.titleLine2
+              : this.titleLine2,
           );
         applyFontStyle(
           text2Element,
           this.titleLine2Font,
           this.titleLine2Size,
           this.titleLine2Bold,
-          this.titleLine2Italic
+          this.titleLine2Italic,
         );
       }
     }
@@ -11108,7 +11241,7 @@ export class VisualizationTester
    */
   private getTitlePositionCoordinates(
     boxWidth: number,
-    boxHeight: number
+    boxHeight: number,
   ): { x: number; y: number } {
     // Position the title relative to the tree content
     const centerX = (this.width || 800) / 2;
@@ -11233,7 +11366,7 @@ export class VisualizationTester
         .attr('cy', centerY)
         .attr(
           'r',
-          this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0
+          this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0,
         )
         .attr('fill', 'blue')
         .attr('opacity', 0.8)
@@ -11245,7 +11378,7 @@ export class VisualizationTester
         .duration(300)
         .attr(
           'r',
-          this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0
+          this.blueDotScreenCenterEnabled ? this.blueDotScreenCenterSize : 0,
         );
     }
   }
@@ -11330,7 +11463,7 @@ export class VisualizationTester
         // When colorTarget is 'nodes' or 'both', use colorized colors
         if (this.colorTarget === 'text') {
           console.log(
-            `🎨 [colorTarget='text'] Circle fill color: ${this.nodeFillColor}, stroke: ${this.nodeStrokeColor}`
+            `🎨 [colorTarget='text'] Circle fill color: ${this.nodeFillColor}, stroke: ${this.nodeStrokeColor}`,
           );
           return this.nodeFillColor;
         }
@@ -11338,7 +11471,7 @@ export class VisualizationTester
       })
       .style(
         'stroke',
-        this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333')
+        this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333'),
       )
       .style('stroke-width', 2);
 
@@ -11414,7 +11547,7 @@ export class VisualizationTester
         // When colorTarget is 'nodes' or 'both', use colorized colors
         if (this.colorTarget === 'text') {
           console.log(
-            `🎨 [colorTarget='text'] Updating circle fill color: ${this.nodeFillColor}, stroke: ${this.nodeStrokeColor}`
+            `🎨 [colorTarget='text'] Updating circle fill color: ${this.nodeFillColor}, stroke: ${this.nodeStrokeColor}`,
           );
           return this.nodeFillColor;
         }
@@ -11422,7 +11555,7 @@ export class VisualizationTester
       })
       .style(
         'stroke',
-        this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333')
+        this.nodeStrokeColor || (this.isDarkMode ? '#fff' : '#333'),
       );
 
     // Update labels
@@ -11564,6 +11697,11 @@ export class VisualizationTester
         event.stopPropagation();
       }
     });
+
+    // Update selected node text info after transition completes
+    setTimeout(() => {
+      this.updateSelectedNodeTextInfo();
+    }, 750); // Match transition duration
   }
 
   // Helper method to determine if background is light or dark based on background style
@@ -11597,14 +11735,14 @@ export class VisualizationTester
     }
     return this.colorsService.getDefaultNodeStyle(
       this.isDarkMode,
-      this.isBackgroundLight()
+      this.isBackgroundLight(),
     ).nodeColor; // Default node color
   }
 
   // Helper method to get selected visualization option
   public getSelectedVisualizationOption() {
     return this.visualizationOptions.find(
-      (option) => option.value === this.selectedVisualization
+      (option) => option.value === this.selectedVisualization,
     );
   }
 
@@ -11679,7 +11817,7 @@ export class VisualizationTester
       .selectAll('path.tree-link')
       .data(
         links,
-        (d: any, i: number) => `link-${d.source.data.id}-${d.target.data.id}`
+        (d: any, i: number) => `link-${d.source.data.id}-${d.target.data.id}`,
       );
 
     // EXIT: Remove exiting links with fade out
@@ -11757,7 +11895,7 @@ export class VisualizationTester
         hasId: 'id' in n,
         hasNodeId: 'nodeId' in n,
         keys: Object.keys(n).slice(0, 10),
-      }))
+      })),
     );
 
     this.treeNodesGroup
@@ -11785,8 +11923,8 @@ export class VisualizationTester
           ? this.colorsService.getSelectedNodeStyle(this.isDarkMode).nodeColor
           : this.colorsService.getDefaultNodeStyle(
               this.isDarkMode,
-              this.isBackgroundLight()
-            ).nodeColor
+              this.isBackgroundLight(),
+            ).nodeColor,
       ) // Root node in different color
       .attr('stroke', (d: any) => (d.depth === 0 ? '#d84315' : '#1565c0'))
       .attr('stroke-width', 2)
@@ -11818,7 +11956,7 @@ export class VisualizationTester
             console.log(
               'Tree node pan mode shift+click: adding node to selection',
               d.data.id,
-              event
+              event,
             );
             this.toggleNodeSelection(d.data.id);
           } else {
@@ -11874,7 +12012,7 @@ export class VisualizationTester
         nodeId: (n as any).nodeId,
         hasId: 'id' in n,
         hasNodeId: 'nodeId' in n,
-      }))
+      })),
     );
 
     this.treeLabelsGroup
@@ -11944,7 +12082,7 @@ export class VisualizationTester
             console.log(
               'Tree label pan mode shift+click: adding node to selection',
               d.data.id,
-              event
+              event,
             );
             this.toggleNodeSelection(d.data.id);
           } else {
@@ -11975,7 +12113,7 @@ export class VisualizationTester
   }
 
   private drawCircles(
-    circles: { x: number; y: number; r: number; id: string }[]
+    circles: { x: number; y: number; r: number; id: string }[],
   ) {
     this.g
       .selectAll('circle.node-circle')
@@ -12030,7 +12168,7 @@ export class VisualizationTester
   }
 
   private updateCircles(
-    circles: { x: number; y: number; r: number; id: string }[]
+    circles: { x: number; y: number; r: number; id: string }[],
   ) {
     // Join new data with existing circles
     const circleSelection = this.g
@@ -12121,7 +12259,7 @@ export class VisualizationTester
   }
 
   private drawLabels(
-    circles: { x: number; y: number; r: number; id: string }[]
+    circles: { x: number; y: number; r: number; id: string }[],
   ) {
     this.g
       .selectAll('text.node-label')
@@ -12170,7 +12308,7 @@ export class VisualizationTester
   }
 
   private updateLabels(
-    circles: { x: number; y: number; r: number; id: string }[]
+    circles: { x: number; y: number; r: number; id: string }[],
   ) {
     // Join new data with existing text labels
     const labelSelection = this.g
@@ -12274,7 +12412,7 @@ export class VisualizationTester
       .attr('r', radius + 5)
       .attr(
         'fill',
-        this.isDarkMode ? 'rgba(60, 60, 60, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+        this.isDarkMode ? 'rgba(60, 60, 60, 0.9)' : 'rgba(255, 255, 255, 0.9)',
       )
       .attr('stroke', this.isDarkMode ? '#555' : '#ccc')
       .attr('stroke-width', 1);
@@ -12426,7 +12564,7 @@ export class VisualizationTester
           this.wheelIndicator,
           this.wheelCenterX,
           this.wheelCenterY,
-          this.wheelRadius
+          this.wheelRadius,
         );
       }
 
@@ -12463,7 +12601,7 @@ export class VisualizationTester
         this.wheelIndicator,
         this.wheelCenterX,
         this.wheelCenterY,
-        this.wheelRadius
+        this.wheelRadius,
       );
     }
 
@@ -12491,7 +12629,7 @@ export class VisualizationTester
         this.wheelIndicator,
         this.wheelCenterX,
         this.wheelCenterY,
-        this.wheelRadius
+        this.wheelRadius,
       );
     }
 
@@ -12557,7 +12695,7 @@ export class VisualizationTester
         this.wheelIndicator,
         this.wheelCenterX,
         this.wheelCenterY,
-        this.wheelRadius
+        this.wheelRadius,
       );
     }
 
@@ -12749,7 +12887,7 @@ export class VisualizationTester
     indicator: any,
     centerX: number,
     centerY: number,
-    wheelRadius: number
+    wheelRadius: number,
   ) {
     if (!indicator) return;
 
@@ -12820,7 +12958,7 @@ export class VisualizationTester
 
     // Get the selected tenant and logged-in user
     const selectedTenant = this.organizations.find(
-      (org) => org.TenantID === orgId
+      (org) => org.TenantID === orgId,
     );
     if (!selectedTenant) {
       console.error('Selected tenant not found');
@@ -12839,14 +12977,14 @@ export class VisualizationTester
         // NEW LOGIC: Determine if player selection drawer should be shown
         // Condition 1: User only has role 4 (Related Member/Parent) for current tenant
         const userHasOnlyParentRole = selectedTenant.Roles?.every(
-          (role) => role.RoleID === 4
+          (role) => role.RoleID === 4,
         );
 
         // Condition 2: Multiple relatives with at least one non-parent role (not role 4)
         const eligibleRelatives =
           FilterNonParentRelativesDirective.filterNonParentRelatives(
             selectedTenant.Relatives || [],
-            selectedTenant
+            selectedTenant,
           );
         const hasMultipleEligibleRelatives = eligibleRelatives.length > 1;
 
@@ -12862,7 +13000,7 @@ export class VisualizationTester
 
           // Determine if user can select themselves
           const userHasNonParentRole = selectedTenant.Roles?.some(
-            (role) => role.RoleID !== 4
+            (role) => role.RoleID !== 4,
           );
 
           // Store tenant and show player selection drawer
@@ -12905,7 +13043,7 @@ export class VisualizationTester
 
     // Save the last selected context
     this.store.dispatch(
-      new SaveLastSelectedContext(tenant.TenantID, contextUser.UserId)
+      new SaveLastSelectedContext(tenant.TenantID, contextUser.UserId),
     );
 
     // Clear team and team group selections as they may not be valid for the new organization
@@ -12924,7 +13062,7 @@ export class VisualizationTester
     }
 
     const selectedOrg = this.organizations.find(
-      (org) => org.TenantID === this.currentSelectedTenantId
+      (org) => org.TenantID === this.currentSelectedTenantId,
     );
     if (!selectedOrg) {
       return [];
@@ -12989,12 +13127,12 @@ export class VisualizationTester
 
         // Show team group members toolbar
         this.store.dispatch(
-          new SetToolbarVisibility('teamGroupMembers' as any, true)
+          new SetToolbarVisibility('teamGroupMembers' as any, true),
         );
 
         // Hide team roster toolbar since we're focusing on team group members
         this.store.dispatch(
-          new SetToolbarVisibility('teamRoster' as any, false)
+          new SetToolbarVisibility('teamRoster' as any, false),
         );
       } else {
         // No team group selected - hide team group specific toolbars
@@ -13002,13 +13140,13 @@ export class VisualizationTester
 
         // Hide team group members toolbar
         this.store.dispatch(
-          new SetToolbarVisibility('teamGroupMembers' as any, false)
+          new SetToolbarVisibility('teamGroupMembers' as any, false),
         );
 
         // Show team roster toolbar if a team is selected
         if (this.currentSelectedTeamId) {
           this.store.dispatch(
-            new SetToolbarVisibility('teamRoster' as any, true)
+            new SetToolbarVisibility('teamRoster' as any, true),
           );
         }
       }
@@ -13020,13 +13158,13 @@ export class VisualizationTester
    */
   private handleTeamToolbarVisibility(
     teamId: number | null,
-    previousTeamId: number | null
+    previousTeamId: number | null,
   ): void {
     console.log(
       '👨‍👩‍👧‍👦 Managing toolbar visibility for team:',
       teamId,
       'previous:',
-      previousTeamId
+      previousTeamId,
     );
 
     // Only manage toolbar visibility if no operation mode is active
@@ -13037,13 +13175,13 @@ export class VisualizationTester
 
         // Show team roster toolbar
         this.store.dispatch(
-          new SetToolbarVisibility('teamRoster' as any, true)
+          new SetToolbarVisibility('teamRoster' as any, true),
         );
 
         // If no team group is currently selected, hide team group members toolbar
         if (!this.currentSelectedTeamGroupId) {
           this.store.dispatch(
-            new SetToolbarVisibility('teamGroupMembers' as any, false)
+            new SetToolbarVisibility('teamGroupMembers' as any, false),
           );
         }
       } else {
@@ -13052,10 +13190,10 @@ export class VisualizationTester
 
         // Hide both team roster and team group members toolbars
         this.store.dispatch(
-          new SetToolbarVisibility('teamRoster' as any, false)
+          new SetToolbarVisibility('teamRoster' as any, false),
         );
         this.store.dispatch(
-          new SetToolbarVisibility('teamGroupMembers' as any, false)
+          new SetToolbarVisibility('teamGroupMembers' as any, false),
         );
       }
     }
@@ -13137,7 +13275,7 @@ export class VisualizationTester
       }
     } else {
       this.selectedPlayerIds = this.selectedPlayerIds.filter(
-        (id) => id !== playerId
+        (id) => id !== playerId,
       );
     }
   }
@@ -13159,10 +13297,10 @@ export class VisualizationTester
   // Deselect all visible (filtered) players
   public deselectAllVisiblePlayers(): void {
     const visiblePlayerIds = this.getSelectedTeamPlayers().map(
-      (p) => p.PlayerID
+      (p) => p.PlayerID,
     );
     this.selectedPlayerIds = this.selectedPlayerIds.filter(
-      (id) => !visiblePlayerIds.includes(id)
+      (id) => !visiblePlayerIds.includes(id),
     );
   }
 
@@ -13171,7 +13309,7 @@ export class VisualizationTester
     const visiblePlayers = this.getSelectedTeamPlayers();
     if (visiblePlayers.length === 0) return false;
     return visiblePlayers.every((player) =>
-      this.selectedPlayerIds.includes(player.PlayerID)
+      this.selectedPlayerIds.includes(player.PlayerID),
     );
   }
 
@@ -13180,7 +13318,7 @@ export class VisualizationTester
     const visiblePlayers = this.getSelectedTeamPlayers();
     if (visiblePlayers.length === 0) return false;
     const selectedVisibleCount = visiblePlayers.filter((player) =>
-      this.selectedPlayerIds.includes(player.PlayerID)
+      this.selectedPlayerIds.includes(player.PlayerID),
     ).length;
     return (
       selectedVisibleCount > 0 && selectedVisibleCount < visiblePlayers.length
@@ -13209,7 +13347,7 @@ export class VisualizationTester
 
   public trackByTeamGroupId(
     index: number,
-    group: ITeamGroup | IDefaultTeamGroup
+    group: ITeamGroup | IDefaultTeamGroup,
   ): number {
     return group.TeamGroupID;
   }
@@ -13227,7 +13365,7 @@ export class VisualizationTester
 
   public onTempPlayerCheckboxChange(
     event: { playerId: number; checked: boolean } | number,
-    isChecked?: boolean
+    isChecked?: boolean,
   ): void {
     let playerId: number;
     let checked: boolean;
@@ -13247,7 +13385,7 @@ export class VisualizationTester
       }
     } else {
       this.tempSelectedPlayerIds = this.tempSelectedPlayerIds.filter(
-        (id) => id !== playerId
+        (id) => id !== playerId,
       );
     }
   }
@@ -13255,7 +13393,7 @@ export class VisualizationTester
   public saveTeamGroupChanges(): void {
     if (!this.editingTeamGroup || !this.selectedTeam) {
       console.error(
-        'Cannot save: no team group being edited or no team selected'
+        'Cannot save: no team group being edited or no team selected',
       );
       return;
     }
@@ -13263,7 +13401,7 @@ export class VisualizationTester
     console.log('Saving team group changes...');
     console.log(
       'Original players:',
-      this.editingTeamGroup.Players.map((p) => p.PlayerID)
+      this.editingTeamGroup.Players.map((p) => p.PlayerID),
     );
     console.log('New player selection:', this.tempSelectedPlayerIds);
 
@@ -13272,27 +13410,29 @@ export class VisualizationTester
 
     // Filter to get only the selected players
     const selectedPlayers = allTeamPlayers.filter((player) =>
-      this.tempSelectedPlayerIds.includes(player.PlayerID)
+      this.tempSelectedPlayerIds.includes(player.PlayerID),
     );
 
     console.log(
       'Selected players for team group:',
-      selectedPlayers.map((p) => `${p.FirstName} ${p.LastName} (${p.PlayerID})`)
+      selectedPlayers.map(
+        (p) => `${p.FirstName} ${p.LastName} (${p.PlayerID})`,
+      ),
     );
 
     // Find the team in organizations array and update it there (not in state directly)
     const tenant = this.organizations.find(
-      (org) => org.TenantID === this.selectedTeam!.TenantID
+      (org) => org.TenantID === this.selectedTeam!.TenantID,
     );
 
     if (tenant) {
       const team = tenant.Teams.find(
-        (t) => t.TeamID === this.selectedTeam!.TeamID
+        (t) => t.TeamID === this.selectedTeam!.TeamID,
       );
 
       if (team && team.TeamGroups) {
         const teamGroupIndex = team.TeamGroups.findIndex(
-          (tg) => tg.TeamGroupID === this.editingTeamGroup!.TeamGroupID
+          (tg) => tg.TeamGroupID === this.editingTeamGroup!.TeamGroupID,
         );
 
         if (teamGroupIndex !== -1) {
@@ -13317,7 +13457,7 @@ export class VisualizationTester
 
           // Restore the team group selection (SetSelectedContextTeam clears it)
           this.store.dispatch(
-            new SetSelectedContextTeamGroup(updatedTeamGroup)
+            new SetSelectedContextTeamGroup(updatedTeamGroup),
           );
 
           console.log('Team group updated successfully in team data');
@@ -13330,7 +13470,7 @@ export class VisualizationTester
               this.editingTeamGroup.TeamGroupName +
               '" updated with ' +
               selectedPlayers.length +
-              ' players'
+              ' players',
           );
         } else {
           console.error('Team group not found in team data');
@@ -13345,7 +13485,7 @@ export class VisualizationTester
   // Helper methods to generate new IDs
   private generateNewTeamId(): number {
     const allTeamIds = this.organizations.flatMap((org) =>
-      org.Teams.map((team) => team.TeamID)
+      org.Teams.map((team) => team.TeamID),
     );
     return allTeamIds.length > 0 ? Math.max(...allTeamIds) + 1 : 1;
   }
@@ -13353,8 +13493,8 @@ export class VisualizationTester
   private generateNewTeamGroupId(): number {
     const allTeamGroupIds = this.organizations.flatMap((org) =>
       org.Teams.flatMap((team) =>
-        team.TeamGroups.map((group) => group.TeamGroupID)
-      )
+        team.TeamGroups.map((group) => group.TeamGroupID),
+      ),
     );
     return allTeamGroupIds.length > 0 ? Math.max(...allTeamGroupIds) + 1 : 1;
   }
@@ -13369,7 +13509,7 @@ export class VisualizationTester
 
     // Ensure uniqueness by checking against existing signup codes
     const existingCodes = this.organizations.flatMap((org) =>
-      org.Teams.map((team) => team.SignupCode)
+      org.Teams.map((team) => team.SignupCode),
     );
 
     if (existingCodes.includes(result)) {
@@ -13383,7 +13523,7 @@ export class VisualizationTester
   public onCreateTeam(): void {
     console.log(
       'Opening create team dialog. Selected organization:',
-      this.currentSelectedTenantId
+      this.currentSelectedTenantId,
     );
 
     // Ensure we use the currently selected organization from the teams panel
@@ -13392,13 +13532,13 @@ export class VisualizationTester
     // Fallback: get the value directly from the organization dropdown if needed
     if (!selectedOrgId) {
       const orgSelect = document.getElementById(
-        'organization-select'
+        'organization-select',
       ) as HTMLSelectElement;
       if (orgSelect && orgSelect.value) {
         selectedOrgId = parseInt(orgSelect.value);
         console.log(
           'Using organization from dropdown fallback:',
-          selectedOrgId
+          selectedOrgId,
         );
       }
     }
@@ -13422,13 +13562,13 @@ export class VisualizationTester
         'Type check - selectedOrgId:',
         typeof selectedOrgId,
         'value:',
-        selectedOrgId
+        selectedOrgId,
       );
       console.log(
         'Type check - selectedTenantIdForNewTeam:',
         typeof this.selectedTenantIdForNewTeam,
         'value:',
-        this.selectedTenantIdForNewTeam
+        this.selectedTenantIdForNewTeam,
       );
 
       if (selectedOrgId && this.selectedTenantIdForNewTeam !== selectedOrgId) {
@@ -13446,7 +13586,7 @@ export class VisualizationTester
 
       console.log(
         'After dialog open - selectedTenantIdForNewTeam:',
-        this.selectedTenantIdForNewTeam
+        this.selectedTenantIdForNewTeam,
       );
       console.log(
         'Available organizations:',
@@ -13454,7 +13594,7 @@ export class VisualizationTester
           id: org.TenantID,
           name: org.TenantName,
           type: typeof org.TenantID,
-        }))
+        })),
       );
     }, 100);
   }
@@ -13470,7 +13610,7 @@ export class VisualizationTester
       'Converted to:',
       this.selectedTenantIdForNewTeam,
       'Type:',
-      typeof this.selectedTenantIdForNewTeam
+      typeof this.selectedTenantIdForNewTeam,
     );
   }
 
@@ -13481,7 +13621,7 @@ export class VisualizationTester
       return this.defaultTeamGroups.filter(
         (group) =>
           group.OwnershipContext.Context === 'TENANT' &&
-          group.OwnershipContext.ContextKey === -1
+          group.OwnershipContext.ContextKey === -1,
       );
     }
 
@@ -13521,7 +13661,7 @@ export class VisualizationTester
     return (
       availableGroups.length > 0 &&
       availableGroups.every((group) =>
-        this.selectedDefaultTeamGroupsForNewTeam.has(group.TeamGroupID)
+        this.selectedDefaultTeamGroupsForNewTeam.has(group.TeamGroupID),
       )
     );
   }
@@ -13545,7 +13685,7 @@ export class VisualizationTester
 
   public copyDefaultTeamGroupsToTeam(team: ITeam): void {
     const selectedGroups = this.defaultTeamGroups.filter((group) =>
-      this.selectedDefaultTeamGroupsForNewTeam.has(group.TeamGroupID)
+      this.selectedDefaultTeamGroupsForNewTeam.has(group.TeamGroupID),
     );
 
     for (const defaultGroup of selectedGroups) {
@@ -13564,7 +13704,7 @@ export class VisualizationTester
       // Add the context user to the team group if they exist
       if (this.selectedContextUser) {
         const contextUserPlayer = team.Players.find(
-          (p) => p.UserId === this.selectedContextUser!.UserId
+          (p) => p.UserId === this.selectedContextUser!.UserId,
         );
         if (contextUserPlayer) {
           newTeamGroup.Players.push(contextUserPlayer);
@@ -13575,7 +13715,7 @@ export class VisualizationTester
     }
 
     console.log(
-      `Copied ${selectedGroups.length} default team groups to team ${team.TeamName}`
+      `Copied ${selectedGroups.length} default team groups to team ${team.TeamName}`,
     );
   }
 
@@ -13605,11 +13745,11 @@ export class VisualizationTester
 
     // Check if jersey number is already taken
     const jerseyExists = this.newTeamPlayers.some(
-      (player) => player.JerseyNumber === this.newPlayerJerseyNumber
+      (player) => player.JerseyNumber === this.newPlayerJerseyNumber,
     );
     if (jerseyExists) {
       alert(
-        `Jersey number ${this.newPlayerJerseyNumber} is already taken. Please choose a different number.`
+        `Jersey number ${this.newPlayerJerseyNumber} is already taken. Please choose a different number.`,
       );
       return;
     }
@@ -13659,10 +13799,12 @@ export class VisualizationTester
 
   private generateNewPlayerId(): number {
     const allPlayerIds = this.organizations.flatMap((org) =>
-      org.Teams.flatMap((team) => team.Players.map((player) => player.PlayerID))
+      org.Teams.flatMap((team) =>
+        team.Players.map((player) => player.PlayerID),
+      ),
     );
     const newTeamPlayerIds = this.newTeamPlayers.map(
-      (player) => player.PlayerID
+      (player) => player.PlayerID,
     );
     const allIds = [...allPlayerIds, ...newTeamPlayerIds];
     return allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
@@ -13702,7 +13844,7 @@ export class VisualizationTester
     ) {
       console.error('Cannot create team: missing required fields');
       alert(
-        'Please enter a team name and select organization, gender, age group, and level.'
+        'Please enter a team name and select organization, gender, age group, and level.',
       );
       return;
     }
@@ -13712,7 +13854,7 @@ export class VisualizationTester
     try {
       // Find the selected organization
       const selectedOrg = this.organizations.find(
-        (org) => org.TenantID === this.selectedTenantIdForNewTeam
+        (org) => org.TenantID === this.selectedTenantIdForNewTeam,
       );
 
       if (!selectedOrg) {
@@ -13725,12 +13867,12 @@ export class VisualizationTester
       // Check if team name already exists in this organization
       const existingTeam = selectedOrg.Teams.find(
         (team) =>
-          team.TeamName.toLowerCase() === this.newTeamName.trim().toLowerCase()
+          team.TeamName.toLowerCase() === this.newTeamName.trim().toLowerCase(),
       );
 
       if (existingTeam) {
         alert(
-          `A team named "${this.newTeamName.trim()}" already exists in this organization.`
+          `A team named "${this.newTeamName.trim()}" already exists in this organization.`,
         );
         this.isCreatingTeam = false;
         return;
@@ -13738,10 +13880,10 @@ export class VisualizationTester
 
       // Get gender and age group details
       const gender = this.mockGenderService.getGenderById(
-        this.newTeamGenderId!
+        this.newTeamGenderId!,
       );
       const ageGroup = this.mockAgeGroupService.getAgeGroupById(
-        this.newTeamAgeGroupId!
+        this.newTeamAgeGroupId!,
       );
 
       if (!gender || !ageGroup) {
@@ -13819,7 +13961,7 @@ export class VisualizationTester
         newTeam.TeamGroups.length,
         'team groups and',
         newTeam.Players.length,
-        'players'
+        'players',
       );
 
       // Close dialog
@@ -13863,13 +14005,13 @@ export class VisualizationTester
     try {
       // Find the organization containing this team
       const organization = this.organizations.find((org) =>
-        org.Teams.some((team) => team.TeamID === this.teamToDelete!.TeamID)
+        org.Teams.some((team) => team.TeamID === this.teamToDelete!.TeamID),
       );
 
       if (!organization) {
         console.error(
           'Organization not found for team:',
-          this.teamToDelete.TeamName
+          this.teamToDelete.TeamName,
         );
         alert('Error: Could not find the organization for this team.');
         return;
@@ -13877,7 +14019,7 @@ export class VisualizationTester
 
       // Remove the team from the organization
       const teamIndex = organization.Teams.findIndex(
-        (team) => team.TeamID === this.teamToDelete!.TeamID
+        (team) => team.TeamID === this.teamToDelete!.TeamID,
       );
       if (teamIndex !== -1) {
         const teamName = this.teamToDelete.TeamName;
@@ -13888,7 +14030,7 @@ export class VisualizationTester
 
         console.log(
           `Deleted team "${teamName}" (ID: ${this.teamToDelete.TeamID}) ` +
-            `with ${teamGroupCount} team groups and ${playerCount} players`
+            `with ${teamGroupCount} team groups and ${playerCount} players`,
         );
 
         // Clear the selection since the team no longer exists
@@ -13999,10 +14141,10 @@ export class VisualizationTester
 
     // Update gender and age group names
     const selectedGender = this.getAvailableGenders().find(
-      (g) => g.GenderID === this.editTeamGenderId
+      (g) => g.GenderID === this.editTeamGenderId,
     );
     const selectedAgeGroup = this.getAvailableAgeGroups().find(
-      (ag) => ag.AgeGroupID === this.editTeamAgeGroupId
+      (ag) => ag.AgeGroupID === this.editTeamAgeGroupId,
     );
 
     if (selectedGender) {
@@ -14016,11 +14158,11 @@ export class VisualizationTester
 
     // Update the team in the organizations array
     const organization = this.organizations.find(
-      (org) => org.TenantID === this.editTeamTenantId
+      (org) => org.TenantID === this.editTeamTenantId,
     );
     if (organization) {
       const teamIndex = organization.Teams.findIndex(
-        (team) => team.TeamID === this.selectedTeam!.TeamID
+        (team) => team.TeamID === this.selectedTeam!.TeamID,
       );
       if (teamIndex !== -1) {
         organization.Teams[teamIndex] = { ...this.selectedTeam };
@@ -14041,7 +14183,7 @@ export class VisualizationTester
 
     console.log(
       'Opening create team group dialog for team:',
-      this.selectedTeam.TeamName
+      this.selectedTeam.TeamName,
     );
     this.newTeamGroupName = '';
     this.newTeamGroupPlayerIds = [...this.selectedPlayerIds]; // Pre-select currently selected players
@@ -14064,7 +14206,7 @@ export class VisualizationTester
 
   public onNewTeamGroupPlayerCheckboxChange(
     event: { playerId: number; checked: boolean } | number,
-    isChecked?: boolean
+    isChecked?: boolean,
   ): void {
     let playerId: number;
     let checked: boolean;
@@ -14084,7 +14226,7 @@ export class VisualizationTester
       }
     } else {
       this.newTeamGroupPlayerIds = this.newTeamGroupPlayerIds.filter(
-        (id) => id !== playerId
+        (id) => id !== playerId,
       );
     }
   }
@@ -14107,19 +14249,19 @@ export class VisualizationTester
     const existingGroup = this.selectedTeam.TeamGroups.find(
       (group) =>
         group.TeamGroupName.toLowerCase() ===
-        this.newTeamGroupName.trim().toLowerCase()
+        this.newTeamGroupName.trim().toLowerCase(),
     );
 
     if (existingGroup) {
       alert(
-        `A team group named "${this.newTeamGroupName.trim()}" already exists in this team.`
+        `A team group named "${this.newTeamGroupName.trim()}" already exists in this team.`,
       );
       return;
     }
 
     // Get selected players
     const selectedPlayers = this.selectedTeam.Players.filter((player) =>
-      this.newTeamGroupPlayerIds.includes(player.PlayerID)
+      this.newTeamGroupPlayerIds.includes(player.PlayerID),
     );
 
     // Create new team group
@@ -14143,7 +14285,7 @@ export class VisualizationTester
       newTeamGroup.TeamGroupName,
       'with',
       selectedPlayers.length,
-      'players'
+      'players',
     );
 
     // Close dialog
@@ -14167,7 +14309,7 @@ export class VisualizationTester
 
     console.log(
       'Opening edit dialog for team group:',
-      this.selectedTeamGroup.TeamGroupName
+      this.selectedTeamGroup.TeamGroupName,
     );
 
     // Set the team group being edited
@@ -14175,7 +14317,7 @@ export class VisualizationTester
 
     // Initialize temp selection with current team group players
     this.tempSelectedPlayerIds = this.selectedTeamGroup.Players.map(
-      (player) => player.PlayerID
+      (player) => player.PlayerID,
     );
 
     // Show the edit dialog
@@ -14184,7 +14326,7 @@ export class VisualizationTester
     console.log(
       'Edit dialog opened with',
       this.tempSelectedPlayerIds.length,
-      'players pre-selected'
+      'players pre-selected',
     );
   }
 
@@ -14209,13 +14351,13 @@ export class VisualizationTester
 
     console.log(
       'Auto-building team group:',
-      this.selectedTeamGroup.TeamGroupName
+      this.selectedTeamGroup.TeamGroupName,
     );
 
     // Get available players from the team (players not in any team group)
     const availablePlayers = this.selectedTeam.Players.filter((player) => {
       return !this.selectedTeam.TeamGroups.some((group) =>
-        group.Players.some((p) => p.PlayerID === player.PlayerID)
+        group.Players.some((p) => p.PlayerID === player.PlayerID),
       );
     });
 
@@ -14225,14 +14367,14 @@ export class VisualizationTester
       const positionMatch =
         this.selectedTeamGroup.MatchingPositions.length === 0 ||
         this.selectedTeamGroup.MatchingPositions.includes(
-          player.PositionAbbrev
+          player.PositionAbbrev,
         );
 
       // Check position number match
       const numberMatch =
         this.selectedTeamGroup.MatchingPositionNumbers.length === 0 ||
         this.selectedTeamGroup.MatchingPositionNumbers.includes(
-          player.JerseyNumber
+          player.JerseyNumber,
         );
 
       return positionMatch || numberMatch;
@@ -14242,7 +14384,7 @@ export class VisualizationTester
       console.log('No matching players found for auto-build');
       this.showAutoBuildInfo(
         'Auto-Build - No Players Found',
-        "No players found that match the team group's position or number requirements."
+        "No players found that match the team group's position or number requirements.",
       );
       return;
     }
@@ -14251,13 +14393,13 @@ export class VisualizationTester
     this.selectedTeamGroup.Players.push(...matchingPlayers);
 
     console.log(
-      `Auto-build completed: Added ${matchingPlayers.length} players to ${this.selectedTeamGroup.TeamGroupName}`
+      `Auto-build completed: Added ${matchingPlayers.length} players to ${this.selectedTeamGroup.TeamGroupName}`,
     );
 
     // Show success message
     this.showAutoBuildInfo(
       'Auto-Build Completed',
-      `Auto-build completed! Added ${matchingPlayers.length} player(s) to ${this.selectedTeamGroup.TeamGroupName}.`
+      `Auto-build completed! Added ${matchingPlayers.length} player(s) to ${this.selectedTeamGroup.TeamGroupName}.`,
     );
   }
 
@@ -14288,7 +14430,7 @@ export class VisualizationTester
     try {
       // Remove the team group from the team's team groups array
       const teamGroupIndex = this.selectedTeam.TeamGroups.findIndex(
-        (tg) => tg.TeamGroupID === this.teamGroupToDelete!.TeamGroupID
+        (tg) => tg.TeamGroupID === this.teamGroupToDelete!.TeamGroupID,
       );
 
       if (teamGroupIndex !== -1) {
@@ -14299,7 +14441,7 @@ export class VisualizationTester
         this.selectedTeam.TeamGroups.splice(teamGroupIndex, 1);
 
         console.log(
-          `Deleted team group "${this.teamGroupToDelete.TeamGroupName}" with ${playersToReturn.length} players. Players remain on the team.`
+          `Deleted team group "${this.teamGroupToDelete.TeamGroupName}" with ${playersToReturn.length} players. Players remain on the team.`,
         );
 
         // Clear team group selection
@@ -14317,7 +14459,7 @@ export class VisualizationTester
     } catch (error) {
       console.error('Error deleting team group:', error);
       alert(
-        'An error occurred while deleting the team group. Please try again.'
+        'An error occurred while deleting the team group. Please try again.',
       );
     }
   }
@@ -14382,7 +14524,7 @@ export class VisualizationTester
     return (
       availableGroups.length > 0 &&
       availableGroups.every((group) =>
-        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID)
+        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID),
       )
     );
   }
@@ -14412,7 +14554,7 @@ export class VisualizationTester
 
     try {
       const selectedGroups = this.defaultTeamGroups.filter((group) =>
-        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID)
+        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID),
       );
 
       for (const defaultGroup of selectedGroups) {
@@ -14420,12 +14562,12 @@ export class VisualizationTester
         const existingGroup = this.selectedTeam.TeamGroups.find(
           (tg) =>
             tg.TeamGroupName.toLowerCase() ===
-            defaultGroup.TeamGroupName.toLowerCase()
+            defaultGroup.TeamGroupName.toLowerCase(),
         );
 
         if (existingGroup) {
           console.warn(
-            `Team group "${defaultGroup.TeamGroupName}" already exists in team, skipping`
+            `Team group "${defaultGroup.TeamGroupName}" already exists in team, skipping`,
           );
           continue;
         }
@@ -14446,7 +14588,7 @@ export class VisualizationTester
       }
 
       console.log(
-        `Added ${selectedGroups.length} default team groups to team ${this.selectedTeam.TeamName}`
+        `Added ${selectedGroups.length} default team groups to team ${this.selectedTeam.TeamName}`,
       );
 
       // Close dialog
@@ -14491,11 +14633,11 @@ export class VisualizationTester
       };
 
       const selectedGroups = this.defaultTeamGroups.filter((group) =>
-        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID)
+        this.selectedDefaultTeamGroupsToAdd.has(group.TeamGroupID),
       );
 
       console.log(
-        `📥 Importing ${selectedGroups.length} default team groups...`
+        `📥 Importing ${selectedGroups.length} default team groups...`,
       );
 
       const teamPlayers = updatedTeam.Players || [];
@@ -14509,12 +14651,12 @@ export class VisualizationTester
           const existingGroup = updatedTeam.TeamGroups.find(
             (tg) =>
               tg.TeamGroupName.toLowerCase() ===
-              defaultGroup.TeamGroupName.toLowerCase()
+              defaultGroup.TeamGroupName.toLowerCase(),
           );
 
           if (existingGroup) {
             console.warn(
-              `⚠️ Team group "${defaultGroup.TeamGroupName}" already exists in team, skipping`
+              `⚠️ Team group "${defaultGroup.TeamGroupName}" already exists in team, skipping`,
             );
             continue;
           }
@@ -14527,14 +14669,14 @@ export class VisualizationTester
               player.PositionAbbrev &&
               defaultGroup.MatchingPositions.some(
                 (pos) =>
-                  pos.toLowerCase() === player.PositionAbbrev?.toLowerCase()
+                  pos.toLowerCase() === player.PositionAbbrev?.toLowerCase(),
               );
 
             // Check if player's jersey number matches any of the matching numbers
             const numberMatch =
               defaultGroup.MatchingPositionNumbers?.length > 0 &&
               defaultGroup.MatchingPositionNumbers.includes(
-                player.JerseyNumber
+                player.JerseyNumber,
               );
 
             return positionMatch || numberMatch;
@@ -14560,18 +14702,18 @@ export class VisualizationTester
           addedCount++;
 
           console.log(
-            `✅ Added team group "${defaultGroup.TeamGroupName}" with ${matchedPlayers.length} matched players`
+            `✅ Added team group "${defaultGroup.TeamGroupName}" with ${matchedPlayers.length} matched players`,
           );
         } catch (groupError) {
           console.error(
             `❌ Error processing team group "${defaultGroup.TeamGroupName}":`,
-            groupError
+            groupError,
           );
         }
       }
 
       console.log(
-        `✅ Successfully imported ${addedCount} of ${selectedGroups.length} team groups to team "${updatedTeam.TeamName}"`
+        `✅ Successfully imported ${addedCount} of ${selectedGroups.length} team groups to team "${updatedTeam.TeamName}"`,
       );
 
       // Update the team in the store with the modified copy
@@ -14635,14 +14777,14 @@ export class VisualizationTester
     const conflictingPlayer = teamPlayers.find(
       (p) =>
         p.PlayerID !== this.editingPlayer!.PlayerID &&
-        p.JerseyNumber === this.editingPlayer!.JerseyNumber
+        p.JerseyNumber === this.editingPlayer!.JerseyNumber,
     );
 
     if (conflictingPlayer) {
       alert(
         `Jersey number ${
           this.editingPlayer.JerseyNumber
-        } is already taken by ${this.getPlayerFullName(conflictingPlayer)}`
+        } is already taken by ${this.getPlayerFullName(conflictingPlayer)}`,
       );
       return;
     }
@@ -14660,7 +14802,7 @@ export class VisualizationTester
   private updatePlayerInDataStructure(updatedPlayer: Player): void {
     // Find the organization
     const org = this.organizations.find(
-      (o) => o.TenantID === this.currentSelectedTenantId
+      (o) => o.TenantID === this.currentSelectedTenantId,
     );
     if (!org) return;
 
@@ -14670,7 +14812,7 @@ export class VisualizationTester
 
     // Update player in team's player list
     const playerIndex = team.Players.findIndex(
-      (p) => p.PlayerID === updatedPlayer.PlayerID
+      (p) => p.PlayerID === updatedPlayer.PlayerID,
     );
     if (playerIndex !== -1) {
       team.Players[playerIndex] = { ...updatedPlayer };
@@ -14679,7 +14821,7 @@ export class VisualizationTester
     // Update player in team groups if exists
     team.TeamGroups.forEach((teamGroup) => {
       const groupPlayerIndex = teamGroup.Players.findIndex(
-        (p) => p.PlayerID === updatedPlayer.PlayerID
+        (p) => p.PlayerID === updatedPlayer.PlayerID,
       );
       if (groupPlayerIndex !== -1) {
         teamGroup.Players[groupPlayerIndex] = { ...updatedPlayer };
@@ -14691,7 +14833,7 @@ export class VisualizationTester
     if (!this.editingPlayer) return;
 
     const selectedPosition = this.getAvailablePositions().find(
-      (p) => p.name === this.editingPlayer!.PositionName
+      (p) => p.name === this.editingPlayer!.PositionName,
     );
     if (selectedPosition) {
       this.editingPlayer.PositionAbbrev = selectedPosition.abbreviation;
@@ -14702,7 +14844,7 @@ export class VisualizationTester
     if (!this.editingPlayer) return;
 
     const selectedGender = this.getAvailableGenders().find(
-      (g) => g.GenderName === this.editingPlayer!.GenderName
+      (g) => g.GenderName === this.editingPlayer!.GenderName,
     );
     if (selectedGender) {
       this.editingPlayer.GenderID = selectedGender.GenderID;
@@ -14714,7 +14856,7 @@ export class VisualizationTester
     if (!this.editingPlayer) return;
 
     const selectedAgeGroup = this.getAvailableAgeGroups().find(
-      (ag) => ag.AgeGroupName === this.editingPlayer!.AgeGroupName
+      (ag) => ag.AgeGroupName === this.editingPlayer!.AgeGroupName,
     );
     if (selectedAgeGroup) {
       this.editingPlayer.AgeGroupID = selectedAgeGroup.AgeGroupID;
@@ -14798,7 +14940,7 @@ export class VisualizationTester
     if (!this.newPlayer.GenderName) return;
 
     const selectedGender = this.getAvailableGenders().find(
-      (g) => g.GenderName === this.newPlayer.GenderName
+      (g) => g.GenderName === this.newPlayer.GenderName,
     );
     if (selectedGender) {
       this.newPlayer.GenderID = selectedGender.GenderID;
@@ -14810,7 +14952,7 @@ export class VisualizationTester
     if (!this.newPlayer.AgeGroupName) return;
 
     const selectedAgeGroup = this.getAvailableAgeGroups().find(
-      (ag) => ag.AgeGroupName === this.newPlayer.AgeGroupName
+      (ag) => ag.AgeGroupName === this.newPlayer.AgeGroupName,
     );
     if (selectedAgeGroup) {
       this.newPlayer.AgeGroupID = selectedAgeGroup.AgeGroupID;
@@ -14893,21 +15035,21 @@ export class VisualizationTester
 
     // Check for jersey number conflicts
     const conflictingPlayer = this.selectedTeam.Players.find(
-      (p) => p.JerseyNumber === this.newPlayer.JerseyNumber
+      (p) => p.JerseyNumber === this.newPlayer.JerseyNumber,
     );
 
     if (conflictingPlayer) {
       alert(
         `Jersey number ${
           this.newPlayer.JerseyNumber
-        } is already taken by ${this.getPlayerFullName(conflictingPlayer)}`
+        } is already taken by ${this.getPlayerFullName(conflictingPlayer)}`,
       );
       return;
     }
 
     // Set the primary position data
     const primaryPosition = this.getAvailablePositions().find(
-      (p) => p.name === this.newPlayerPrimaryPosition
+      (p) => p.name === this.newPlayerPrimaryPosition,
     );
 
     if (primaryPosition) {
@@ -14954,7 +15096,7 @@ export class VisualizationTester
     // Add the player to selected team groups
     for (const teamGroupId of this.selectedTeamGroupIds) {
       const teamGroup = this.selectedTeam.TeamGroups.find(
-        (tg) => tg.TeamGroupID === teamGroupId
+        (tg) => tg.TeamGroupID === teamGroupId,
       );
       if (teamGroup) {
         if (!teamGroup.Players) {
@@ -14976,8 +15118,8 @@ export class VisualizationTester
     // Show success message
     alert(
       `Player ${this.getPlayerFullName(
-        newPlayerComplete
-      )} has been added successfully!`
+        newPlayerComplete,
+      )} has been added successfully!`,
     );
   }
 
@@ -15013,7 +15155,7 @@ export class VisualizationTester
     if (toolbarType === 'skillsRadar') {
       this.skillsRadarManuallyClosed = true;
       console.log(
-        '🎯 Skills radar manually closed - will not auto-open until nodes cleared'
+        '🎯 Skills radar manually closed - will not auto-open until nodes cleared',
       );
     }
 
@@ -15023,10 +15165,10 @@ export class VisualizationTester
 
   public onToolbarVisibilityChange(
     toolbarType: string,
-    visible: boolean
+    visible: boolean,
   ): void {
     console.log(
-      `🎯 [visualization-tester] onToolbarVisibilityChange: ${toolbarType} = ${visible}`
+      `🎯 [visualization-tester] onToolbarVisibilityChange: ${toolbarType} = ${visible}`,
     );
     this.store.dispatch(new SetToolbarVisibility(toolbarType as any, visible));
   }
@@ -15140,10 +15282,10 @@ export class VisualizationTester
       if (defaultPosition) {
         console.log(
           `🎯 First show - setting default position for ${type}:`,
-          defaultPosition
+          defaultPosition,
         );
         this.store.dispatch(
-          new UpdateToolbarPosition(type as any, defaultPosition)
+          new UpdateToolbarPosition(type as any, defaultPosition),
         );
       }
     }
@@ -15159,7 +15301,7 @@ export class VisualizationTester
 
       // Set toolbar to center position before toggling visibility
       this.store.dispatch(
-        new UpdateToolbarPosition(type as any, { x: centerX, y: centerY })
+        new UpdateToolbarPosition(type as any, { x: centerX, y: centerY }),
       );
 
       // Small delay to ensure position update happens before visibility toggle
@@ -15230,8 +15372,8 @@ export class VisualizationTester
       console.log(
         'Available elements:',
         Array.from(document.querySelectorAll('[class*="toolbar"]')).map(
-          (el) => el.className
-        )
+          (el) => el.className,
+        ),
       );
     }
   }
@@ -15292,7 +15434,7 @@ export class VisualizationTester
           'colorizationOptions',
           'overlays',
           'bottomToolbar',
-        ].includes(key)
+        ].includes(key),
     );
     return keys;
   }
@@ -15308,7 +15450,7 @@ export class VisualizationTester
         'overlays',
         'statusPanel',
         'bottomToolbar',
-      ].includes(key)
+      ].includes(key),
     );
   }
 
@@ -15463,7 +15605,7 @@ export class VisualizationTester
           URL.revokeObjectURL(url);
         },
         format === 'jpg' ? 'image/jpeg' : 'image/png',
-        0.95
+        0.95,
       );
     };
 
@@ -15484,7 +15626,7 @@ export class VisualizationTester
     } catch (error) {
       console.error('Failed to copy image to clipboard:', error);
       alert(
-        'Failed to copy to clipboard. Your browser may not support this feature.'
+        'Failed to copy to clipboard. Your browser may not support this feature.',
       );
     }
   }
@@ -15556,7 +15698,7 @@ export class VisualizationTester
       'handleSnagitMouseDown called, snagitActive:',
       this.snagitActive,
       'point:',
-      point
+      point,
     );
     if (!this.snagitActive) return;
 
@@ -15624,7 +15766,7 @@ export class VisualizationTester
     x: number,
     y: number,
     width: number,
-    height: number
+    height: number,
   ): void {
     const svgElement = this.svgRef.nativeElement;
 
@@ -15707,7 +15849,7 @@ export class VisualizationTester
           URL.revokeObjectURL(url);
         },
         format === 'jpg' ? 'image/jpeg' : 'image/png',
-        0.95
+        0.95,
       );
     };
 
@@ -15739,16 +15881,16 @@ export class VisualizationTester
 
     // Get current context from state
     const loggedInUser = this.store.selectSnapshot(
-      GlobalContextState.loggedInUser
+      GlobalContextState.loggedInUser,
     );
     const selectedTenant = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTenant
+      GlobalContextState.selectedContextTenant,
     );
     const selectedTeam = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTeam
+      GlobalContextState.selectedContextTeam,
     );
     const selectedTeamGroup = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTeamGroup
+      GlobalContextState.selectedContextTeamGroup,
     );
 
     console.log('  - Logged-in user:', loggedInUser?.UserId);
@@ -15761,7 +15903,7 @@ export class VisualizationTester
       loggedInUser,
       selectedTenant,
       selectedTeam,
-      selectedTeamGroup
+      selectedTeamGroup,
     );
 
     console.log(`✅ Loaded ${filteredFlows.length} filtered DecisionFlows`);
@@ -15816,8 +15958,8 @@ export class VisualizationTester
         flow.treeData === null
           ? '(treeData is null)'
           : flow.treeData === undefined
-          ? '(treeData is undefined)'
-          : ''
+            ? '(treeData is undefined)'
+            : '',
       );
       // Generate completely new random tree data using the better randomization method
       this.treeData = this.generateRandomTreeData(this.nodeCount);
@@ -15829,10 +15971,10 @@ export class VisualizationTester
         this.store.dispatch(
           new SketchActions.UpdateDecisionFlow(flow.FlowID, {
             treeData: updatedTreeData,
-          })
+          }),
         );
         console.log(
-          '💾 Dispatched update to save new tree data to DecisionFlow'
+          '💾 Dispatched update to save new tree data to DecisionFlow',
         );
       }
     } else if (shouldGenerateSingleRoot) {
@@ -15852,15 +15994,15 @@ export class VisualizationTester
       this.store.dispatch(
         new SketchActions.UpdateDecisionFlow(flow.FlowID, {
           treeData: updatedTreeData,
-        })
+        }),
       );
       console.log(
-        '💾 Dispatched update to save single root node to DecisionFlow'
+        '💾 Dispatched update to save single root node to DecisionFlow',
       );
     } else {
       console.log(
         '📂 Using existing tree data from DecisionFlow:',
-        flow.treeData
+        flow.treeData,
       );
       // Use the existing tree data from the DecisionFlow (deep copy for safety)
       this.treeData = JSON.parse(JSON.stringify(flow.treeData));
@@ -15899,12 +16041,12 @@ export class VisualizationTester
     const currentLessons = this.store.selectSnapshot(LessonsState.getLessons);
 
     const lessonsNeedingMigration = currentLessons.filter(
-      (lesson) => lesson.FlowID === undefined || lesson.FlowID === null
+      (lesson) => lesson.FlowID === undefined || lesson.FlowID === null,
     );
 
     if (lessonsNeedingMigration.length > 0) {
       console.log(
-        `📊 Found ${lessonsNeedingMigration.length} lessons without FlowID, migrating to FlowID: 0 (system/global)`
+        `📊 Found ${lessonsNeedingMigration.length} lessons without FlowID, migrating to FlowID: 0 (system/global)`,
       );
       // Use FlowID 0 as default (system/global lessons)
       this.store.dispatch(new MigrateLessonsFlowID(0));
@@ -15938,7 +16080,7 @@ export class VisualizationTester
    * Helper method to determine if a DecisionFlow needs random tree data generation
    */
   private isTreeDataInvalidOrMissing(
-    treeData: TreeNode | null | undefined
+    treeData: TreeNode | null | undefined,
   ): boolean {
     console.log('🔍 Checking if tree data is invalid or missing:', treeData);
 
@@ -16001,7 +16143,7 @@ export class VisualizationTester
     // Determine the ownership context
     let ownershipContext: OwnershipContext;
     const loggedInUser = this.store.selectSnapshot(
-      GlobalContextState.loggedInUser
+      GlobalContextState.loggedInUser,
     );
 
     if (event.ownershipContext === 'PERSONAL') {
@@ -16097,7 +16239,7 @@ export class VisualizationTester
     // Validate that we have a selected node with children
     if (!this.selectedNode || !this.selectedNodeHasChildren) {
       console.error(
-        'Cannot breakout: No selected node or node has no children'
+        'Cannot breakout: No selected node or node has no children',
       );
       return;
     }
@@ -16192,7 +16334,7 @@ export class VisualizationTester
    */
   private promoteDataset(
     flow: DecisionFlow,
-    newContextName: 'TENANT' | 'SYSTEM'
+    newContextName: 'TENANT' | 'SYSTEM',
   ): void {
     console.log('Promoting dataset:', {
       flowId: flow.FlowID,
@@ -16225,7 +16367,7 @@ export class VisualizationTester
 
     // Update in the state (this would be replaced with proper state management)
     const flowIndex = this.decisionFlows.findIndex(
-      (f) => f.FlowID === flow.FlowID
+      (f) => f.FlowID === flow.FlowID,
     );
     if (flowIndex >= 0) {
       this.decisionFlows[flowIndex] = updatedFlow;
@@ -16303,7 +16445,7 @@ export class VisualizationTester
    */
   private demoteDataset(
     flow: DecisionFlow,
-    newContextName: 'TENANT' | 'TEAM'
+    newContextName: 'TENANT' | 'TEAM',
   ): void {
     console.log('Demoting dataset:', {
       flowId: flow.FlowID,
@@ -16336,7 +16478,7 @@ export class VisualizationTester
 
     // Update in the state (this would be replaced with proper state management)
     const flowIndex = this.decisionFlows.findIndex(
-      (f) => f.FlowID === flow.FlowID
+      (f) => f.FlowID === flow.FlowID,
     );
     if (flowIndex >= 0) {
       this.decisionFlows[flowIndex] = updatedFlow;
@@ -16402,7 +16544,7 @@ export class VisualizationTester
 
     // Remove the flow from the decisionFlows array
     const flowIndex = this.decisionFlows.findIndex(
-      (f) => f.FlowID === flow.FlowID
+      (f) => f.FlowID === flow.FlowID,
     );
     if (flowIndex >= 0) {
       // Remove the dataset from the array
@@ -16530,7 +16672,7 @@ export class VisualizationTester
         ContextKey: this.currentSelectedTenantId || -1,
       };
       console.log(
-        `Promoted lesson "${updatedLesson.LessonName}" from TEAM to TENANT`
+        `Promoted lesson "${updatedLesson.LessonName}" from TEAM to TENANT`,
       );
     } else if (context === 'TENANT') {
       // Promote from TENANT to SYSTEM (TENANT with Context -1)
@@ -16539,7 +16681,7 @@ export class VisualizationTester
         ContextKey: -1,
       };
       console.log(
-        `Promoted lesson "${updatedLesson.LessonName}" from TENANT to SYSTEM`
+        `Promoted lesson "${updatedLesson.LessonName}" from TENANT to SYSTEM`,
       );
     }
 
@@ -16568,7 +16710,7 @@ export class VisualizationTester
         ContextKey: this.currentSelectedTenantId || -1,
       };
       console.log(
-        `Demoted lesson "${updatedLesson.LessonName}" from SYSTEM to TENANT`
+        `Demoted lesson "${updatedLesson.LessonName}" from SYSTEM to TENANT`,
       );
     } else if (
       ownershipContext.Context === 'TENANT' &&
@@ -16580,7 +16722,7 @@ export class VisualizationTester
         ContextKey: this.currentSelectedTeamId || -1,
       };
       console.log(
-        `Demoted lesson "${updatedLesson.LessonName}" from TENANT to TEAM`
+        `Demoted lesson "${updatedLesson.LessonName}" from TENANT to TEAM`,
       );
     }
 
@@ -16661,11 +16803,11 @@ export class VisualizationTester
         new SketchActions.UpdateDecisionFlow(result.dataset.FlowID, {
           FlowName: result.newName,
           FlowDesc: result.newDescription,
-        })
+        }),
       );
 
       console.log(
-        `✅ Successfully updated dataset ${result.dataset.FlowID}: "${result.newName}"`
+        `✅ Successfully updated dataset ${result.dataset.FlowID}: "${result.newName}"`,
       );
     } catch (error) {
       console.error('❌ Error updating dataset:', error);
@@ -16688,7 +16830,7 @@ export class VisualizationTester
 
     // Get next available FlowID
     const maxFlowId = Math.max(
-      ...this.decisionFlows.map((flow) => flow.FlowID || 0)
+      ...this.decisionFlows.map((flow) => flow.FlowID || 0),
     );
     const newFlowId = maxFlowId + 1;
 
@@ -16717,7 +16859,7 @@ export class VisualizationTester
         // Update nextNodeId based on how many nodes were processed
         nextNodeId = this.getNextNodeIdAfterTreeCopy(
           dataset.treeData,
-          nextNodeId + 1
+          nextNodeId + 1,
         );
 
         newRootNode.children!.push(childNode);
@@ -16762,7 +16904,7 @@ export class VisualizationTester
    */
   private copyTreeNodeChildren(
     parentNode: TreeNode,
-    startingId: number
+    startingId: number,
   ): TreeNode[] {
     const children: TreeNode[] = [];
     let currentId = startingId;
@@ -16791,7 +16933,7 @@ export class VisualizationTester
    */
   private getNextNodeIdAfterTreeCopy(
     node: TreeNode,
-    startingId: number
+    startingId: number,
   ): number {
     let nextId = startingId;
 
@@ -16810,7 +16952,7 @@ export class VisualizationTester
       (group) =>
         (group.OwnershipContext.Context === 'TENANT' &&
           group.OwnershipContext.ContextKey === -1) ||
-        group.IsSystemDefault
+        group.IsSystemDefault,
     ).length;
   }
 
@@ -16821,7 +16963,7 @@ export class VisualizationTester
     if (!orgId) {
       // If no organization selected, count all organizational groups
       return this.defaultTeamGroups.filter(
-        (group) => group.OwnershipContext.Context === 'TENANT'
+        (group) => group.OwnershipContext.Context === 'TENANT',
       ).length;
     }
 
@@ -16829,7 +16971,7 @@ export class VisualizationTester
     return this.defaultTeamGroups.filter(
       (group) =>
         group.OwnershipContext.Context === 'TENANT' &&
-        group.OwnershipContext.ContextKey === orgId
+        group.OwnershipContext.ContextKey === orgId,
     ).length;
   }
 
@@ -16846,18 +16988,18 @@ export class VisualizationTester
     console.log('====== DEBUG: TOOLBAR VISIBILITY STATE ======');
     console.log(
       'Current NGXS state:',
-      this.store.selectSnapshot(SketchState.getToolbarVisibility)
+      this.store.selectSnapshot(SketchState.getToolbarVisibility),
     );
     console.log('Current toolbarVisibility property:', this.toolbarVisibility);
     console.log('localStorage keys:', Object.keys(localStorage));
     const ngsxStorageKey = Object.keys(localStorage).find((k) =>
-      k.includes('@@NGXS')
+      k.includes('@@NGXS'),
     );
     if (ngsxStorageKey) {
       const stored = JSON.parse(localStorage.getItem(ngsxStorageKey) || '{}');
       console.log(
         `NGXS Storage (${ngsxStorageKey}):`,
-        stored.sketch?.toolbarVisibility
+        stored.sketch?.toolbarVisibility,
       );
     }
     console.log('=========================================');
@@ -16894,11 +17036,11 @@ export class VisualizationTester
           if (populatedUser.Tenants && populatedUser.Tenants.length > 0) {
             this.organizations = populatedUser.Tenants;
             console.log(
-              `✅ Updated organizations list with ${this.organizations.length} tenants for user ${populatedUser.UserId}:`
+              `✅ Updated organizations list with ${this.organizations.length} tenants for user ${populatedUser.UserId}:`,
             );
             this.organizations.forEach((org, idx) => {
               console.log(
-                `  ${idx + 1}. ${org.TenantName} (ID: ${org.TenantID})`
+                `  ${idx + 1}. ${org.TenantName} (ID: ${org.TenantID})`,
               );
             });
           } else {
@@ -16914,7 +17056,7 @@ export class VisualizationTester
             populatedUser.Tenants
           ) {
             const lastTenant = populatedUser.Tenants.find(
-              (t) => t.TenantID === populatedUser.LastSelectedContextTenant
+              (t) => t.TenantID === populatedUser.LastSelectedContextTenant,
             );
 
             if (lastTenant) {
@@ -16928,7 +17070,7 @@ export class VisualizationTester
               } else {
                 // Look for the context user in the tenant's related users
                 const relatedUser = lastTenant.Relatives?.find(
-                  (r) => r.UserId === populatedUser.LastSelectedContextUser
+                  (r) => r.UserId === populatedUser.LastSelectedContextUser,
                 );
                 if (relatedUser) {
                   // Use the related user directly (it's already a User object)
@@ -16944,8 +17086,8 @@ export class VisualizationTester
                     lastTenant,
                     contextUser,
                     undefined,
-                    populatedUser.Tenants || []
-                  )
+                    populatedUser.Tenants || [],
+                  ),
                 );
                 console.log('Auto-selected last context:', {
                   tenant: lastTenant.TenantName,
@@ -16963,7 +17105,7 @@ export class VisualizationTester
             availableTenants: populatedUser.Tenants?.length || 0,
           });
           this.store.dispatch(
-            new SetLoggedInUser(populatedUser, populatedUser.Tenants || [])
+            new SetLoggedInUser(populatedUser, populatedUser.Tenants || []),
           );
 
           // Trigger change detection to ensure organizations list is updated
@@ -16982,7 +17124,7 @@ export class VisualizationTester
             // Only one tenant, automatically select it
             const singleTenant = populatedUser.Tenants![0];
             console.log(
-              `✅ Auto-selecting single tenant: ${singleTenant.TenantName}`
+              `✅ Auto-selecting single tenant: ${singleTenant.TenantName}`,
             );
 
             // Set the selected tenant
@@ -16993,7 +17135,7 @@ export class VisualizationTester
           } else {
             // Multiple tenants, open tenant selection drawer
             console.log(
-              `🚪 Opening tenant drawer to select from ${tenantCount} tenants`
+              `🚪 Opening tenant drawer to select from ${tenantCount} tenants`,
             );
             this.toggleTenantDrawer();
           }
@@ -17054,7 +17196,7 @@ export class VisualizationTester
    */
   get overdueLessonsCount(): number {
     const tenant = this.store.selectSnapshot(
-      GlobalContextState.selectedContextTenant
+      GlobalContextState.selectedContextTenant,
     );
     if (!tenant?.assignedLessons) {
       return 0;
@@ -17126,7 +17268,7 @@ export class VisualizationTester
       // Use NGXS GlobalContext to set the selected team
       console.log(
         '🎯 Dispatching SetSelectedContextTeam with team:',
-        team.TeamName
+        team.TeamName,
       );
       this.store.dispatch(new SetSelectedContextTeam(team));
     } else {
@@ -17209,7 +17351,7 @@ export class VisualizationTester
   }
 
   private getDefaultToolbarPosition(
-    type: string
+    type: string,
   ): { x: number; y: number } | null {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -17313,7 +17455,7 @@ export class VisualizationTester
           return 'System';
         }
         const org = this.organizations.find(
-          (o) => o.TenantID === ownership.ContextKey
+          (o) => o.TenantID === ownership.ContextKey,
         );
         return org ? `Org: ${org.TenantName}` : 'Organization';
       case 'TEAM':
@@ -17368,7 +17510,7 @@ export class VisualizationTester
       !this.defaultGroupFormTenantId
     ) {
       alert(
-        'Please select an organization for organization-level default team groups.'
+        'Please select an organization for organization-level default team groups.',
       );
       return;
     }
@@ -17501,7 +17643,7 @@ export class VisualizationTester
       'Applied default group template to team:',
       this.selectedDefaultTeamGroup.TeamGroupName,
       'for team:',
-      this.selectedTeam.TeamName
+      this.selectedTeam.TeamName,
     );
   }
 
@@ -17515,7 +17657,7 @@ export class VisualizationTester
     console.log('- currentSelectedTeamId:', this.currentSelectedTeamId);
     console.log(
       '- currentSelectedTeamGroupId:',
-      this.currentSelectedTeamGroupId
+      this.currentSelectedTeamGroupId,
     );
 
     // Check all localStorage keys related to state
@@ -17524,15 +17666,15 @@ export class VisualizationTester
     console.log('Observable Values:');
     console.log(
       '- selectedOrganizationId$ current:',
-      this.store.selectSnapshot(GlobalContextState.contextTenantId)
+      this.store.selectSnapshot(GlobalContextState.contextTenantId),
     );
     console.log(
       '- selectedTeamId$ current:',
-      this.store.selectSnapshot(GlobalContextState.contextTeamId)
+      this.store.selectSnapshot(GlobalContextState.contextTeamId),
     );
     console.log(
       '- selectedTeamGroupId$ current:',
-      this.store.selectSnapshot(GlobalContextState.contextTeamGroupId)
+      this.store.selectSnapshot(GlobalContextState.contextTeamGroupId),
     );
 
     console.log('Selected Objects:');
@@ -17540,7 +17682,7 @@ export class VisualizationTester
     console.log('Selected TeamGroup Object:', this.selectedTeamGroup);
     console.log(
       'Available Organizations:',
-      this.organizations.map((o) => ({ id: o.TenantID, name: o.TenantName }))
+      this.organizations.map((o) => ({ id: o.TenantID, name: o.TenantName })),
     );
     console.log('========================');
   }
@@ -17553,23 +17695,23 @@ export class VisualizationTester
     setTimeout(() => {
       console.log(
         'TEST: After setting, current state:',
-        this.currentSelectedTenantId
+        this.currentSelectedTenantId,
       );
       console.log(
         'TEST: LocalStorage now contains:',
-        localStorage.getItem('@@STATE:teamSelection')
+        localStorage.getItem('@@STATE:teamSelection'),
       );
       console.log(
         'TEST: Organization 0 check - is it falsy?',
-        !this.currentSelectedTenantId
+        !this.currentSelectedTenantId,
       );
       console.log(
         'TEST: Organization 0 check - is it === 0?',
-        this.currentSelectedTenantId === 0
+        this.currentSelectedTenantId === 0,
       );
       console.log(
         'TEST: Organization 0 check - is it !== null?',
-        this.currentSelectedTenantId !== null
+        this.currentSelectedTenantId !== null,
       );
     }, 200);
   }
@@ -17588,18 +17730,18 @@ export class VisualizationTester
     console.log('- currentSelectedTeamId:', this.currentSelectedTeamId);
     console.log(
       '- currentSelectedTeamGroupId:',
-      this.currentSelectedTeamGroupId
+      this.currentSelectedTeamGroupId,
     );
 
     // Check actual DOM values
     const orgSelect = document.getElementById(
-      'organization-select'
+      'organization-select',
     ) as HTMLSelectElement;
     const teamSelect = document.getElementById(
-      'team-select'
+      'team-select',
     ) as HTMLSelectElement;
     const teamGroupSelect = document.getElementById(
-      'team-group-select'
+      'team-group-select',
     ) as HTMLSelectElement;
 
     console.log('DOM Values:');
@@ -17610,30 +17752,30 @@ export class VisualizationTester
     console.log('Binding Expressions:');
     console.log(
       '- org binding result:',
-      this.currentSelectedTenantId !== null ? this.currentSelectedTenantId : ''
+      this.currentSelectedTenantId !== null ? this.currentSelectedTenantId : '',
     );
     console.log(
       '- team binding result:',
-      this.currentSelectedTeamId !== null ? this.currentSelectedTeamId : ''
+      this.currentSelectedTeamId !== null ? this.currentSelectedTeamId : '',
     );
     console.log(
       '- teamGroup binding result:',
       this.currentSelectedTeamGroupId !== null
         ? this.currentSelectedTeamGroupId
-        : ''
+        : '',
     );
 
     console.log('Available Options:');
     console.log(
       '- organizations:',
-      this.organizations.map((o) => ({ id: o.TenantID, name: o.TenantName }))
+      this.organizations.map((o) => ({ id: o.TenantID, name: o.TenantName })),
     );
     console.log(
       '- teams for current org:',
       this.getTeamsForSelectedOrganization().map((t) => ({
         id: t.TeamID,
         name: t.TeamName,
-      }))
+      })),
     );
     console.log('===================');
   }
@@ -17649,7 +17791,7 @@ export class VisualizationTester
     setTimeout(() => {
       console.log(
         'TEST Step 1 Result: Org set to',
-        this.currentSelectedTenantId
+        this.currentSelectedTenantId,
       );
 
       // Step 2: Set a team (first team of Wauwatosa East should be ID 97)
@@ -17658,14 +17800,14 @@ export class VisualizationTester
         console.log(
           'TEST Step 2: Setting team',
           teams[0].TeamID,
-          teams[0].TeamName
+          teams[0].TeamName,
         );
         this.store.dispatch(new SetSelectedTeam(teams[0].TeamID));
 
         setTimeout(() => {
           console.log(
             'TEST Step 2 Result: Team set to',
-            this.currentSelectedTeamId
+            this.currentSelectedTeamId,
           );
           console.log('TEST Final State:', {
             org: this.currentSelectedTenantId,
@@ -17674,7 +17816,7 @@ export class VisualizationTester
           });
           console.log(
             'TEST LocalStorage:',
-            localStorage.getItem('@@STATE:teamSelection')
+            localStorage.getItem('@@STATE:teamSelection'),
           );
         }, 100);
       } else {
@@ -17717,7 +17859,7 @@ export class VisualizationTester
           };
         }
         return lessonNode;
-      }
+      },
     );
 
     const updatedLesson = {
@@ -17729,7 +17871,7 @@ export class VisualizationTester
     this.store.dispatch(new UpdateLesson(updatedLesson));
 
     console.log(
-      `Updated lesson "${this.selectedLesson.LessonName}" with radar values for node ${event.nodeId}`
+      `Updated lesson "${this.selectedLesson.LessonName}" with radar values for node ${event.nodeId}`,
     );
   }
 
@@ -17805,7 +17947,7 @@ export class VisualizationTester
       // Update the visualization
       this.updateVisualization();
       console.log(
-        `Successfully promoted node "${this.selectedNode}" to sibling of its parent`
+        `Successfully promoted node "${this.selectedNode}" to sibling of its parent`,
       );
     } else {
       console.error('Failed to promote node');
@@ -17917,7 +18059,7 @@ export class VisualizationTester
     // Check if this is the root node (can't promote children of root)
     if (this.selectedNode === this.treeData?.id) {
       alert(
-        'Children of the root node cannot be promoted as they have no grandparent to move to.'
+        'Children of the root node cannot be promoted as they have no grandparent to move to.',
       );
       return;
     }
@@ -18026,14 +18168,14 @@ export class VisualizationTester
     const success = this.insertNodeBetweenWithData(
       this.pendingInsertNode,
       event.name,
-      event.description
+      event.description,
     );
 
     if (success) {
       // Update the visualization
       this.updateVisualization();
       console.log(
-        `Successfully inserted node "${event.name}" between "${this.pendingInsertNode}" and its parent`
+        `Successfully inserted node "${event.name}" between "${this.pendingInsertNode}" and its parent`,
       );
     } else {
       console.error('Failed to insert node between');
@@ -18064,7 +18206,7 @@ export class VisualizationTester
     const success = this.editNodeData(
       this.pendingEditNode,
       event.name,
-      event.description
+      event.description,
     );
 
     if (success) {
@@ -18108,7 +18250,7 @@ export class VisualizationTester
     this.closeAddChildDialog();
 
     console.log(
-      `Successfully added child "${event.name}" with ID "${newChildId}"`
+      `Successfully added child "${event.name}" with ID "${newChildId}"`,
     );
   }
 
@@ -18135,7 +18277,7 @@ export class VisualizationTester
       // Update the visualization
       this.updateVisualization();
       console.log(
-        `Successfully reparented node "${this.selectedNode}" to parent "${event.newParentId}"`
+        `Successfully reparented node "${this.selectedNode}" to parent "${event.newParentId}"`,
       );
     } else {
       console.error('Failed to reparent node');
@@ -18151,7 +18293,7 @@ export class VisualizationTester
   private addChildToNode(
     parentId: string,
     childId: string,
-    childName: string
+    childName: string,
   ): void {
     const addChild = (node: TreeNode): boolean => {
       if (node.id === parentId) {
@@ -18181,7 +18323,7 @@ export class VisualizationTester
       const success = addChild(this.treeData);
       if (success) {
         console.log(
-          `Successfully added child "${childName}" to node "${parentId}"`
+          `Successfully added child "${childName}" to node "${parentId}"`,
         );
       } else {
         console.warn(`Failed to find parent node "${parentId}" in tree data`);
@@ -18316,7 +18458,7 @@ export class VisualizationTester
 
     if (!parentNode || !nodeToInsert) {
       console.error(
-        'Cannot find node or its parent for insert between operation'
+        'Cannot find node or its parent for insert between operation',
       );
       return false;
     }
@@ -18327,7 +18469,7 @@ export class VisualizationTester
 
     // Find the index of the node in its parent's children
     const nodeIndex = parentNode.children!.findIndex(
-      (child) => child.id === nodeId
+      (child) => child.id === nodeId,
     );
     if (nodeIndex === -1) {
       console.error("Node not found in parent's children");
@@ -18353,7 +18495,7 @@ export class VisualizationTester
   private insertNodeBetweenWithData(
     nodeId: string,
     name: string,
-    description: string
+    description: string,
   ): boolean {
     if (!this.treeData) return false;
 
@@ -18363,7 +18505,7 @@ export class VisualizationTester
 
     if (!parentNode || !nodeToInsert) {
       console.error(
-        'Cannot find node or its parent for insert between operation'
+        'Cannot find node or its parent for insert between operation',
       );
       return false;
     }
@@ -18373,7 +18515,7 @@ export class VisualizationTester
 
     // Find the index of the node in its parent's children
     const nodeIndex = parentNode.children!.findIndex(
-      (child) => child.id === nodeId
+      (child) => child.id === nodeId,
     );
     if (nodeIndex === -1) {
       console.error("Node not found in parent's children");
@@ -18402,7 +18544,7 @@ export class VisualizationTester
   private editNodeData(
     nodeId: string,
     name: string,
-    description: string
+    description: string,
   ): boolean {
     if (!this.treeData) return false;
 
@@ -18419,7 +18561,7 @@ export class VisualizationTester
     (nodeToEdit as any).description = description;
 
     console.log(
-      `Updated node ${nodeId} with name: "${name}" and description: "${description}"`
+      `Updated node ${nodeId} with name: "${name}" and description: "${description}"`,
     );
     return true;
   }
@@ -18444,7 +18586,7 @@ export class VisualizationTester
 
     // Remove the node from its current parent
     const nodeIndex = parentNode.children!.findIndex(
-      (child) => child.id === nodeId
+      (child) => child.id === nodeId,
     );
     if (nodeIndex === -1) {
       console.error("Node not found in parent's children");
@@ -18483,7 +18625,7 @@ export class VisualizationTester
 
     // Find and remove the node from its parent's children
     const nodeIndex = parentNode.children.findIndex(
-      (child) => child.id === nodeId
+      (child) => child.id === nodeId,
     );
     if (nodeIndex === -1) {
       console.error("Node not found in parent's children");
@@ -18546,7 +18688,7 @@ export class VisualizationTester
     // Store children to promote
     const childrenToPromote = [...sourceNode.children];
     console.log(
-      `Promoting ${childrenToPromote.length} children from node ${nodeId}`
+      `Promoting ${childrenToPromote.length} children from node ${nodeId}`,
     );
 
     // Clear children from source node
@@ -18561,7 +18703,7 @@ export class VisualizationTester
     parentNode.children.push(...childrenToPromote);
 
     console.log(
-      `Successfully promoted ${childrenToPromote.length} children to siblings`
+      `Successfully promoted ${childrenToPromote.length} children to siblings`,
     );
     return true;
   }
@@ -18636,7 +18778,7 @@ export class VisualizationTester
 
   private generateHexGrid(
     centerX: number,
-    centerY: number
+    centerY: number,
   ): Array<{
     x: number;
     y: number;
@@ -18651,7 +18793,7 @@ export class VisualizationTester
 
     const maxDistance = Math.sqrt(
       Math.pow(Math.max(centerX, effectiveWidth - centerX), 2) +
-        Math.pow(Math.max(centerY, effectiveHeight - centerY), 2)
+        Math.pow(Math.max(centerY, effectiveHeight - centerY), 2),
     );
 
     const hexSpacing = this.HEX_RADIUS * Math.sqrt(3);
@@ -18676,7 +18818,7 @@ export class VisualizationTester
   }
 
   private assignNodesToRadialHexPositions(
-    hexes: Array<{ x: number; y: number; q: number; r: number }>
+    hexes: Array<{ x: number; y: number; q: number; r: number }>,
   ): Array<{
     id: string;
     x: number;
@@ -18716,12 +18858,12 @@ export class VisualizationTester
     const hexesWithDistance = hexes.map((hex) => ({
       ...hex,
       distanceFromCenter: Math.sqrt(
-        Math.pow(hex.x - centerX, 2) + Math.pow(hex.y - centerY, 2)
+        Math.pow(hex.x - centerX, 2) + Math.pow(hex.y - centerY, 2),
       ),
     }));
 
     hexesWithDistance.sort(
-      (a, b) => a.distanceFromCenter - b.distanceFromCenter
+      (a, b) => a.distanceFromCenter - b.distanceFromCenter,
     );
 
     // Limit nodes to nodeCount
@@ -18760,7 +18902,7 @@ export class VisualizationTester
       color: string;
       depth: number;
       name: string;
-    }>
+    }>,
   ): void {
     if (!this.g) return;
 
@@ -18782,7 +18924,7 @@ export class VisualizationTester
       .append('polygon')
       .attr('class', 'hex-cell')
       .attr('points', (d: any) =>
-        this.getHexagonPoints(d.x, d.y, this.HEX_RADIUS)
+        this.getHexagonPoints(d.x, d.y, this.HEX_RADIUS),
       )
       .attr('fill', (d: any) => {
         const hexKey = `${d.x},${d.y}`;
@@ -18793,7 +18935,7 @@ export class VisualizationTester
 
         // Check if this is the center hex
         const dist = Math.sqrt(
-          Math.pow(d.x - centerX, 2) + Math.pow(d.y - centerY, 2)
+          Math.pow(d.x - centerX, 2) + Math.pow(d.y - centerY, 2),
         );
         if (dist < 15) {
           return '#000';
@@ -18807,7 +18949,7 @@ export class VisualizationTester
     // Add center hex outline
     const centerHex = hexes.find((h) => {
       const dist = Math.sqrt(
-        Math.pow(h.x - centerX, 2) + Math.pow(h.y - centerY, 2)
+        Math.pow(h.x - centerX, 2) + Math.pow(h.y - centerY, 2),
       );
       return dist < 15;
     });
@@ -18818,7 +18960,7 @@ export class VisualizationTester
         .attr('class', 'center-hex')
         .attr(
           'points',
-          this.getHexagonPoints(centerHex.x, centerHex.y, this.HEX_RADIUS)
+          this.getHexagonPoints(centerHex.x, centerHex.y, this.HEX_RADIUS),
         )
         .attr('fill', 'none')
         .attr('stroke', '#fff')
@@ -18835,7 +18977,7 @@ export class VisualizationTester
       color: string;
       depth: number;
       name: string;
-    }>
+    }>,
   ): void {
     if (!this.g) return;
 
@@ -18867,7 +19009,7 @@ export class VisualizationTester
   private getHexagonPoints(
     centerX: number,
     centerY: number,
-    radius: number
+    radius: number,
   ): string {
     const points = [];
     for (let i = 0; i < 6; i++) {

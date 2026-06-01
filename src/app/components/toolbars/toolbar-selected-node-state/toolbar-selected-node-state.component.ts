@@ -18,6 +18,17 @@ export class ToolbarSelectedNodeStateComponent extends BaseToolbarComponent {
   override toolbarIcon = '📍';
   // Component-specific inputs
   @Input() selectedNode: string | null = null;
+  @Input() textX: number | null = null;
+  @Input() textY: number | null = null;
+  @Input() textRotation: number | null = null;
+  @Input() textAnchor: string | null = null;
+  @Input() has180Added: boolean = false;
+
+  // Transform state inputs
+  @Input() currentZoom: number = 1;
+  @Input() currentPanX: number = 0;
+  @Input() currentPanY: number = 0;
+  @Input() currentRotation: number = 0;
 
   constructor() {
     super();

@@ -686,7 +686,11 @@
     <!-- Selected Node State Panel (Component) -->
     <app-toolbar-selected-node-state [visible]="toolbarVisibility.statusPanel" [isDarkMode]="isDarkMode"
         [position]="toolbarPositions.statusPanel" [locked]="toolbarLocks.statusPanel"
-        [applyConstraints]="applyToolbarConstraints" [selectedNode]="selectedNode" (close)="hideToolbar('statusPanel')"
+        [applyConstraints]="applyToolbarConstraints" [selectedNode]="selectedNode" [textX]="selectedNodeTextX"
+        [textY]="selectedNodeTextY" [textRotation]="selectedNodeTextRotation" [textAnchor]="selectedNodeTextAnchor"
+        [has180Added]="selectedNodeText180Added" [currentZoom]="selectedNodeCurrentZoom"
+        [currentPanX]="selectedNodeCurrentPanX" [currentPanY]="selectedNodeCurrentPanY"
+        [currentRotation]="selectedNodeCurrentRotation" (close)="hideToolbar('statusPanel')"
         (toggleLock)="toggleToolbarLock('statusPanel')" (dragStart)="onToolbarDragStart($event, 'statusPanel')">
     </app-toolbar-selected-node-state>
 
