@@ -84,10 +84,7 @@ export class ToolbarVisualizationOptionsComponent extends BaseToolbarComponent {
   private textPositionOptionsRadial = [
     { value: 'radiating-leaf', label: 'Radiating (Leaf-only)' },
     { value: 'radiating-all', label: 'Radiating (All)' },
-    { value: 'above', label: 'Above' },
-    { value: 'below', label: 'Below' },
-    { value: 'left', label: 'Left' },
-    { value: 'right', label: 'Right' },
+    { value: 'radiating-locked-root', label: 'Radiating (Locked Root)' },
   ];
 
   private textPositionOptionsHorizontal = [
@@ -473,7 +470,7 @@ export class ToolbarVisualizationOptionsComponent extends BaseToolbarComponent {
 
   getSelectedVisualizationOption(): VisualizationOption | undefined {
     return this.visualizationOptions.find(
-      (option) => option.value === this.selectedVisualization
+      (option) => option.value === this.selectedVisualization,
     );
   }
 }

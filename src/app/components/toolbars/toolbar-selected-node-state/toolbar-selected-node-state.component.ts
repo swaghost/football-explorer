@@ -30,6 +30,14 @@ export class ToolbarSelectedNodeStateComponent extends BaseToolbarComponent {
   @Input() currentPanY: number = 0;
   @Input() currentRotation: number = 0;
 
+  // Debug: Intermediate angle calculations
+  @Input() angleFromCenter: number | null = null;
+  @Input() effectiveAngle: number | null = null;
+  @Input() normalizedAngle: number | null = null;
+  @Input() baseRotationDeg: number | null = null;
+  @Input() finalRotationDeg: number | null = null;
+  @Input() viewerAngle: number | null = null;
+
   constructor() {
     super();
     // Set default position - can be overridden by parent

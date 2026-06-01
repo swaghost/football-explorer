@@ -690,7 +690,10 @@
         [textY]="selectedNodeTextY" [textRotation]="selectedNodeTextRotation" [textAnchor]="selectedNodeTextAnchor"
         [has180Added]="selectedNodeText180Added" [currentZoom]="selectedNodeCurrentZoom"
         [currentPanX]="selectedNodeCurrentPanX" [currentPanY]="selectedNodeCurrentPanY"
-        [currentRotation]="selectedNodeCurrentRotation" (close)="hideToolbar('statusPanel')"
+        [currentRotation]="selectedNodeCurrentRotation" [angleFromCenter]="selectedNodeAngleFromCenter"
+        [effectiveAngle]="selectedNodeEffectiveAngle" [normalizedAngle]="selectedNodeNormalizedAngle"
+        [baseRotationDeg]="selectedNodeBaseRotationDeg" [finalRotationDeg]="selectedNodeFinalRotationDeg"
+        [viewerAngle]="selectedNodeViewerAngle" (close)="hideToolbar('statusPanel')"
         (toggleLock)="toggleToolbarLock('statusPanel')" (dragStart)="onToolbarDragStart($event, 'statusPanel')">
     </app-toolbar-selected-node-state>
 

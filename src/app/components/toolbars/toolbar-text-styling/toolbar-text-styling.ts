@@ -427,10 +427,7 @@ export class ToolbarTextStylingComponent
   private textPositionOptionsRadial = [
     { value: 'radiating-leaf', label: 'Radiating (Leaf-only)' },
     { value: 'radiating-all', label: 'Radiating (All)' },
-    { value: 'above', label: 'Above' },
-    { value: 'below', label: 'Below' },
-    { value: 'left', label: 'Left' },
-    { value: 'right', label: 'Right' },
+    { value: 'radiating-locked-root', label: 'Radiating (Locked Root)' },
   ];
 
   private textPositionOptionsHorizontal = [
@@ -998,7 +995,7 @@ export class ToolbarTextStylingComponent
     const strategies =
       this.categoryStrategyMap[this.colorizationCategory] || [];
     return this.colorStrategyOptions.filter((option) =>
-      strategies.includes(option.value)
+      strategies.includes(option.value),
     );
   }
 

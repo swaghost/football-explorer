@@ -303,7 +303,7 @@ export class VisualizationTester
   public blueDotScreenCenterEnabled = false;
   public blueDotScreenCenterSize = 10;
   public nodeSize: 'xsmall' | 'small' | 'medium' | 'large' = 'medium';
-  public textPosition = 'below';
+  public textPosition = 'radiating-all'; // Default for radial tree
   public textFontFamily = 'Arial'; // Text font family
   public lineType: 'line' | 'step' | 'curve' = 'curve'; // Link line type
   public linkThickness: number = 1; // Link thickness (stroke width in pixels)
@@ -456,6 +456,14 @@ export class VisualizationTester
   public selectedNodeCurrentPanX: number = 0;
   public selectedNodeCurrentPanY: number = 0;
   public selectedNodeCurrentRotation: number = 0;
+
+  // Debug: Intermediate angle calculations
+  public selectedNodeAngleFromCenter: number | null = null;
+  public selectedNodeEffectiveAngle: number | null = null;
+  public selectedNodeNormalizedAngle: number | null = null;
+  public selectedNodeBaseRotationDeg: number | null = null;
+  public selectedNodeFinalRotationDeg: number | null = null;
+  public selectedNodeViewerAngle: number | null = null; // Final angle as seen by viewer
 
   public drawingMode:
     | 'pencil'
@@ -4237,6 +4245,9 @@ export class VisualizationTester
           // Apply the transform
           this.applyTransform();
 
+          // Update text rotations for new viewer perspective
+          this.updateTextRotations();
+
           // Update selected node text info
           this.updateSelectedNodeTextInfo();
         },
@@ -4296,6 +4307,9 @@ export class VisualizationTester
 
     // Apply rotation to the tree
     this.applyTransform();
+
+    // Update text rotations for new viewer perspective
+    this.updateTextRotations();
 
     // Update selected node text info
     this.updateSelectedNodeTextInfo();
@@ -8361,6 +8375,22 @@ export class VisualizationTester
   public onVisualizationChange(visualizationType: string): void {
     this.selectedVisualization = visualizationType;
     this.parseVisualizationType(visualizationType);
+
+    // Set default text position for radial layouts
+    if (
+      visualizationType === 'radialTree' ||
+      visualizationType === 'radialCluster'
+    ) {
+      // Only change if current position is not already a valid radial option
+      if (
+        this.textPosition !== 'radiating-leaf' &&
+        this.textPosition !== 'radiating-all' &&
+        this.textPosition !== 'radiating-locked-root'
+      ) {
+        this.textPosition = 'radiating-all';
+      }
+    }
+
     // Recalculate ideal dimensions for new visualization type
     if (this.treeData) {
       this.calculateAndApplyIdealDimensions(this.treeData);
@@ -8382,6 +8412,21 @@ export class VisualizationTester
       `Format changed to ${format}, visualization type updated to: ${this.selectedVisualization}`,
     );
 
+    // Set default text position for radial layouts
+    if (
+      this.selectedVisualization === 'radialTree' ||
+      this.selectedVisualization === 'radialCluster'
+    ) {
+      // Only change if current position is not already a valid radial option
+      if (
+        this.textPosition !== 'radiating-leaf' &&
+        this.textPosition !== 'radiating-all' &&
+        this.textPosition !== 'radiating-locked-root'
+      ) {
+        this.textPosition = 'radiating-all';
+      }
+    }
+
     // Recalculate ideal dimensions for new visualization type
     if (this.treeData) {
       this.calculateAndApplyIdealDimensions(this.treeData);
@@ -8397,6 +8442,21 @@ export class VisualizationTester
     console.log(
       `Layout style changed to ${style}, visualization type updated to: ${this.selectedVisualization}`,
     );
+
+    // Set default text position for radial layouts
+    if (
+      this.selectedVisualization === 'radialTree' ||
+      this.selectedVisualization === 'radialCluster'
+    ) {
+      // Only change if current position is not already a valid radial option
+      if (
+        this.textPosition !== 'radiating-leaf' &&
+        this.textPosition !== 'radiating-all' &&
+        this.textPosition !== 'radiating-locked-root'
+      ) {
+        this.textPosition = 'radiating-all';
+      }
+    }
 
     this.updateVisualization();
   }
@@ -9634,13 +9694,33 @@ export class VisualizationTester
       const centerY = this.height / 2;
       const angleFromCenter = Math.atan2(d.y - centerY, d.x - centerX);
 
+      // Calculate how this text will appear from viewer's perspective
+      // (accounting for global rotation)
+      const effectiveAngle =
+        angleFromCenter + (this.rotationAngle * Math.PI) / 180;
+      // Normalize to [-π, π]
+      const normalizedAngle = Math.atan2(
+        Math.sin(effectiveAngle),
+        Math.cos(effectiveAngle),
+      );
+
+      // Decide if flip is needed based on viewer's perspective
+      // Flip when text would appear at or past 90° / -90° from horizontal
+      const needsFlip =
+        normalizedAngle >= Math.PI / 2 || normalizedAngle <= -Math.PI / 2;
+
+      // Apply the flip to the LAYOUT angle, but we need to compensate for what the viewer will see
+      // If needsFlip, we want viewer to see (angleFromCenter + 180°) after parent rotation
+      // Viewer sees: layoutRotation + parentRotation
+      // We want: (angleFromCenter + parentRotation + 180°) for readability
+      // So: layoutRotation = angleFromCenter + 180° (parent will add its rotation)
+      const rotationDeg = (angleFromCenter * 180) / Math.PI;
+      const isLeftSide = needsFlip;
+
       switch (this.textPosition) {
         case 'radiating-leaf':
           // Only show radiating text for leaf nodes
           if (!d.children && !d._children) {
-            const rotationDeg = (angleFromCenter * 180) / Math.PI;
-            const isLeftSide =
-              angleFromCenter > Math.PI / 2 || angleFromCenter < -Math.PI / 2;
             return {
               x: d.x + radiatingOffset * Math.cos(angleFromCenter),
               y: d.y + radiatingOffset * Math.sin(angleFromCenter),
@@ -9652,13 +9732,34 @@ export class VisualizationTester
             x: d.x,
             y: d.y + belowOffset,
             anchor: 'middle',
-            rotation: 0,
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
           };
 
         case 'radiating-all':
-          const rotationDeg = (angleFromCenter * 180) / Math.PI;
-          const isLeftSide =
-            angleFromCenter > Math.PI / 2 || angleFromCenter < -Math.PI / 2;
+          return {
+            x: d.x + radiatingOffset * Math.cos(angleFromCenter),
+            y: d.y + radiatingOffset * Math.sin(angleFromCenter),
+            anchor: isLeftSide ? 'end' : 'start',
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
+          };
+
+        case 'radiating-locked-root':
+          // Root node (depth 0) is always positioned to the right and never rotates
+          if (d.depth === 0) {
+            // To keep text truly locked to the right, we need to reverse-transform the offset
+            // so that after parent rotation, it appears horizontal to the right
+            const rotationRad = (this.rotationAngle * Math.PI) / 180;
+            const xOffset = radiatingOffset * Math.cos(-rotationRad);
+            const yOffset = radiatingOffset * Math.sin(-rotationRad);
+            
+            return {
+              x: d.x + xOffset,
+              y: d.y + yOffset,
+              anchor: 'start',
+              rotation: -this.rotationAngle, // Counteract parent rotation to stay fixed
+            };
+          }
+          // All other nodes behave like 'radiating-all'
           return {
             x: d.x + radiatingOffset * Math.cos(angleFromCenter),
             y: d.y + radiatingOffset * Math.sin(angleFromCenter),
@@ -9671,7 +9772,7 @@ export class VisualizationTester
             x: d.x,
             y: d.y - belowOffset,
             anchor: 'middle',
-            rotation: 0,
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
           };
 
         case 'left':
@@ -9679,7 +9780,7 @@ export class VisualizationTester
             x: d.x - belowOffset,
             y: d.y + 4,
             anchor: 'end',
-            rotation: 0,
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
           };
 
         case 'right':
@@ -9687,7 +9788,7 @@ export class VisualizationTester
             x: d.x + belowOffset,
             y: d.y + 4,
             anchor: 'start',
-            rotation: 0,
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
           };
 
         case 'below':
@@ -9696,7 +9797,7 @@ export class VisualizationTester
             x: d.x,
             y: d.y + belowOffset,
             anchor: 'middle',
-            rotation: 0,
+            rotation: isLeftSide ? rotationDeg + 180 : rotationDeg,
           };
       }
     }
@@ -9757,6 +9858,27 @@ export class VisualizationTester
     return { x: d.x, y: d.y + belowOffset, anchor: 'middle', rotation: 0 };
   }
 
+  // Update text rotations when rotation angle changes
+  private updateTextRotations(): void {
+    if (!this.g) return;
+
+    // Update all text element rotations, anchors, and positions when rotation changes
+    this.g
+      .selectAll('.tree-node-label')
+      .attr('text-anchor', (d: any) => this.getTextPosition(d).anchor)
+      .attr('x', (d: any) => this.getTextPosition(d).x - d.x)
+      .attr('y', (d: any) => this.getTextPosition(d).y - d.y)
+      .attr('transform', (d: any) => {
+        const pos = this.getTextPosition(d);
+        if (pos.rotation !== 0) {
+          const offsetX = pos.x - d.x;
+          const offsetY = pos.y - d.y;
+          return `rotate(${pos.rotation}, ${offsetX}, ${offsetY})`;
+        }
+        return '';
+      });
+  }
+
   // Update selected node text position information for display in toolbar
   private updateSelectedNodeTextInfo(): void {
     if (!this.selectedNode || !this.treeNodes || this.treeNodes.length === 0) {
@@ -9766,7 +9888,7 @@ export class VisualizationTester
       this.selectedNodeTextRotation = null;
       this.selectedNodeTextAnchor = null;
       this.selectedNodeText180Added = false;
-      
+
       // Also clear transform state when no node selected
       this.selectedNodeCurrentZoom = 1;
       this.selectedNodeCurrentPanX = 0;
@@ -9788,7 +9910,7 @@ export class VisualizationTester
       this.selectedNodeTextRotation = null;
       this.selectedNodeTextAnchor = null;
       this.selectedNodeText180Added = false;
-      
+
       // Also clear transform state
       this.selectedNodeCurrentZoom = 1;
       this.selectedNodeCurrentPanX = 0;
@@ -9813,42 +9935,67 @@ export class VisualizationTester
     this.selectedNodeCurrentRotation =
       Math.round(this.rotationAngle * 100) / 100;
 
-    // Log for debugging
-    console.log('🔍 Selected Node Text Info Updated:', {
-      node: this.selectedNode,
-      x: this.selectedNodeTextX,
-      y: this.selectedNodeTextY,
-      rotation: this.selectedNodeTextRotation,
-      anchor: this.selectedNodeTextAnchor,
-      zoom: this.selectedNodeCurrentZoom,
-      panX: this.selectedNodeCurrentPanX,
-      panY: this.selectedNodeCurrentPanY,
-      rotationAngle: this.selectedNodeCurrentRotation,
-    });
-
     // Check if 180 degrees was added (for radial layouts)
     if (
       this.selectedVisualization === 'radialTree' ||
       this.selectedVisualization === 'radialCluster'
     ) {
-      if (
-        this.textPosition === 'radiating-leaf' ||
-        this.textPosition === 'radiating-all'
-      ) {
-        const centerX = this.width / 2;
-        const centerY = this.height / 2;
-        const angleFromCenter = Math.atan2(
-          selectedD3Node.y - centerY,
-          selectedD3Node.x - centerX,
-        );
-        const isLeftSide =
-          angleFromCenter > Math.PI / 2 || angleFromCenter < -Math.PI / 2;
-        this.selectedNodeText180Added = isLeftSide;
-      } else {
-        this.selectedNodeText180Added = false;
-      }
+      // Now all text positions in radial layouts can have 180° added
+      const centerX = this.width / 2;
+      const centerY = this.height / 2;
+      const angleFromCenter = Math.atan2(
+        selectedD3Node.y - centerY,
+        selectedD3Node.x - centerX,
+      );
+
+      // Account for global rotation transform
+      const effectiveAngle =
+        angleFromCenter + (this.rotationAngle * Math.PI) / 180;
+      // Normalize to [-π, π]
+      const normalizedAngle = Math.atan2(
+        Math.sin(effectiveAngle),
+        Math.cos(effectiveAngle),
+      );
+
+      // Calculate base rotation (radial in layout coordinates)
+      const baseRotationDeg = (angleFromCenter * 180) / Math.PI;
+
+      // Check if text needs 180° flip when viewed from viewer's perspective
+      const needsFlip =
+        normalizedAngle >= Math.PI / 2 || normalizedAngle <= -Math.PI / 2;
+      this.selectedNodeText180Added = needsFlip;
+
+      // Store debug info
+      this.selectedNodeAngleFromCenter =
+        Math.round(((angleFromCenter * 180) / Math.PI) * 100) / 100;
+      this.selectedNodeEffectiveAngle =
+        Math.round(((effectiveAngle * 180) / Math.PI) * 100) / 100;
+      this.selectedNodeNormalizedAngle =
+        Math.round(((normalizedAngle * 180) / Math.PI) * 100) / 100;
+      this.selectedNodeBaseRotationDeg =
+        Math.round(baseRotationDeg * 100) / 100;
+      this.selectedNodeFinalRotationDeg =
+        Math.round(
+          (needsFlip ? baseRotationDeg + 180 : baseRotationDeg) * 100,
+        ) / 100;
+
+      // Calculate what angle the text appears at from viewer (base + parent rotation + flip)
+      const finalRotation = needsFlip ? baseRotationDeg + 180 : baseRotationDeg;
+      let viewerAngle = finalRotation + this.rotationAngle;
+
+      // Normalize viewer angle to -180° to 180° range for better readability
+      while (viewerAngle > 180) viewerAngle -= 360;
+      while (viewerAngle < -180) viewerAngle += 360;
+
+      this.selectedNodeViewerAngle = Math.round(viewerAngle * 100) / 100;
     } else {
       this.selectedNodeText180Added = false;
+      this.selectedNodeAngleFromCenter = null;
+      this.selectedNodeEffectiveAngle = null;
+      this.selectedNodeNormalizedAngle = null;
+      this.selectedNodeBaseRotationDeg = null;
+      this.selectedNodeFinalRotationDeg = null;
+      this.selectedNodeViewerAngle = null;
     }
   }
 

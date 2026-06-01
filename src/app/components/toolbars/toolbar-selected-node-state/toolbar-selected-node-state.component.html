@@ -50,8 +50,7 @@
                         <td style="text-align: right; padding: 4px 8px;">{{ textAnchor !== null ? textAnchor : '—' }}
                         </td>
                     </tr>
-                    <tr *ngIf="textRotation !== null && textRotation !== 0"
-                        style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                    <tr *ngIf="angleFromCenter !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
                         <td style="text-align: left; padding: 4px 8px;">180° Added</td>
                         <td style="text-align: right; padding: 4px 8px;">{{ has180Added ? 'Yes' : 'No' }}</td>
                     </tr>
@@ -75,6 +74,38 @@
                     <tr>
                         <td style="text-align: left; padding: 4px 8px;">Rotation</td>
                         <td style="text-align: right; padding: 4px 8px;">{{ currentRotation }}°</td>
+                    </tr>
+                    <!-- Debug: Angle Calculations (only for radial layouts) -->
+                    <tr *ngIf="angleFromCenter !== null"
+                        style="background-color: rgba(128,128,128,0.1); border-top: 2px solid rgba(128,128,128,0.3); border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td colspan="2" style="text-align: left; padding: 4px 8px; font-weight: bold;">Angle
+                            Calculations
+                        </td>
+                    </tr>
+                    <tr *ngIf="angleFromCenter !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td style="text-align: left; padding: 4px 8px;">Angle From Center</td>
+                        <td style="text-align: right; padding: 4px 8px;">{{ angleFromCenter }}°</td>
+                    </tr>
+                    <tr *ngIf="effectiveAngle !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td style="text-align: left; padding: 4px 8px;">Effective Angle</td>
+                        <td style="text-align: right; padding: 4px 8px;">{{ effectiveAngle }}°</td>
+                    </tr>
+                    <tr *ngIf="normalizedAngle !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td style="text-align: left; padding: 4px 8px;">Normalized Angle</td>
+                        <td style="text-align: right; padding: 4px 8px;">{{ normalizedAngle }}°</td>
+                    </tr>
+                    <tr *ngIf="baseRotationDeg !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td style="text-align: left; padding: 4px 8px;">Base Rotation</td>
+                        <td style="text-align: right; padding: 4px 8px;">{{ baseRotationDeg }}°</td>
+                    </tr>
+                    <tr *ngIf="finalRotationDeg !== null" style="border-bottom: 1px solid rgba(128,128,128,0.2);">
+                        <td style="text-align: left; padding: 4px 8px;">Final Rotation (w/ flip)</td>
+                        <td style="text-align: right; padding: 4px 8px;">{{ finalRotationDeg }}°</td>
+                    </tr>
+                    <tr *ngIf="viewerAngle !== null"
+                        style="background-color: rgba(255,255,0,0.1); border-bottom: 1px solid rgba(255,215,0,0.5);">
+                        <td style="text-align: left; padding: 4px 8px; font-weight: bold;">👁️ Viewer Angle</td>
+                        <td style="text-align: right; padding: 4px 8px; font-weight: bold;">{{ viewerAngle }}°</td>
                     </tr>
                 </tbody>
             </table>
