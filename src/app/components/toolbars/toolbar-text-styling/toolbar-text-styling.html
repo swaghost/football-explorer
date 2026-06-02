@@ -314,7 +314,7 @@
                 <div style="flex: 1;">
                     <label for="treeTextFont">Font:</label>
                     <select id="treeTextFont" [(ngModel)]="treeTextFont" (change)="onTreeTextFontChange(treeTextFont)"
-                        style="width: 100%;">
+                        class="visualization-select" [class.dark-mode]="isDarkMode" style="width: 100%;">
                         <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                             <option *ngFor="let option of group.options" [value]="option.value">
                                 {{ option.label }}
@@ -325,7 +325,7 @@
                 <div style="flex: 0.6;">
                     <label for="treeTextSize">Size (pt):</label>
                     <select id="treeTextSize" [(ngModel)]="treeTextSize" (change)="onTreeTextSizeChange(treeTextSize)"
-                        style="width: 100%;">
+                        class="visualization-select" [class.dark-mode]="isDarkMode" style="width: 100%;">
                         <option *ngFor="let option of treeTextSizeOptions" [value]="option.value">
                             {{ option.label }}
                         </option>
@@ -420,7 +420,7 @@
                         <label for="rootNodeFont">Font:</label>
                         <select id="rootNodeFont" [(ngModel)]="rootNodeFont"
                             (change)="onRootNodeFontChange(rootNodeFont)" [disabled]="!overrideRootNodeStyle"
-                            style="width: 100%;">
+                            class="visualization-select" [class.dark-mode]="isDarkMode" style="width: 100%;">
                             <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                 <option *ngFor="let option of group.options" [value]="option.value">
                                     {{ option.label }}
@@ -432,7 +432,7 @@
                         <label for="rootNodeSize">Size (pt):</label>
                         <select id="rootNodeSize" [(ngModel)]="rootNodeSize"
                             (change)="onRootNodeSizeChange(rootNodeSize)" [disabled]="!overrideRootNodeStyle"
-                            style="width: 100%;">
+                            class="visualization-select" [class.dark-mode]="isDarkMode" style="width: 100%;">
                             <option *ngFor="let option of rootNodeSizeOptions" [value]="option.value">
                                 {{ option.label }}
                             </option>
@@ -516,7 +516,7 @@
                     <div class="form-group">
                         <label for="keyPosition">Position:</label>
                         <select id="keyPosition" [(ngModel)]="keyPosition" (change)="onKeyPositionChange(keyPosition)"
-                            [disabled]="!includeColorKey">
+                            [disabled]="!includeColorKey" class="visualization-select" [class.dark-mode]="isDarkMode">
                             <option *ngFor="let option of keyPositionOptions" [value]="option.value">
                                 {{ option.label }}
                             </option>
@@ -526,7 +526,7 @@
                     <div class="form-group">
                         <label for="keyFont">Font:</label>
                         <select id="keyFont" [(ngModel)]="keyFont" (change)="onKeyFontChange(keyFont)"
-                            [disabled]="!includeColorKey">
+                            [disabled]="!includeColorKey" class="visualization-select" [class.dark-mode]="isDarkMode">
                             <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                 <option *ngFor="let option of group.options" [value]="option.value">
                                     {{ option.label }}
@@ -546,7 +546,8 @@
                     <div class="form-group">
                         <label for="keyColorShape">Color Shape:</label>
                         <select id="keyColorShape" [(ngModel)]="keyColorShape"
-                            (change)="onKeyColorShapeChange(keyColorShape)" [disabled]="!includeColorKey">
+                            (change)="onKeyColorShapeChange(keyColorShape)" [disabled]="!includeColorKey"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
                             <option *ngFor="let option of keyColorShapeOptions" [value]="option.value">
                                 {{ option.label }}
                             </option>
@@ -556,7 +557,8 @@
                     <div class="form-group">
                         <label for="keyColorUniformity">Uniformity:</label>
                         <select id="keyColorUniformity" [(ngModel)]="keyColorUniformity"
-                            (change)="onKeyColorUniformityChange(keyColorUniformity)" [disabled]="!includeColorKey">
+                            (change)="onKeyColorUniformityChange(keyColorUniformity)" [disabled]="!includeColorKey"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
                             <option *ngFor="let option of keyColorUniformityOptions" [value]="option.value">
                                 {{ option.label }}
                             </option>
@@ -580,7 +582,8 @@
                     <div class="form-group">
                         <label for="keyTitleFont">Title Font:</label>
                         <select id="keyTitleFont" [(ngModel)]="keyTitleFont"
-                            (change)="onKeyTitleFontChange(keyTitleFont)" [disabled]="!includeColorKey">
+                            (change)="onKeyTitleFontChange(keyTitleFont)" [disabled]="!includeColorKey"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
                             <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                 <option *ngFor="let option of group.options" [value]="option.value">
                                     {{ option.label }}
@@ -620,7 +623,7 @@
                 <div class="form-group">
                     <label for="keyBorder">Border:</label>
                     <select id="keyBorder" [(ngModel)]="keyBorder" (change)="onKeyBorderChange(keyBorder)"
-                        [disabled]="!includeColorKey">
+                        [disabled]="!includeColorKey" class="visualization-select" [class.dark-mode]="isDarkMode">
                         <option *ngFor="let option of keyBorderOptions" [value]="option.value">
                             {{ option.label }}
                         </option>
@@ -680,7 +683,8 @@
                 <div class="form-group">
                     <label for="titlePosition">Position:</label>
                     <select id="titlePosition" [(ngModel)]="titlePosition"
-                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!enableTitle">
+                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!enableTitle"
+                        class="visualization-select" [class.dark-mode]="isDarkMode">
                         <option *ngFor="let option of titlePositionOptions" [value]="option.value">
                             {{ option.label }}
                         </option>
@@ -701,7 +705,8 @@
                         <div class="form-group" style="flex: 1;">
                             <label for="titleLine1Font">Font:</label>
                             <select id="titleLine1Font" [(ngModel)]="titleLine1Font"
-                                (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!enableTitle">
+                                (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!enableTitle"
+                                class="visualization-select" [class.dark-mode]="isDarkMode">
                                 <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                     <option *ngFor="let option of group.options" [value]="option.value">
                                         {{ option.label }}
@@ -763,7 +768,8 @@
                         <div class="form-group" style="flex: 1;">
                             <label for="titleLine2Font">Font:</label>
                             <select id="titleLine2Font" [(ngModel)]="titleLine2Font"
-                                (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!enableTitle">
+                                (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!enableTitle"
+                                class="visualization-select" [class.dark-mode]="isDarkMode">
                                 <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                     <option *ngFor="let option of group.options" [value]="option.value">
                                         {{ option.label }}
@@ -819,7 +825,8 @@
                         <div class="form-group" style="flex: 1;">
                             <label for="titleBorderType">Type:</label>
                             <select id="titleBorderType" [(ngModel)]="titleBorderType"
-                                (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!enableTitle">
+                                (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!enableTitle"
+                                class="visualization-select" [class.dark-mode]="isDarkMode">
                                 <option *ngFor="let option of titleBorderTypeOptions" [value]="option.value">
                                     {{ option.label }}
                                 </option>
@@ -1171,7 +1178,8 @@
                 <div class="form-group">
                     <label for="titlePosition">Position:</label>
                     <select id="titlePosition" [(ngModel)]="titlePosition"
-                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!includeTitle">
+                        (change)="onTitlePositionChange(titlePosition)" [disabled]="!includeTitle"
+                        class="visualization-select" [class.dark-mode]="isDarkMode">
                         <option *ngFor="let option of titlePositionOptions" [value]="option.value">
                             {{ option.label }}
                         </option>
@@ -1189,7 +1197,8 @@
                     <div class="form-group">
                         <label for="titleLine1Font">Line 1 Font:</label>
                         <select id="titleLine1Font" [(ngModel)]="titleLine1Font"
-                            (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!includeTitle">
+                            (change)="onTitleLine1FontChange(titleLine1Font)" [disabled]="!includeTitle"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
                             <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                 <option *ngFor="let option of group.options" [value]="option.value">
                                     {{ option.label }}
@@ -1251,7 +1260,8 @@
                     <div class="form-group">
                         <label for="titleLine2Font">Line 2 Font:</label>
                         <select id="titleLine2Font" [(ngModel)]="titleLine2Font"
-                            (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!includeTitle">
+                            (change)="onTitleLine2FontChange(titleLine2Font)" [disabled]="!includeTitle"
+                            class="visualization-select" [class.dark-mode]="isDarkMode">
                             <optgroup *ngFor="let group of keyFontOptionsGrouped" [label]="group.label">
                                 <option *ngFor="let option of group.options" [value]="option.value">
                                     {{ option.label }}
@@ -1306,7 +1316,8 @@
                 <div class="form-group">
                     <label for="titleBorderType">Border Type:</label>
                     <select id="titleBorderType" [(ngModel)]="titleBorderType"
-                        (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!includeTitle">
+                        (change)="onTitleBorderTypeChange(titleBorderType)" [disabled]="!includeTitle"
+                        class="visualization-select" [class.dark-mode]="isDarkMode">
                         <option *ngFor="let option of titleBorderOptions" [value]="option.value">
                             {{ option.label }}
                         </option>

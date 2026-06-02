@@ -9319,7 +9319,7 @@ export class VisualizationTester
         break;
       case 'aqua-circle':
       default:
-        svgBackground = this.colorsService.getBackgroundColor(this.isDarkMode);
+        svgBackground = '#ffffff'; // Pure white background
         this.removeDigitalGrid();
         this.removeHexPattern();
         break;
